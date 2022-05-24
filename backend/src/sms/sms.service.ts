@@ -15,6 +15,9 @@ export class SmsService {
         private readonly httpService: HttpService) { }
 
     async sendVerificationSMS(recipient: Recipient, challenge: Challenge): Promise<boolean> {
+        const oneTimeLink = this.getOneTimeLink(challenge);
+        const message = this.getMessage(recipient.lang, recipient.name, content.SMSSender, oneTimeLink);
+        this.logger.log(`Send verification SMS: ${recipient.phoneNumber}: ${message}`);
         const settings = SMSConfig.getTeliaConfig();
 
         // check stack trace to see if sendVerificationSMS() is called from registerJunior()
@@ -29,8 +32,6 @@ export class SmsService {
             }
         }
 
-        const oneTimeLink = this.getOneTimeLink(challenge);
-        const message = this.getMessage(recipient.lang, recipient.name, content.SMSSender, oneTimeLink);
         const messageRequest = {
             username: settings.username, password: settings.password,
             from: settings.user, to: [recipient.phoneNumber], message,
