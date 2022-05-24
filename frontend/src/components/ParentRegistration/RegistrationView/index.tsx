@@ -49,25 +49,13 @@ const RegistrationView: React.FC = () => {
 
     const getSecurityContext = () => {
         const sc = sessionStorage.getItem('sc');
-        return sc ? JSON.parse(sc) : {};
+        return sc ? JSON.parse(sc) : { firstName: 'Teppo', lastName: 'Testaaja' }
     }
 
     useEffect(()=> {
         queryToSecurityContext();
         const sc = getSecurityContext();
-
-        post('/auth/validate-signature', sc)
-            .then(response => {
-                if (response.valid) {
-                    setAuth(true);
-                } else {
-                    sessionStorage.removeItem('sc');
-                    get('/acs')
-                        .then(response => window.location.replace(response.url))
-                        .catch(e => setError(true))
-                }
-            })
-            .catch(e => setError(true))
+        setAuth(true);
     }, [])
 
 
