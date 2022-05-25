@@ -28,6 +28,44 @@ on: [push]
 name: Deploy to Amazon ECS
 
 jobs:
+  build-service:
+    name: Build all-in-one service
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        role-duration-seconds: 1200
+        aws-region: eu-west-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: youth-club/service
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # Build a docker container and
+        # push it to ECR so that it can
+        # be deployed to ECS.
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+    outputs:
+      image: ${{ steps.build-image.outputs.image }}
+
+
   build-admin-frontend:
     name: Build admin-frontend
     runs-on: ubuntu-latest
@@ -41,6 +79,8 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        role-duration-seconds: 1200
         aws-region: eu-west-1
 
     - name: Login to Amazon ECR
@@ -51,7 +91,7 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: youth-club-admin-front
+        ECR_REPOSITORY: youth-club/admin-front
         IMAGE_TAG: ${{ github.sha }}
       run: |
         # Build a docker container and
@@ -64,7 +104,7 @@ jobs:
       image: ${{ steps.build-image.outputs.image }}
 
   deploy-admin-frontend:
-    if: secrets.deploy_enabled == 'true' && github.ref == 'refs/heads/master'
+    if: github.repository_owner != 'espoon-voltti' && github.ref == 'refs/heads/master'
     name: Deploy admin-frontend
     runs-on: ubuntu-latest
     needs:
@@ -79,7 +119,7 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: admin-frontend/task-definition.json
-        container-name: youth-club-admin-front
+        container-name: youth-club/admin-front
         image: ${{ needs.build-admin-frontend.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
@@ -103,6 +143,8 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        role-duration-seconds: 1200
         aws-region: eu-west-1
 
     - name: Login to Amazon ECR
@@ -113,7 +155,7 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: youth-club-mobile-front
+        ECR_REPOSITORY: youth-club/mobile-front
         IMAGE_TAG: ${{ github.sha }}
       run: |
         # Build a docker container and
@@ -127,7 +169,7 @@ jobs:
       image: ${{ steps.build-image.outputs.image }}
 
   deploy-mobile-frontend:
-    if: secrets.deploy_enabled == 'true' && github.ref == 'refs/heads/master'
+    if: github.repository_owner != 'espoon-voltti' && github.ref == 'refs/heads/master'
     name: Deploy mobile-frontend
     runs-on: ubuntu-latest
     needs:
@@ -142,7 +184,7 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: frontend/task-definition.json
-        container-name: youth-club-mobile-front
+        container-name: youth-club/mobile-front
         image: ${{ needs.build-mobile-frontend.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
@@ -166,6 +208,8 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        role-duration-seconds: 1200
         aws-region: eu-west-1
 
     - name: Login to Amazon ECR
@@ -176,7 +220,7 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: youth-club-server
+        ECR_REPOSITORY: youth-club/server
         IMAGE_TAG: ${{ github.sha }}
       run: |
         # Build a docker container and
@@ -190,7 +234,7 @@ jobs:
       image: ${{ steps.build-image.outputs.image }}
 
   deploy-backend:
-    if: secrets.deploy_enabled == 'true' && github.ref == 'refs/heads/master'
+    if: github.repository_owner != 'espoon-voltti' && github.ref == 'refs/heads/master'
     name: Deploy backend
     runs-on: ubuntu-latest
     needs:
@@ -205,7 +249,7 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: backend/task-definition.json
-        container-name: youth-club-server
+        container-name: youth-club/server
         image: ${{ needs.build-backend.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
