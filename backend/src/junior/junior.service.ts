@@ -112,10 +112,19 @@ export class JuniorService {
     async attemptChallenge(challengeId: string, challenge: string): Promise<string> {
         const entry = await this.challengeRepo.findOne({ where: { id: challengeId }, relations: ['junior'] });
         // Returning false could be more benefical than providing an exception in terms of security.
-        if (!entry) { return undefined; }
-        if (challenge !== entry.challenge) { return undefined; }
+        if (!entry) {
+            this.logger.log(`cucumber No entry provided`);
+            return undefined;
+        }
+        if (challenge !== entry.challenge) {
+            this.logger.log(`cucumber No challenge provided`);
+            return undefined;
+        }
         const user = entry.junior;
-        if (!user) { return undefined; }
+        if (!user) {
+            this.logger.log(`cucumber No user provided`);
+            return undefined;
+        }
         await this.challengeRepo.remove(entry);
         return user.id;
     }
