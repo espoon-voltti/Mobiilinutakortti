@@ -153,7 +153,7 @@ const CheckInView = (props) => {
                 delay={300}
                 onScan={handleScan}
                 onError={handleError}
-                facingMode="environment"
+                facingMode="user"
                 style={{ width: "100%", height: "100%" }}
             />
           </QrReaderContainer>
