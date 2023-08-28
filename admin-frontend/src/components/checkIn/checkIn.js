@@ -131,8 +131,6 @@ const CheckInView = (props) => {
     notify('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
   };
 
-  const facingMode = sessionStorage.getItem('facingMode') || 'environment';
-
   return (
     <Container>
       <Notification />
@@ -155,7 +153,7 @@ const CheckInView = (props) => {
                 delay={300}
                 onScan={handleScan}
                 onError={handleError}
-                facingMode={facingMode}
+                facingMode="user"
                 style={{ width: "100%", height: "100%" }}
             />
           </QrReaderContainer>
