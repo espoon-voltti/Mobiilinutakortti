@@ -31,6 +31,15 @@ const OpenCheckInButton = (props) => {
       state: {record: props.record}
     }}>
       <Button onClick={() => prepareCheckIn(props.record.id, "user", false)} variant="contained" >Kirjautuminen</Button>
+    </Link>
+)}
+
+const OpenContinuousCheckInButton = (props) => {
+  return (
+    <Link to={{
+      pathname: `/checkIn/${props.record.id}`,
+      state: {record: props.record}
+    }}>
       <Button onClick={() => prepareCheckIn(props.record.id, "environment", true)} variant="contained" >Jatkuva kirjautuminen</Button>
     </Link>
 )}
@@ -51,6 +60,7 @@ export const YouthClubList = (props) => (
       <OpenCheckInButton />
       <OpenLogBookButton />
       <OpenLogBookCheckInsButton />
+      <OpenContinuousCheckInButton />
     </Datagrid>
   </List>
 );
