@@ -37,16 +37,12 @@ const CheckInView = (props) => {
   const [showQrCheckNotification, setShowQrCheckNotification] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checkInSuccess, setCheckInSuccess] = useState(null);
-
+  const notify = useNotify();
+  
   // Timeout for automatic logout
   const timeoutDuration = 600; // Set your desired timeout duration in seconds
   const [remainingTime, setRemainingTime] = useState(timeoutDuration); // Set your desired initial timeout in seconds
-
-  // Facing mode
-  const [facingMode, setFacingMode] = useState("user");
-
-  const notify = useNotify();
-
+  
   const logout = () => {
     sessionStorage.removeItem("initialCheckin")
 
@@ -56,13 +52,6 @@ const CheckInView = (props) => {
       document.location.href = "/";
     }
   }
-
-  // Camera facing mode
-  useEffect(() => {
-    const cameraFacingMode = sessionStorage.getItem("facingMode");
-    setFacingMode(cameraFacingMode);
-  }, [])
-
 
   // For scanning multiple users set a timeout for automatic logout
   // For scanning single user clear the session token and reload the page after 3 minutes to fix
@@ -167,8 +156,8 @@ const CheckInView = (props) => {
   const minutes = String(Math.floor(remainingTime / 60)).padStart(2, '0');
   const seconds = String(remainingTime % 60).padStart(2, '0');
 
-
   const continuousCheckIn = sessionStorage.getItem("continuousCheckIn");
+  const facingMode = sessionStorage.getItem("facingMode") || "user";
 
   return (
     <Container>
