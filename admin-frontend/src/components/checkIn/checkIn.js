@@ -37,6 +37,14 @@ const CheckInView = (props) => {
   const [showQrCheckNotification, setShowQrCheckNotification] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checkInSuccess, setCheckInSuccess] = useState(null);
+
+  // Timeout for automatic logout
+  const timeoutDuration = 600; // Set your desired timeout duration in seconds
+  const [remainingTime, setRemainingTime] = useState(timeoutDuration); // Set your desired initial timeout in seconds
+
+  // Facing mode
+  const [facingMode, setFacingMode] = useState("user");
+
   const notify = useNotify();
 
   const logout = () => {
@@ -49,21 +57,45 @@ const CheckInView = (props) => {
     }
   }
 
+  // Camera facing mode
   useEffect(() => {
-    localStorage.removeItem("admin-token")
-    const initialCheckIn = sessionStorage.getItem("initialCheckIn");
-    const path = props.location.pathname;
-    const m = path.match(/\d+/);
-    const id = m !== null ? m.shift() : null;
-    if (id !== initialCheckIn) {
-      logout();
-    }
+    const cameraFacingMode = sessionStorage.getItem("facingMode");
+    setFacingMode(cameraFacingMode);
+  }, [])
 
-  },[])
-  // reload the page in 3 minutes to fix qr reader stopping scanning after a period of time
+
+  // For scanning multiple users set a timeout for automatic logout
+  // For scanning single user clear the session token and reload the page after 3 minutes to fix
+  // qr reader stopping scanning after a period of time
   useEffect(() => {
-    const timer = setTimeout(() => window.location.reload(), 180000);
-    return () => clearTimeout(timer);
+    const continuousCheckIn = sessionStorage.getItem("continuousCheckIn");
+    if (continuousCheckIn == "false") {
+      localStorage.removeItem("admin-token")
+      const initialCheckIn = sessionStorage.getItem("initialCheckIn");
+      const path = props.location.pathname;
+      const m = path.match(/\d+/);
+      const id = m !== null ? m.shift() : null;
+      if (id !== initialCheckIn) {
+        logout();
+      }
+
+      const timer = setTimeout(() => window.location.reload(), 18000);
+      return () => clearTimeout(timer);
+    } else {
+      // Set up the timeout
+      const timer = setTimeout(() => { logout() }, timeoutDuration * 1000);
+
+      // Update the remaining time every second
+      const interval = setInterval(() => {
+        setRemainingTime(prevRemainingTime => prevRemainingTime - 1);
+      }, 1000);
+
+      // Clean up timers when the component unmounts
+      return () => {
+        clearTimeout(timer);
+        clearInterval(interval);
+      };
+    }
   }, [])
 
   useEffect(() => {
@@ -117,8 +149,8 @@ const CheckInView = (props) => {
       await httpClientWithResponse(url, options, true)
         .then(response => {
           if (response.statusCode < 200 || response.statusCode >= 300) {
-              setLoading(false);
-              notify('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
+            setLoading(false);
+            notify('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
             setShowQRCode(true)
           } else {
             handleCheckInReturn(response.success);
@@ -131,11 +163,20 @@ const CheckInView = (props) => {
     notify('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
   };
 
+  // Calculate minutes and seconds from remaining time
+  const minutes = String(Math.floor(remainingTime / 60)).padStart(2, '0');
+  const seconds = String(remainingTime % 60).padStart(2, '0');
+
+
+  const continuousCheckIn = sessionStorage.getItem("continuousCheckIn");
+
   return (
     <Container>
       <Notification />
       <CheckinBackground />
-      <NavigationPrompt
+
+      {continuousCheckIn == "false" && (
+        <NavigationPrompt
         afterConfirm={logout}
         disableNative={true}
         when={true}
@@ -147,21 +188,26 @@ const CheckInView = (props) => {
           />
         )}
       </NavigationPrompt>
-      {showQRCode && (
-          <QrReaderContainer>
-            <QrReader
-                delay={300}
-                onScan={handleScan}
-                onError={handleError}
-                facingMode="user"
-                style={{ width: "100%", height: "100%" }}
-            />
-          </QrReaderContainer>
       )}
-      {}
+      {continuousCheckIn == "true" && (
+        <p>Kirjaudutaan ulos: {minutes}:{seconds}</p>
+      )}
+
+      {showQRCode && (
+        <QrReaderContainer>
+          <QrReader
+            delay={300}
+            onScan={handleScan}
+            onError={handleError}
+            facingMode={facingMode}
+            style={{ width: "100%", height: "100%" }}
+          />
+        </QrReaderContainer>
+      )}
+
       {showQrCheckNotification && <QrCheckResultScreen successful={checkInSuccess} youthClubName={youthClubName} />}
       {loading && (
-          <LoadingMessage message={'Odota hetki'}/>
+        <LoadingMessage message={'Odota hetki'} />
       )}
     </Container>
   )
