@@ -40,7 +40,7 @@ const CheckInView = (props) => {
   const notify = useNotify();
   
   // Timeout for automatic logout
-  const timeoutDuration = 600; // Set your desired timeout duration in seconds
+  const timeoutDuration = 1800; // Set your desired timeout duration in seconds
   const [remainingTime, setRemainingTime] = useState(timeoutDuration); // Set your desired initial timeout in seconds
   
   const logout = () => {
@@ -126,6 +126,10 @@ const CheckInView = (props) => {
     if (qrData) {
       setShowQRCode(false);
       setLoading(true);
+
+      // Reset timer when continuously scanning
+      setRemainingTime(timeoutDuration);
+
       const url = api.youthClub.checkIn;
       const body = JSON.stringify({
         clubId: props.match.params.youthClubId,
