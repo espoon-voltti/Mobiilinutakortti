@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { successSound, errorSound } from "../audio/audio.js"
 
-const prepareCheckIn = (id) => {
+const prepareCheckIn = (id, facingMode, continuousCheckIn) => {
   successSound.volume = 0;
   successSound.play();
   successSound.pause();
@@ -18,6 +18,8 @@ const prepareCheckIn = (id) => {
   errorSound.pause();
   errorSound.currentTime = 0;
   sessionStorage.setItem("initialCheckIn", id);
+  sessionStorage.setItem("facingMode", facingMode);
+  sessionStorage.setItem("continuousCheckIn", continuousCheckIn);
   successSound.volume = 1;
   errorSound.volume = 1;
 }
@@ -28,7 +30,17 @@ const OpenCheckInButton = (props) => {
       pathname: `/checkIn/${props.record.id}`,
       state: {record: props.record}
     }}>
-      <Button onClick={() => prepareCheckIn(props.record.id)} variant="contained" >Kirjautuminen</Button>
+      <Button onClick={() => prepareCheckIn(props.record.id, "user", false)} variant="contained" >Kirjautuminen</Button>
+    </Link>
+)}
+
+const OpenContinuousCheckInButton = (props) => {
+  return (
+    <Link to={{
+      pathname: `/checkIn/${props.record.id}`,
+      state: {record: props.record}
+    }}>
+      <Button onClick={() => prepareCheckIn(props.record.id, "environment", true)} variant="contained" >Jatkuva kirjautuminen</Button>
     </Link>
 )}
 
@@ -48,6 +60,7 @@ export const YouthClubList = (props) => (
       <OpenCheckInButton />
       <OpenLogBookButton />
       <OpenLogBookCheckInsButton />
+      <OpenContinuousCheckInButton />
     </Datagrid>
   </List>
 );
