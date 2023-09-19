@@ -58,9 +58,9 @@ export const YouthClubList = (props) => (
       <TextField label="Nimi" source="name" />
       {/* <TextField label="Postinumero" source="postCode" /> */}
       <OpenCheckInButton />
+      <OpenContinuousCheckInButton />
       <OpenLogBookButton />
       <OpenLogBookCheckInsButton />
-      <OpenContinuousCheckInButton />
     </Datagrid>
   </List>
 );
