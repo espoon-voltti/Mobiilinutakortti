@@ -61,7 +61,7 @@ services:
       REACT_APP_ENDPOINT:
 
   db:
-    image: postgres:11
+    image: postgres:16
     ports:
       - 5432:5432
     volumes:
