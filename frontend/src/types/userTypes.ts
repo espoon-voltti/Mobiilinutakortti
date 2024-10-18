@@ -1,3 +1,11 @@
+export enum Status {
+    accepted = 'accepted',
+    pending = 'pending',
+    expired = 'expired',
+    failedCall = 'failedCall',
+    extraEntriesOnly = 'extraEntriesOnly'
+}
+
 export enum userTypes {
     GET_USER = "GET_USER",
     GET_SELF_SUCCESS = "GET_SELF_SUCCESS",
@@ -6,12 +14,13 @@ export enum userTypes {
 
 export interface userState {
     id: string,
-    name: string
+    name: string,
+    status: Status
 }
 
 export interface getSelfSuccess {
     type: userTypes.GET_SELF_SUCCESS,
-    payload: { id: string, name: string },
+    payload: { id: string, name: string; status: Status },
 }
 
 export interface getSelfFail {

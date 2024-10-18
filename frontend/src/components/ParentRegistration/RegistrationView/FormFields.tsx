@@ -17,7 +17,7 @@ const getFieldError = (t: Translations, errors: FormikErrors<FormValues>, fieldN
 
 
 interface InputProps {
-    title: string,
+    title?: string,
     placeholder?: string,
     description?: string,
     type?: string
@@ -102,7 +102,7 @@ export const SelectGroup: React.FC<GroupProps> = ({
     ));
     return(
         <div>
-            <Label>{title}</Label>
+            {title && <Label>{title}</Label>}
             <Description>{description && description.split('\\n').map((line, i) => <p key={i}>{line}</p>)}</Description>
             <Select>
                 {inputs}
@@ -114,7 +114,8 @@ export const SelectGroup: React.FC<GroupProps> = ({
 
 interface DropdownProps extends InputProps {
     options: SelectItem[],
-    defaultChoice: string
+    defaultChoice: string,
+    optionType?: string
 }
 
 export const DropdownField: React.FC<DropdownProps & FieldProps> = ({
@@ -122,6 +123,7 @@ export const DropdownField: React.FC<DropdownProps & FieldProps> = ({
     title,
     defaultChoice,
     options,
+    optionType,
     form: {touched, errors, handleBlur},
     ...props
 }) => {
@@ -131,12 +133,15 @@ export const DropdownField: React.FC<DropdownProps & FieldProps> = ({
     const inputs = options.map(option => (
             <option key={option.value} value={option.value}>{option.label}</option>
     ));
+
+    const defaultValue = optionType && optionType === 'number' ? 0 : '';
+
     return(
         <div>
             <Description>{props.description}</Description>
             <Dropdown>
                 <select {...field} {...props} onBlur={handleBlur}>
-                    <option disabled value="">{defaultChoice}</option>
+                    <option disabled value={defaultValue}>{defaultChoice}</option>
                     {inputs}
                 </select>
             </Dropdown>

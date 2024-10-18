@@ -2,7 +2,10 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Length } from 'class-validator';
 import { makePhoneNumberInternational, lowercase, trimString } from '../../common/transformers';
 import { CheckIn } from '../../club/entities';
-import { ConfigHelper } from '../../configHandler';
+import { ConfigHandler } from '../../configHandler';
+import { NumberTransformer } from 'src/utils/helpers';
+import { ExtraEntry } from 'src/extraEntry/entities/extraEntry.entity';
+import { Permit } from 'src/extraEntry/entities/permit.entity';
 
 @Entity()
 export class Junior {
@@ -21,6 +24,9 @@ export class Junior {
     @Column({ unique: true, transformer: makePhoneNumberInternational })
     phoneNumber: string;
 
+    @Column({ default: false })
+    smsPermissionJunior: boolean;
+
     @Column()
     postCode: string;
 
@@ -36,16 +42,29 @@ export class Junior {
     @Column({ transformer: makePhoneNumberInternational })
     parentsPhoneNumber: string;
 
+    @Column({ default: false })
+    smsPermissionParent: boolean;
+
+    @Column({ nullable: true  })
+    parentsEmail: string;
+
+    @Column({ default: false })
+    emailPermissionParent: boolean;
+
+    @Column({ nullable: true  })
+    additionalContactInformation: string;
+
     @Column({ transformer: lowercase })
     @Length(1, 1)
     gender: string;
 
-    // Additional check introduced to allow the SQLite testDB to run
-    @Column({ type: 'date', default: ConfigHelper.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
+    // Additional check introduced to allow testDB to run (for npm run test): SQLite doesn't have a date data type.
+    @Column({ type: 'date', default: ConfigHandler.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
     birthday: string;
 
-    @Column()
-    homeYouthClub: string;
+    // For historical reasons, type is character varying and not integer and needs to be transformed back into number for UI.
+    @Column({ type: 'character varying', transformer: new NumberTransformer(), nullable: true  })
+    homeYouthClub: number;
 
     @Column({ default: 'fi' })
     communicationsLanguage: string;
@@ -53,12 +72,19 @@ export class Junior {
     @Column()
     status: string;
 
-    @Column({ type: 'date', default: ConfigHelper.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
+    // See testDB note above.
+    @Column({ type: 'date', default: ConfigHandler.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
     creationDate: string;
 
     @Column()
     photoPermission: boolean;
 
-    @OneToMany(type => CheckIn, checkIn => checkIn.junior, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+    @OneToMany(() => CheckIn, checkIn => checkIn.junior)
     checkIns: CheckIn[];
+
+    @OneToMany(() => ExtraEntry, extraEntry => extraEntry.junior)
+    extraEntries: ExtraEntry[];
+
+    @OneToMany(() => Permit, permit => permit.junior)
+    permits: Permit[];
 }

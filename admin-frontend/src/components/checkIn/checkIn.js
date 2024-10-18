@@ -7,10 +7,11 @@ import QrCheckResultScreen from "./qrCheckResultScreen.js";
 import LoadingMessage from "../loadingMessage";
 import { useNotify } from 'react-admin';
 import styled from 'styled-components';
-import { httpClientWithResponse } from '../../httpClients';
+import { httpClient } from '../../httpClients';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { successSound, errorSound } from "../../audio/audio.js"
+import { checkInClubId, userToken } from '../../utils';
 
 const Container = styled.div`
   height: 100%;
@@ -24,14 +25,12 @@ const Container = styled.div`
 const QrReaderContainer = styled.div`
   margin-top: 7.4em;
   width: 32em;
+  max-width: 100%;
   border: 55px solid #f9e51e;
   -webkit-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   -moz-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
 `
-
-let youthClubName = "";
-
 const CheckInView = (props) => {
   const [showQRCode, setShowQRCode] = useState(true);
   const [showQrCheckNotification, setShowQrCheckNotification] = useState(false);
@@ -39,41 +38,28 @@ const CheckInView = (props) => {
   const [checkInSuccess, setCheckInSuccess] = useState(null);
   const notify = useNotify();
 
-  const logout = () => {
-    sessionStorage.removeItem("initialCheckin")
-
-    if (process.env.REACT_APP_ADMIN_FRONTEND_URL) {
-      document.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
-    } else {
-      document.location.href = "/";
-    }
+  const goToLogin = () => {
+    sessionStorage.removeItem(checkInClubId);
+    document.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL || "/";
   }
 
   useEffect(() => {
-    localStorage.removeItem("admin-token")
-    const initialCheckIn = sessionStorage.getItem("initialCheckIn");
+    localStorage.removeItem(userToken);
+    const storedCheckInClubId = sessionStorage.getItem(checkInClubId);
     const path = props.location.pathname;
     const m = path.match(/\d+/);
     const id = m !== null ? m.shift() : null;
-    if (id !== initialCheckIn) {
-      logout();
+    // checkInClubId is set by the youth worker when they click on the log in button for a club.
+    // This prevents the users from manually changing the club id in the browser address bar.
+    if (id !== storedCheckInClubId) {
+      goToLogin();
     }
+  }, [props.location.pathname])
 
-  },[])
   // reload the page in 3 minutes to fix qr reader stopping scanning after a period of time
   useEffect(() => {
     const timer = setTimeout(() => window.location.reload(), 180000);
     return () => clearTimeout(timer);
-  }, [])
-
-  useEffect(() => {
-    if(props.location.state !== undefined) {
-      localStorage.setItem('youthClubName', JSON.stringify(props.location.state.record.name));
-      youthClubName = props.location.state.record.name;
-    }
-    if(props.location.state === undefined) {
-      youthClubName = JSON.parse(localStorage.getItem("youthClubName"));
-    }
   }, [])
 
   const tryToPlayAudio = (success) => {
@@ -114,7 +100,7 @@ const CheckInView = (props) => {
         method: 'POST',
         body
       };
-      await httpClientWithResponse(url, options, true)
+      await httpClient(url, options, true)
         .then(response => {
           if (response.statusCode < 200 || response.statusCode >= 300) {
               setLoading(false);
@@ -136,7 +122,7 @@ const CheckInView = (props) => {
       <Notification />
       <CheckinBackground />
       <NavigationPrompt
-        afterConfirm={logout}
+        afterConfirm={goToLogin}
         disableNative={true}
         when={true}
       >
@@ -159,7 +145,7 @@ const CheckInView = (props) => {
           </QrReaderContainer>
       )}
       {}
-      {showQrCheckNotification && <QrCheckResultScreen successful={checkInSuccess} youthClubName={youthClubName} />}
+      {showQrCheckNotification && <QrCheckResultScreen successful={checkInSuccess} />}
       {loading && (
           <LoadingMessage message={'Odota hetki'}/>
       )}

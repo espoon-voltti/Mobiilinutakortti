@@ -35,7 +35,7 @@ export const translations: Translations = {
     submit: 'Fylla i ansökan',
     privacyPolicy: {
       title: 'Integritetspolicy',
-      href: 'https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja'
+      href: 'https://www.vantaa.fi/fi/kaupunki-ja-paatoksenteko/selosteet-oikeudet-ja-tietosuoja/henkilotietojen-kasittely/henkilotietojen-kasittely-nuorisotyossa-ja-toiminnassa'
     }
   },
   parentRegistration: {
@@ -71,6 +71,22 @@ export const translations: Translations = {
       parentFirstName: 'Förnamn',
       parentLastName: 'Efternamn',
       parentPhoneNumber: 'Telefonnummer',
+      parentsEmail: 'E-postadress',
+      additionalContactInformation: 'Information om en annan kontaktperson eller ett alternativt telefonnummer (t.ex. jobbtelefon)',
+
+      announcements: {
+        title: 'Info meddelande',
+        description: 'Du kommer att få meddelanden om din hemungdomsanläggning eller de ungdomsanläggningar du har besökt. Om du inte inte vill ta emot valfria info-sms längre, hör av dig till en ungdomsarbetare.',
+        emailPermission: 'Info emails',
+        emailPermissionParent: 'Lov för emails till vårdnadshavare',
+        smsPermissionJunior: 'Lov för sms meddelande till junior',
+        smsPermission: 'Info sms',
+        smsPermissionParent: 'Lov för sms meddelande till vårdnadshavare',
+        permissionOptions: {
+          ok: 'Ja',
+          notOk: 'Nej',
+        },
+      },
 
       youthClubHeading: 'Hemungdomskulbb',
       youthClubDefault: 'Välj ungdomskulbb',
@@ -82,14 +98,14 @@ export const translations: Translations = {
 
       termsOfUse: (
         <>
-          Jag godkänner&nbsp;<a target='_blank' rel="noopener noreferrer"
-          href='https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/150593_Mobiilinutakortin_kayttoehdot.pdf'>användarvillkoren</a>
+          Jag godkänner&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/Mobiilinutakortin%20k%C3%A4ytt%C3%B6ehdot.pdf'>användarvillkoren</a>
         </>
       ),
+      correctNote: 'Var så god och se till att informationen du har lämnat är korrekt innan du skickar ansökan.',
       submit: 'Skicka ansökan',
       privacyPolicy: {
         title: 'Läs hur vi hanterar dina personuppgifter.',
-        href: 'https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja',
+        href: 'https://www.vantaa.fi/fi/kaupunki-ja-paatoksenteko/selosteet-oikeudet-ja-tietosuoja/henkilotietojen-kasittely/henkilotietojen-kasittely-nuorisotyossa-ja-toiminnassa',
       }
     },
     errors: {
@@ -97,6 +113,7 @@ export const translations: Translations = {
       birthdayFormat: 'Ange födelsedatum i formatet dd.mm.åååå',
       phoneNumberFormat: 'Kontrollera att telefonnumret du angav är korrekt',
       postCodeFormat: 'Kontrollera att postnumret du angav är korrekt',
+      emailFormat: 'Kontrollera att e-postadress du angav är korrekt',
       selectYouthClub: 'Välj en ungdomsklubb från menyn',
       selectLanguage: 'Välj ett språk från menyn',
       acceptTermsOfUse: 'Acceptera villkoren för att fortsätta',
@@ -111,11 +128,13 @@ export const translations: Translations = {
       )
     },
     error: {
-      message: 'Något gick fel. Om felet återkommer ofta, kontakta din närmaste ungdomsklubb eller Nutakortets kontaktperson, tel. +358 400 662739 (mån-fre 8-16).',
+      message: (<>Något gick fel. Om felet återkommer ofta, kontakta din <a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/fi/palveluhakemisto/palvelu/nuorisotilatoiminta#tab-units'>närmaste ungdomsklubb</a> eller Nutakortets kontaktperson, tel. +358 400 662739 (mån-fre 8-16).</>),
       back: 'Tillbaka',
     }
   },
   qrPage: {
+    codeExpired: "FÖREGÅENDE SÄSONG",
+    codeValid: "NUVARANDE SÄSONG",
     login: 'Logga in',
     instruction: 'Visa QR-kod för en läsare vid inträde i ungdomsklubben.',
   },

@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { SimpleForm, useNotify } from 'react-admin';
 import { TextField, Button, Toolbar } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
-import { httpClientWithResponse } from '../httpClients';
+import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 
 let ChangePasswordView = () => {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    
+
     const dataProvided = () => (oldPassword && newPassword && confirmPassword);
     const passwordsMatch = () => (newPassword === confirmPassword);
     const buttonDisabled = () => !(dataProvided() && passwordsMatch());
@@ -25,7 +25,7 @@ let ChangePasswordView = () => {
                 method: 'POST',
                 body
             };
-            await httpClientWithResponse(url, options)
+            await httpClientWithRefresh(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         notify(response.message, "warning");

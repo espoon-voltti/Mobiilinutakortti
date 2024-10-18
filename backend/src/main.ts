@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as express from 'express';
 import { join } from 'path';
-import { ConfigHelper } from './configHandler';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as fs from 'fs';
 import * as cookieParser from 'cookie-parser';
@@ -11,6 +10,7 @@ import { Logger } from 'nestjs-pino';
 async function bootstrap() {
   // This is for local development only.
   // In test and production environments the HTTPS is provided by a separate AWS load balancer.
+  // NB: normally the TLS certificate is different from the SAML signing certificate, but here we use the same for both cases.
   let httpsOptions = null;
   if (fs.existsSync('./certs/nutakortti-test_private_key.pem')) {
     httpsOptions = {
@@ -23,8 +23,8 @@ async function bootstrap() {
     .setTitle('Nutakortti')
     .setDescription('API for Nutakortti project')
     .setVersion('1.0')
-    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'super-admin')
     .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'admin')
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'youthWorker')
     .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'junior')
     .build();
 

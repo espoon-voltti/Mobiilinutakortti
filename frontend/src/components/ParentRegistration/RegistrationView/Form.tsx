@@ -1,14 +1,15 @@
 import React from 'react';
 import { Field, FormikProps, withFormik, FieldProps } from 'formik';
-import { string, object, boolean, Schema } from 'yup';
+import { string, object, boolean, Schema, number } from 'yup';
 import { post } from '../../../apis';
 
 import { InputField, DropdownField, SelectGroup } from './FormFields';
-import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button, ErrorMessage } from '../StyledComponents';
+import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button, ErrorMessage, FieldInfoText } from '../StyledComponents';
 import { useTranslations } from '../../translations'
 import { CustomizableFormField, Translations } from "../../../customizations/types";
 import { hiddenFormFields, languages } from '../../../customizations'
 import styled, { useTheme } from 'styled-components'
+import { Status } from '../../../types/userTypes';
 
 export interface Club {
     id: number
@@ -18,19 +19,24 @@ export interface Club {
 export interface FormValues {
     juniorFirstName: string,
     juniorLastName: string,
-    juniorNickName: string,
+    juniorNickName?: string,
     juniorBirthday: string,
     juniorPhoneNumber: string,
+    smsPermissionJunior: string,
     juniorGender: string,
-    postCode: string,
+    postCode?: string,
     photoPermission: string,
-    school: string,
-    class: string,
-    communicationsLanguage: string
+    school?: string,
+    class?: string,
+    communicationsLanguage?: string
     parentFirstName: string,
     parentLastName: string,
     parentPhoneNumber: string,
-    youthClub: string,
+    smsPermissionParent: string,
+    parentsEmail?: string,
+    emailPermissionParent?: string,
+    additionalContactInformation?: string,
+    youthClub: number,
     termsOfUse: boolean
 }
 
@@ -85,13 +91,67 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         />
 
                     </Fieldset>
+
+                    {valueOrNull('communicationsLanguage', (
+                        <Fieldset>
+                            <FieldTitle>{t.parentRegistration.form.communicationsLanguage}</FieldTitle>
+                            <Field
+                                name='communicationsLanguage'
+                                component={DropdownField}
+                                title={t.parentRegistration.form.communicationsLanguage}
+                                options={languages.map((lang) => ({ value: lang, label: t.languages[lang] }))}
+                                defaultChoice={t.parentRegistration.form.communicationsLanguageDefault}
+                                description={t.parentRegistration.form.communicationsLanguageDescription}
+                            />
+                        </Fieldset>
+                    ))}
                 </Column>
+
                 <Column>
                     <Fieldset>
                         <FieldTitle>{t.parentRegistration.form.parentHeading}</FieldTitle>
                         <Field disabled name='parentFirstName' component={InputField} title={t.parentRegistration.form.parentFirstName} />
                         <Field disabled name='parentLastName' component={InputField} title={t.parentRegistration.form.parentLastName} />
                         <Field name='parentPhoneNumber' component={InputField} type='phone' title={t.parentRegistration.form.parentPhoneNumber} />
+                        <Field name='parentsEmail' component={InputField} type='email' title={t.parentRegistration.form.parentsEmail} />
+                        <Field name='additionalContactInformation' component={InputField} type='phone' title={t.parentRegistration.form.additionalContactInformation} />
+                    </Fieldset>
+
+                    <Fieldset>
+                        <FieldTitle>{t.parentRegistration.form.announcements.title}</FieldTitle>
+                        <FieldInfoText>{t.parentRegistration.form.announcements.description}</FieldInfoText>
+                        <SelectGroup
+                            error={errors.smsPermissionJunior}
+                            touched={touched.smsPermissionJunior}
+                            title={t.parentRegistration.form.announcements.smsPermission}
+                            name="smsPermissionJunior"
+                            description={t.parentRegistration.form.announcements.smsPermissionJunior}
+                            options={[
+                              { value: 'smsJuniorOk', label: t.parentRegistration.form.announcements.permissionOptions.ok },
+                              { value: 'smsJuniorNotOk', label: t.parentRegistration.form.announcements.permissionOptions.notOk }
+                            ]}
+                        />
+                        <SelectGroup
+                            error={errors.smsPermissionParent}
+                            touched={touched.smsPermissionParent}
+                            name="smsPermissionParent"
+                            description={t.parentRegistration.form.announcements.smsPermissionParent}
+                            options={[
+                              { value: 'smsParentOk', label: t.parentRegistration.form.announcements.permissionOptions.ok },
+                              { value: 'smsParentNotOk', label: t.parentRegistration.form.announcements.permissionOptions.notOk }
+                            ]}
+                        />
+                        <SelectGroup
+                            error={errors.emailPermissionParent}
+                            touched={touched.emailPermissionParent}
+                            title={t.parentRegistration.form.announcements.emailPermission}
+                            name="emailPermissionParent"
+                            description={t.parentRegistration.form.announcements.emailPermissionParent}
+                            options={[
+                              { value: 'emailParentOk', label: t.parentRegistration.form.announcements.permissionOptions.ok },
+                              { value: 'emailParentNotOk', label: t.parentRegistration.form.announcements.permissionOptions.notOk }
+                            ]}
+                        />
                     </Fieldset>
 
                     <Fieldset>
@@ -99,6 +159,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <Field
                             name='youthClub'
                             component={DropdownField}
+                            optionType='number'
                             title={t.parentRegistration.form.youthClubHeading}
                             options={status.clubs}
                             defaultChoice={t.parentRegistration.form.youthClubDefault}
@@ -106,17 +167,6 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         />
                     </Fieldset>
 
-                    <Fieldset>
-                        <FieldTitle>{t.parentRegistration.form.communicationsLanguage}</FieldTitle>
-                        <Field
-                            name='communicationsLanguage'
-                            component={DropdownField}
-                            title={t.parentRegistration.form.communicationsLanguage}
-                            options={languages.map((lang) => ({ value: lang, label: t.languages[lang] }))}
-                            defaultChoice={t.parentRegistration.form.communicationsLanguageDefault}
-                            description={t.parentRegistration.form.communicationsLanguageDescription}
-                        />
-                    </Fieldset>
                 </Column>
                 <FormFooter>
                     {valueOrNull('termsOfUse', (
@@ -132,6 +182,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                             <ErrorMessage>{errors.termsOfUse && t.parentRegistration.errors[errors.termsOfUse as ErrorKey]}</ErrorMessage>
                         </>
                     ))}
+                    <p>{t.parentRegistration.form.correctNote}</p>
                     <SubmitButton type="submit">{t.parentRegistration.form.submit}</SubmitButton>
                     <a target='_blank' rel="noopener noreferrer" href={t.parentRegistration.form.privacyPolicy.href}>
                         {t.parentRegistration.form.privacyPolicy.title}
@@ -152,19 +203,24 @@ const submitForm = async (values: FormValues, securityContext: any) => {
     const data = {
         userData: {
             phoneNumber: values.juniorPhoneNumber,
+            smsPermissionJunior: values.smsPermissionJunior === 'smsJuniorOk',
             lastName: values.juniorLastName,
             firstName: values.juniorFirstName,
             nickName: values.juniorNickName,
             gender: values.juniorGender,
             school: values.school,
             class: values.class,
-            communicationsLanguage: values.communicationsLanguage,
+            communicationsLanguage: values.communicationsLanguage || 'fi',
             birthday: getParsedBirthday(values.juniorBirthday),
             homeYouthClub: values.youthClub,
             postCode: values.postCode,
             parentsName: `${values.parentFirstName} ${values.parentLastName}`,
             parentsPhoneNumber: values.parentPhoneNumber,
-            status: 'pending',
+            smsPermissionParent: values.smsPermissionParent === 'smsParentOk',
+            parentsEmail: values.parentsEmail,
+            emailPermissionParent: values.emailPermissionParent === 'emailParentOk',
+            additionalContactInformation: values.additionalContactInformation,
+            status: Status.pending,
             photoPermission: values.photoPermission === 'y'
         },
         securityContext: securityContext
@@ -187,6 +243,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
             juniorNickName: '',
             juniorBirthday: '',
             juniorPhoneNumber: '',
+            smsPermissionJunior: '',
             juniorGender: '',
             postCode: '',
             photoPermission: '',
@@ -196,7 +253,11 @@ const RegistrationForm = withFormik<Props, FormValues>({
             parentFirstName: props.securityContext.firstName,
             parentLastName: props.securityContext.lastName,
             parentPhoneNumber: '',
-            youthClub: '',
+            smsPermissionParent: '',
+            parentsEmail: '',
+            emailPermissionParent: '',
+            additionalContactInformation: '',
+            youthClub: 0,
             termsOfUse: hiddenFormFields.includes('termsOfUse'),
         }
     },
@@ -204,7 +265,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
     mapPropsToStatus: props => {
         return {
             clubs: props.clubs
-                .map((youthClub) => ({ value: youthClub.id.toString(), label: youthClub.name }))
+                .map((youthClub) => ({ value: youthClub.id, label: youthClub.name }))
                 .sort((a,b) => a.label.localeCompare(b.label, 'fi', { sensitivity: 'base' }))
         }
     },
@@ -214,6 +275,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
         juniorNickName: string(),
         juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'birthdayFormat').required('birthdayFormat'),
         juniorPhoneNumber: string().matches(/(^(\+358|0)\d{6,10}$)/, 'phoneNumberFormat').required('required'),
+        smsPermissionJunior: string().oneOf(['smsJuniorOk', 'smsJuniorNotOk']).required('required'),
         postCode: valueOr('postCode', string().length(5, 'postCodeFormat').matches(/^[0-9]*$/, 'postCodeFormat').required('required'), string()),
         school: valueOr('school', string().required('required'), string()),
         class: valueOr('class', string().required('required'), string()),
@@ -222,8 +284,12 @@ const RegistrationForm = withFormik<Props, FormValues>({
         parentFirstName: string().required('required'),
         parentLastName: string().required('required'),
         parentPhoneNumber: string().matches(/(^(\+358|0)\d{6,10})/, 'phoneNumberFormat').required('required'),
-        youthClub: string().required('selectYouthClub'),
-        communicationsLanguage: string().oneOf(['fi', 'sv', 'en']).required('selectLanguage'),
+        smsPermissionParent: string().oneOf(['smsParentOk', 'smsParentNotOk']).required('required'),
+        parentsEmail: string().matches(/^\S+@\S+\.\S+$/, 'emailFormat'),
+        emailPermissionParent: string().oneOf(['emailParentOk', 'emailParentNotOk']),
+        additionalContactInformation: string(),
+        youthClub: number().integer().required('selectYouthClub').notOneOf([0], 'required'),
+        communicationsLanguage: valueOr('communicationsLanguage', string().oneOf(['fi', 'sv', 'en']).required('selectLanguage'), string()),
         termsOfUse: boolean().oneOf([true], 'acceptTermsOfUse').required('acceptTermsOfUse')
     }),
     handleSubmit: (values, formikBag) => {

@@ -1,10 +1,14 @@
-import { Injectable, InternalServerErrorException, HttpService, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom } from 'rxjs';
 import { Recipient, TeliaMessageRequest, TeliaBatchMessageRequest, BatchItem } from './models';
 import { Challenge } from '../junior/entities';
 import { SMSConfig } from './smsConfigHandler';
+import { ClubService } from '../club/club.service';
 import * as content from '../content';
-import { ConfigHelper } from '../configHandler';
+import { ConfigHandler } from '../configHandler';
 import moment = require('moment');
+
 
 @Injectable()
 export class SmsService {
@@ -12,7 +16,9 @@ export class SmsService {
     private readonly logger = new Logger('SMS Service');
 
     constructor(
-        private readonly httpService: HttpService) { }
+        private readonly clubService: ClubService,
+        private readonly httpService: HttpService,
+        ) { }
 
     async sendVerificationSMS(recipient: Recipient, challenge: Challenge): Promise<boolean> {
         const settings = SMSConfig.getTeliaConfig();
@@ -25,12 +31,12 @@ export class SmsService {
                 throw new InternalServerErrorException(content.SMSNotAvailableButUserCreated);
             }
             else {
-                throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
+                throw new InternalServerErrorException(content.SmsServiceNotAvailable);
             }
         }
 
-        const oneTimeLink = this.getOneTimeLink(challenge);
-        const message = this.getMessage(recipient.lang, recipient.name, content.SMSSender, oneTimeLink);
+        const message = await this.getRegisteredMessage(recipient.lang, challenge, recipient.homeYouthClub);
+
         const messageRequest = {
             username: settings.username, password: settings.password,
             from: settings.user, to: [recipient.phoneNumber], message,
@@ -39,7 +45,7 @@ export class SmsService {
         if (attemptMessage) {
             return true;
         } else {
-            throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
+            throw new InternalServerErrorException(content.SmsServiceNotAvailable);
         }
     }
 
@@ -51,9 +57,10 @@ export class SmsService {
             batchEndPoint,
         } = SMSConfig.getTeliaConfig();
 
+        // NB: not sending recipient names anymore because sometimes the parents' phone numbers have typos in them. This apparently created unnecessary security risks. The phone numbers used here are for the parents.
         const batch: BatchItem[] = recipients.map(recipient => ({
             t: recipient.phoneNumber,
-            m: this.getExpiredMessage(recipient.lang, recipient.name, expireDate),
+            m: this.getExpiredMessage(recipient.lang, expireDate),
         }));
 
         const messageRequest = {
@@ -66,7 +73,7 @@ export class SmsService {
         if (attemptMessage) {
             return true;
         } else {
-            throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
+            throw new InternalServerErrorException(content.SmsServiceNotAvailable);
         }
     }
 
@@ -74,22 +81,23 @@ export class SmsService {
      * Sends multiple messages in a single batch. The service withstands payloads in excess of
      * 100 000 individual messages per batch.
      */
-    private async batchSendMessagesToUsers(messageRequest: TeliaBatchMessageRequest, endpoint: string): Promise<boolean> {
+    async batchSendMessagesToUsers(messageRequest: TeliaBatchMessageRequest, endpoint: string): Promise<boolean> {
         this.logger.log(`Batch sending ${messageRequest.batch.length} SMSs.`);
-        return this.httpService.post(endpoint, messageRequest).toPromise().then(
-            response => {
-                const { batchid, batchstatuscode, batchstatusdescription } = response.data;
-                if (batchstatuscode === 1) {
-                    this.logger.log(`Batch ID ${batchid} received successfully: ${batchstatusdescription}, code ${batchstatuscode}`);
-                    return true;
-                } else {
-                    this.logger.log(`Batch ID ${batchid} failed: ${batchstatusdescription}, code ${batchstatuscode}`);
-                    return false;
-                }
-            }).catch(() => {
-                this.logger.log('Batch send failed: endpoint responded with a non 200 status.');
+
+        try {
+            const response = await lastValueFrom(this.httpService.post(endpoint, messageRequest));
+            const { batchid, batchstatuscode, batchstatusdescription } = response.data;
+            if (batchstatuscode === 1) {
+                this.logger.log(`Batch ID ${batchid} received successfully: ${batchstatusdescription}, code ${batchstatuscode}`);
+                return true;
+            } else {
+                this.logger.log(`Batch ID ${batchid} failed: ${batchstatusdescription}, code ${batchstatuscode}`);
                 return false;
-            });
+            }
+        } catch {
+            this.logger.log('Batch send failed: endpoint responded with a non 200 status.');
+            return false;
+        }
     }
 
     /**
@@ -102,34 +110,31 @@ export class SmsService {
      * to send individual messages to multiple users.
      */
     private async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
-        this.logger.log(`Sending SMS to ${messageRequest.to[0]}`);
-        return this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(
-            response => {
-                if (response.data.accepted[0].to === messageRequest.to[0]) {
-                    this.logger.log(`SMS send to ${messageRequest.to[0]}`);
-                    return true;
-                } else {
-                    this.logger.log(`Failed to send SMS to ${messageRequest.to[0]}: ${response}.`);
-                    return false;
-                }
-            }).catch(error => {
-                this.logger.log(`Failed to send SMS to ${messageRequest.to[0]}.`);
+        this.logger.log(`Sending SMS to xxxxxx${messageRequest.to[0].slice(-4)}`);
+
+        try {
+            const response = await lastValueFrom(this.httpService.post(teliaEndPoint, messageRequest));
+            if (response.data.accepted[0].to === messageRequest.to[0]) {
+                this.logger.log(`SMS send to xxxxxx${messageRequest.to[0].slice(-4)}`);
+                return true;
+            } else {
+                this.logger.log(`Failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}: ${response}.`);
                 return false;
-            });
-
+            }
+        } catch {
+            this.logger.log(`POST error: failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}.`);
+            return false;
+        }
     }
 
-    private getOneTimeLink(challenge: Challenge): string {
-        return `${ConfigHelper.getFrontendPort()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
+    private async getRegisteredMessage(lang: content.Language, challenge: Challenge, homeYouthClub?: number) {
+        const oneTimeLink = `${ConfigHandler.getFrontendUrl()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
+        const clubSpecificMessage = homeYouthClub ? (await this.clubService.getClubById(homeYouthClub))?.messages[lang] : '';
+        return content.RegisteredSmsContent[lang](oneTimeLink, clubSpecificMessage);
     }
 
-    private getMessage(lang: content.Language, recipientName: string, systemName: string, link: string) {
-        return content.RegisteredSmsContent[lang](recipientName, link);
-    }
-
-    private getExpiredMessage(lang: content.Language, recipientName: string, expiredDate: string): string {
+    private getExpiredMessage(lang: content.Language, expiredDate: string): string {
         return content.ExpiredSmsContent[lang](
-            recipientName,
             this.getSeasonPeriod(),
             moment(expiredDate).format('DD.MM.YYYY'),
             process.env.FRONTEND_BASE_URL ? `${process.env.FRONTEND_BASE_URL}/hae` : 'https://nutakortti.vantaa.fi/hae'

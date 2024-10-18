@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Injectable, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import * as saml2 from 'saml2-js';
 import * as fs from 'fs';
@@ -12,7 +12,7 @@ export class SsoService {
   private readonly entity_id: string;
   private readonly sp: saml2.ServiceProvider;
   private readonly idp: saml2.IdentityProvider;
-  private readonly samlHelper;
+  private readonly samlHelper: SAMLHelper;
   private readonly frontend_base_url: string;
   private readonly logger = new Logger('SSO Service');
 
@@ -66,7 +66,7 @@ export class SsoService {
 
   handleLoginResponse(req: Request, res: Response) {
     const options = { request_body: req.body };
-    const response = this.sp.post_assert(this.idp, options, (err, saml_response) => {
+    this.sp.post_assert(this.idp, options, (err, saml_response) => {
       // If the user cancels the authentication or SAML response status is not success, there will be an error.
       if (this._handleError(err, res))
         return;
@@ -103,7 +103,7 @@ export class SsoService {
       sc_token = JSON.parse(binsc);
     }
     if (!sc_token) {
-      this._handleError('Security context missing.', res);
+      this._handleError(new Error('Security context missing.'), res);
       return;
     }
     const sc = {
@@ -117,7 +117,7 @@ export class SsoService {
     } as SecurityContextDto;
 
     if (!this.authenticationService.validateSecurityContext(sc)) {
-      this._handleError('Security context invalid.', res);
+      this._handleError(new Error('Security context invalid.'), res);
       return;
     }
 
@@ -161,7 +161,7 @@ export class SsoService {
       const options = {
         in_response_to: request_id
       }
-      this.sp.create_logout_response_url(this.idp, options, (err, response_url) => {
+      this.sp.create_logout_response_url(this.idp, options, (_, response_url) => {
         this.logger.log('Created logout response URL for request ID: ' + options.in_response_to);
         res.redirect(response_url);
       });
@@ -170,7 +170,7 @@ export class SsoService {
 
       // NOTE: we don't probably have to care about nonsuccessful status at all but here goes anyway.
       if (!this.samlHelper.checkLogoutResponse(req.url)) {
-        this._handleError('Suomi.fi returned nonsuccessful logout status.', res);
+        this._handleError(new Error('Suomi.fi returned nonsuccessful logout status.'), res);
         return;
       }
 
@@ -178,14 +178,14 @@ export class SsoService {
     }
   }
 
-  private _getUserAttribute(user_attributes: Array<Array<string>>, attribute: string): string {
+  private _getUserAttribute(user_attributes: { [attr: string]: string | string[]; }, attribute: string): string {
     const val = attribute in user_attributes ? user_attributes[attribute] : [''];
     return Array.isArray(val) ? val.join(' ') : '';
   }
 
-  private _handleError(err: string, res: Response): boolean {
+  private _handleError(err: Error, res: Response): boolean {
     if (err != null) {
-      this.logger.log('Error: ' + err);
+      this.logger.log('Error: ' + err.toString());
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
       res.end();
       return true;

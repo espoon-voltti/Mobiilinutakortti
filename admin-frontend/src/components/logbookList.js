@@ -14,9 +14,11 @@ import {
     LogBookCardContentSelect,
     VerticalCardPadding,
 } from './styledComponents/logbook';
-import { httpClientWithResponse } from '../httpClients';
+import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 
+// "Kirjautumiset"
+// Similar to logbook view (logbook.js), but displays not statistics, but actually the names of people who have checked in.
 let LogBookListView = (props) => {
     const [clubName, setClubName] = useState('');
     const [table, setTable] = useState([]);
@@ -61,15 +63,15 @@ let LogBookListView = (props) => {
                 body
             };
             resetState();
-            await httpClientWithResponse(url, options)
+            await httpClientWithRefresh(url, options)
                 .then(response => {
-                    if (response.statusCode < 200 || response.statusCode >= 300) {
-                        notify(response.message, "warning");
-                    } else {
-                        setSearchDate(date.toLocaleDateString());
-                        setClubName(response.clubName);
-                        setTable(mapJuniorsToUI(response.juniors))
+                    if (response.juniors.length === 0) {
+                        notify("Ei kirjautumisia valitulla aikavälillä", "warning");
+                        return;
                     }
+                    setSearchDate(date.toLocaleDateString());
+                    setClubName(response.clubName);
+                    setTable(mapJuniorsToUI(response.juniors))
                 });
         }
     }

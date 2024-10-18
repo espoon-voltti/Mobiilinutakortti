@@ -20,11 +20,10 @@ function* getUserInfo(action: getUser): Generator<any, any, any> {
     } catch (error) {
         yield call(deleteToken);
         yield put({ type: authTypes.LOGOUT });
-        window.location.href = '/login'
     }
 }
 
-function* authWithCachedToken(action: AuthWithCache): Generator<any, any, any> {
+function* authWithCachedToken(_: AuthWithCache): Generator<any, any, any> {
     let response
     try {
       response = yield call(getCachedToken);

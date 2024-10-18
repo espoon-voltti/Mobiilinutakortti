@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Title, useNotify } from 'react-admin';
 import { Redirect } from 'react-router-dom';
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
 import CardContent from '@material-ui/core/CardContent';
-import { httpClientWithResponse } from '../httpClients';
+import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import { STATE } from '../state';
 import NewSeasonModal from './newSeasonModal';
@@ -13,11 +13,20 @@ const NewSeason = () => {
   const notify = useNotify();
 
   const [state, setState] = useState(STATE.INITIAL);
+  const [SMSCount, setSMSCount] = useState('?');
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+      const querySMSCount = async () => {
+          const response = await httpClientWithRefresh(api.junior.newSeasonSMSCount, {method: 'GET'});
+          setSMSCount(response.message);
+      };
+      querySMSCount();
+  }, []);
 
   const createNewSeason = async (expireDate) => {
     setState(STATE.LOADING);
-    const response = await httpClientWithResponse(api.junior.newSeason, {
+    const response = await httpClientWithRefresh(api.junior.newSeason, {
       method: 'POST',
       body: JSON.stringify({
         expireDate,
@@ -44,8 +53,11 @@ const NewSeason = () => {
         <p>
           Uuden kauden aloittaminen muuttaa nykyisten käyttäjien tilan tilaan
           "tunnus vanhentunut" ja lähettää kaikille huoltajille tekstiviestinä
-          linkin kortin uusintahakemukseen. Käyttäjiä on yli 2000 ja
-          tekstiviestin lähettäminen maksaa yli 80 euroa.
+          linkin kortin uusintahakemukseen. Jos käyttäjiä on esimerkiksi yli 2000,
+          maksaa tekstiviestien lähettäminen jo yli 80 euroa.
+        </p>
+        <p>
+          Järjestelmä tulee lähettämään {SMSCount} tekstiviestiä.
         </p>
         <p>Oletko varma, että haluat jatkaa?</p>
         <Button

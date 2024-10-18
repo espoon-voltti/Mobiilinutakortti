@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RolesGuard } from './roles.guard';
 import { Junior } from '../junior/entities';
-import { Admin } from '../admin/entities';
+import { YouthWorker } from '../youthWorker/entities';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Admin, Junior]),
+        TypeOrmModule.forFeature([YouthWorker, Junior]),
     ],
     providers: [RolesGuard],
-    exports: [RolesGuard],
+    exports: [RolesGuard, TypeOrmModule.forFeature([YouthWorker, Junior])],
 })
 export class RolesModule { }

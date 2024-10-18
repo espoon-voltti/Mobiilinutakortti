@@ -37,7 +37,7 @@ export const translations: Translations = {
     submit: 'Fill the application',
     privacyPolicy: {
       title: 'Privacy policy',
-      href: 'https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja'
+      href: 'https://www.vantaa.fi/fi/kaupunki-ja-paatoksenteko/selosteet-oikeudet-ja-tietosuoja/henkilotietojen-kasittely/henkilotietojen-kasittely-nuorisotyossa-ja-toiminnassa'
     }
   },
   parentRegistration: {
@@ -72,6 +72,22 @@ export const translations: Translations = {
       parentFirstName: 'First name',
       parentLastName: 'Last name',
       parentPhoneNumber: 'Phone number',
+      parentsEmail: 'Email address',
+      additionalContactInformation: 'Information of another contact person or an alternative phone number (e.g. work phone)',
+
+      announcements: {
+        title: 'Info messages',
+        description: 'You will receive notifications about your home youth facility or the youth facilities you have visited. If you don\'t want to receive optional info text messages anymore, get in touch with a youth worker.',
+        emailPermission: 'Info emails',
+        emailPermissionParent: 'Allow emails for guardian',
+        smsPermissionJunior: 'Allow text messages for junior',
+        smsPermission: 'Info text messages',
+        smsPermissionParent: 'Allow text messages for guardian',
+        permissionOptions: {
+          ok: 'Yes',
+          notOk: 'No',
+        },
+      },
 
       youthClubHeading: 'Home youth club',
       youthClubDefault: 'Choose youth club',
@@ -83,15 +99,14 @@ export const translations: Translations = {
 
       termsOfUse: (
         <>
-          I agree to&nbsp;<a target='_blank' rel="noopener noreferrer"
-          href='https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/150593_Mobiilinutakortin_kayttoehdot.pdf'>the
-          terms of use</a>
+          I agree to&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/Mobiilinutakortin%20k%C3%A4ytt%C3%B6ehdot.pdf'>the terms of use</a>
         </>
       ),
+      correctNote: 'Please ensure the information you have given is correct before sending the application.',
       submit: 'Send application',
       privacyPolicy: {
         title: 'Read how we handle your personal data.',
-        href: 'https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja',
+        href: 'https://www.vantaa.fi/fi/kaupunki-ja-paatoksenteko/selosteet-oikeudet-ja-tietosuoja/henkilotietojen-kasittely/henkilotietojen-kasittely-nuorisotyossa-ja-toiminnassa',
       }
     },
     errors: {
@@ -99,6 +114,7 @@ export const translations: Translations = {
       birthdayFormat: 'Enter the date of birth in format dd.mm.yyyy',
       phoneNumberFormat: 'Check that the phone number you entered is correct',
       postCodeFormat: 'Check that the postal code you entered is correct',
+      emailFormat: 'Check that the email you entered is correct',
       selectYouthClub: 'Choose a youth club from the menu',
       selectLanguage: 'Choose a language from the menu',
       acceptTermsOfUse: 'Accept the terms to continue',
@@ -113,11 +129,13 @@ export const translations: Translations = {
       )
     },
     error: {
-      message: 'Something went wrong. If the error recurs often, contact your nearest youth club or the Nuta card contact person, tel. +358 400 662739 (Mon-Fri 8-16).',
+      message: (<>Something went wrong. If the error recurs often, contact your <a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/fi/palveluhakemisto/palvelu/nuorisotilatoiminta#tab-units'>nearest youth club</a> or the Nuta card contact person, tel. +358 400 662739 (Mon-Fri 8-16).</>),
       back: 'Back',
     }
   },
   qrPage: {
+    codeExpired: "PREVIOUS SEASON",
+    codeValid: "CURRENT SEASON",
     login: 'Login',
     instruction: 'Show QR code to a reader when entering the youth club.',
   },

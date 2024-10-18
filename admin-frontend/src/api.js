@@ -9,25 +9,46 @@ const apiEndpoints = {
     base: `${appUrl}/junior/`,
     dummynumber: `${appUrl}/junior/nextAvailableDummyPhoneNumber`,
     newSeason: `${appUrl}/junior/newSeason`,
-    deleteExpiredUsers:`${appUrl}/junior/newSeason/clearExpired`
+    newSeasonSMSCount: `${appUrl}/junior/newSeason/SMSCount`,
+    deleteExpired:`${appUrl}/junior/newSeason/deleteExpired`
   },
   auth: {
-    login: `${appUrl}/admin/login`
+    login: `${appUrl}/youthworker/login`,
+    loginEntraID: `${appUrl}/youthworker/loginEntraID`,
+    logout: `${appUrl}/youthworker/logout`,
+    autologout: `${appUrl}/youthworker/autologout`,
+  },
+  announcement: {
+    create: `${appUrl}/announcement/create`,
+    dryRun: `${appUrl}/announcement/dryrun`
+  },
+  extraEntry: {
+    base: `${appUrl}/extraEntry/`,
+    list: `${appUrl}/extraEntry/list`,
+    create: `${appUrl}/extraEntry/create`,
+    delete: `${appUrl}/extraEntry/delete`,
+    deletePermit: `${appUrl}/extraEntry/deletepermit`,
+    type: `${appUrl}/extraEntry/type/`,
+    typeList: `${appUrl}/extraEntry/type/list`,
+    typeCreate: `${appUrl}/extraEntry/type/create`
   },
   youthClub: {
+    base: `${appUrl}/club/`,
     list: `${appUrl}/club/list`,
+    edit: `${appUrl}/club/edit`,
     checkIn: `${appUrl}/club/check-in`,
     logBook: `${appUrl}/club/logbook`,
     checkIns: `${appUrl}/club/check-ins`
   },
   youthWorker: {
-    create: `${appUrl}/admin/register`,
-    edit: `${appUrl}/admin/edit`,
-    list: `${appUrl}/admin/list`,
-    self: `${appUrl}/admin/getSelf`,
-    refresh: `${appUrl}/admin/refresh`,
-    password: `${appUrl}/admin/changePassword`,
-    base: `${appUrl}/admin/`
+    create: `${appUrl}/youthworker/register`,
+    edit: `${appUrl}/youthworker/edit`,
+    list: `${appUrl}/youthworker/list`,
+    self: `${appUrl}/youthworker/getSelf`,
+    refresh: `${appUrl}/youthworker/refresh`,
+    password: `${appUrl}/youthworker/changePassword`,
+    base: `${appUrl}/youthworker/`,
+    setMainYouthClub: `${appUrl}/youthworker/setMainYouthClub`
   }
 }
 

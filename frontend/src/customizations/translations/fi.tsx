@@ -75,6 +75,22 @@ export const translations: Translations = {
       parentFirstName: 'Etunimi',
       parentLastName: 'Sukunimi',
       parentPhoneNumber: 'Puhelinnumero',
+      parentsEmail: 'Sähköpostiosoite',
+      additionalContactInformation: 'Toisen yhteyshenkilön tiedot tai vaihtoehtoinen puhelinnumero (esim. työpuhelin)',
+
+      announcements: {
+        title: "Tiedotus",
+        description: "Saat ilmoituksia liittyen kotinuorisotilaasi tai niihin nuorisotiloihin, joilla olet vieraillut. Jos et halua saada valinnaisia infoviestejä enää, ole yhteydessä nuorisotyöntekijään.",
+        emailPermission: 'Infosähköpostit',
+        emailPermissionParent: 'Sähköpostiviestejä saa lähettää huoltajalle',
+        smsPermissionJunior: 'Tekstiviestejä saa lähettää nuorelle',
+        smsPermission: 'Infotekstiviestit',
+        smsPermissionParent: 'Tekstiviestejä saa lähettää huoltajalle',
+        permissionOptions: {
+          ok: 'Kyllä',
+          notOk: 'Ei',
+        },
+      },
 
       youthClubHeading: 'Kotinuorisotila',
       youthClubDefault: 'Valitse nuorisotila',
@@ -86,13 +102,14 @@ export const translations: Translations = {
 
       termsOfUse: (
         <>
-          Hyväksyn&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/Mobiilinutakortin%20k%C3%A4ytt%C3%B6ehdot%202022pdf.pdf'>käyttöehdot</a>
+          Hyväksyn&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/Mobiilinutakortin%20k%C3%A4ytt%C3%B6ehdot.pdf'>käyttöehdot</a>
         </>
       ),
+      correctNote: 'Varmistathan, että täyttämäsi tiedot ovat oikein ennen hakemuksen lähettämistä.',
       submit: 'Lähetä hakemus',
       privacyPolicy: {
         title: 'Lue tarkemmin, kuinka käsittelemme tietojasi.',
-        href: 'https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja',
+        href: 'https://www.vantaa.fi/fi/kaupunki-ja-paatoksenteko/selosteet-oikeudet-ja-tietosuoja/henkilotietojen-kasittely/henkilotietojen-kasittely-nuorisotyossa-ja-toiminnassa',
       }
     },
     errors: {
@@ -100,6 +117,7 @@ export const translations: Translations = {
       birthdayFormat: 'Anna syntymäaika muodossa pp.kk.vvvv',
       phoneNumberFormat: 'Tarkista, että antamasi puhelinnumero on oikein',
       postCodeFormat: 'Tarkista, että antamasi postinumero on oikein',
+      emailFormat: 'Tarkista, että antamasi sähköpostiosoite on oikein',
       selectYouthClub: 'Valitse kotinuorisotila valikosta',
       selectLanguage: 'Valitse kieli valikosta',
       acceptTermsOfUse: 'Hyväksy käyttöehdot jatkaaksesi',
@@ -119,11 +137,13 @@ export const translations: Translations = {
       )
     },
     error: {
-      message: 'Jokin meni pieleen. Jos virhe toistuu useasti, ole yhteydessä lähinuorisotilaasi tai Mobiilinutakortin yhteyshenkilöön p. +358 400 662739 (virka-aikana).',
+      message: (<>Jokin meni pieleen. Jos virhe toistuu useasti, ole yhteydessä <a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/fi/palveluhakemisto/palvelu/nuorisotilatoiminta#tab-units'>lähinuorisotilaasi</a> tai Mobiilinutakortin yhteyshenkilöön p. +358 400 662739 (virka-aikana).</>),
       back: 'Takaisin',
     }
   },
   qrPage: {
+    codeExpired: "Edellinen kausi",
+    codeValid: "Kuluva kausi",
     login: 'Kirjaudu',
     instruction: 'Näytä QR-koodi lukulaitteelle saapuessasi nuorisotilaan.',
   },

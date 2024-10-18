@@ -15,7 +15,9 @@ import {
   Edit,
   SelectField
 } from 'react-admin';
-import { getYouthClubs } from '../utils';
+import { getYouthClubs, getActiveYouthClubs } from '../utils';
+
+const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
 
 export const YouthWorkerList = (props) => {
   const [youthClubs, setYouthClubs] = useState([]);
@@ -27,18 +29,17 @@ export const YouthWorkerList = (props) => {
     addYouthClubsToState();
   }, []);
 
-
   if (youthClubs.length === 0) {
     return null
   }
 
   return (
-    <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
+    <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props} hasCreate={!useEntraID}>
       <Datagrid>
-        <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
+        <FunctionField label="Nimi" render={record => `${record.firstName}${useEntraID ? '' : (' ' + record.lastName)}`} />
         <TextField label="Sähköposti" source="email" />
         <SelectField label="Kotinuorisotila" source="mainYouthClub" choices={youthClubs} />
-        <BooleanField label="Ylläpitäjä" source="isSuperUser" />
+        <BooleanField label="Ylläpitäjä" source="isAdmin" />
         <EditButton />
       </Datagrid>
     </List>
@@ -46,11 +47,12 @@ export const YouthWorkerList = (props) => {
 }
 
 export const YouthWorkerCreate = (props) => {
-  const [youthClubs, setYouthClubs] = useState([]);
+  const [youthClubChoices, setYouthClubChoices] = useState([]);
+
   useEffect(() => {
     const addYouthClubsToState = async () => {
-      const parsedYouthClubs = await getYouthClubs();
-      setYouthClubs(parsedYouthClubs);
+      const parsedYouthClubs = await getActiveYouthClubs();
+      setYouthClubChoices(parsedYouthClubs);
     };
     addYouthClubsToState();
   }, []);
@@ -62,19 +64,20 @@ export const YouthWorkerCreate = (props) => {
         <TextInput label="Salasana" source="password" type="password" validate={required()} />
         <TextInput label="Etunimi" source="firstName" validate={required()} />
         <TextInput label="Sukunimi" source="lastName" validate={required()} />
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubs} />
-        <BooleanInput label="Ylläpitäjä" source="isSuperUser" defaultValue={false} />
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubChoices} />
+        <BooleanInput label="Ylläpitäjä" source="isAdmin" defaultValue={false} />
       </SimpleForm>
     </Create>
   );
 };
 
 export const YouthWorkerEdit = (props) => {
-  const [youthClubs, setYouthClubs] = useState([]);
+  const [youthClubChoices, setYouthClubChoices] = useState([]);
+
   useEffect(() => {
     const addYouthClubsToState = async () => {
-        const parsedYouthClubs = await getYouthClubs();
-        setYouthClubs(parsedYouthClubs);
+      const youthClubs = await getYouthClubs();
+      setYouthClubChoices(youthClubs.map(yc => {return {...yc, disabled: !yc.active}}))
     };
     addYouthClubsToState();
   }, []);
@@ -100,11 +103,11 @@ export const YouthWorkerEdit = (props) => {
   return (
     <Edit title="Muokkaa nuorisotyöntekijää" {...props} undoable={false}>
       <SimpleForm variant="standard" margin="normal" redirect="list">
-        <TextInput label="Sähköposti" source="email" type="email" />
-        <TextInput label="Etunimi" source="firstName" />
-        <TextInput label="Sukunimi" source="lastName" />
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubs} />
-        <BooleanInput label="Ylläpitäjä" source="isSuperUser" />
+        <TextInput label="Sähköposti" source="email" type="email" disabled={useEntraID} />
+        <TextInput label={useEntraID ? "Nimi" : "Etunimi"} source="firstName" disabled={useEntraID} />
+        {!useEntraID && (<TextInput label="Sukunimi" source="lastName" />)}
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubChoices} />
+        <BooleanInput label="Ylläpitäjä" source="isAdmin" disabled={useEntraID} />
       </SimpleForm>
     </Edit >
   );

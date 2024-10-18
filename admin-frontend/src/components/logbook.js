@@ -13,16 +13,18 @@ import {
     VerticalCardPadding,
     StyledDialogTitle
 } from './styledComponents/logbook';
-import { httpClientWithResponse } from '../httpClients';
+import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 
-// Alternative labels for mapping the genders 1-to-1 to LogBook 
+// Alternative labels for mapping the genders 1-to-1 to LogBook
 const genderLabel = {
     m: 'Poika',
     f: 'Tyttö',
     o: 'Ei binäärinen',
 };
-  
+
+// "Logbook"
+// Similar to logbook list view (logbookList.js), but displays general statistics, not names.
 let LogBookView = (props) => {
     const [clubName, setClubName] = useState('');
     const [data, setData] = useState([]);
@@ -34,7 +36,7 @@ let LogBookView = (props) => {
         setData([]);
         setSearchDate('');
     }
-    
+
     const getLogBookEntry = async values => {
         const date = new Date(values.queryDate);
         if (!isNaN(date.getTime())) {
@@ -48,22 +50,22 @@ let LogBookView = (props) => {
                 body
             };
             resetState();
-            await httpClientWithResponse(url, options)
+            await httpClientWithRefresh(url, options)
                 .then(response => {
-                    if (response.statusCode < 200 || response.statusCode >= 300) {
-                        notify(response.message, "warning");
-                    } else {
-                        setSearchDate(date.toLocaleDateString());
-                        setClubName(response.clubName);
-                        setData(response.statistics);
+                    if (response.statistics.map(s => s.count).reduce((x,y) => x + y, 0) === 0) {
+                        notify("Ei kirjautumisia valitulla aikavälillä", "warning");
+                        return;
                     }
+                    setSearchDate(date.toLocaleDateString());
+                    setClubName(response.clubName);
+                    setData(response.statistics);
                 });
         }
     }
 
     return (
         <Container>
-            <Form 
+            <Form
                 onSubmit={getLogBookEntry}
                 render={({ handleSubmit }) => (
                     <form onSubmit={handleSubmit}>

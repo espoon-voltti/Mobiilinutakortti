@@ -7,6 +7,21 @@ export type CustomizableFormField =
   | 'school'
   | 'class'
   | 'termsOfUse'
+  | 'communicationsLanguage'
+
+interface Messages {
+  fi: string
+  en: string
+  sv: string
+}
+
+export interface Club {
+  active: boolean
+  id: number
+  messages: Messages
+  name: string
+  postCode: number
+}
 
 export interface Theme {
   pages: {
@@ -132,7 +147,23 @@ export interface Translations {
       parentFirstName: string,
       parentLastName: string,
       parentPhoneNumber: string,
+      parentsEmail: string,
+      additionalContactInformation: string,
 
+      announcements: {
+        title: string,
+        description: string,
+        emailPermission: string,
+        emailPermissionParent: string,
+        smsPermissionJunior: string,
+        smsPermission: string,
+        smsPermissionParent: string,
+        permissionOptions: {
+          ok: string,
+          notOk: string,
+        },
+      },
+      
       youthClubHeading: string,
       youthClubDefault: string,
       youthClubDescription: string,
@@ -142,6 +173,7 @@ export interface Translations {
       communicationsLanguageDescription: string,
 
       termsOfUse: ReactNode,
+      correctNote: string,
       submit: ReactNode,
       privacyPolicy: {
         title: ReactNode,
@@ -153,6 +185,7 @@ export interface Translations {
       birthdayFormat: string,
       phoneNumberFormat: string,
       postCodeFormat: string,
+      emailFormat: string,
       selectYouthClub: string,
       selectLanguage: string,
       acceptTermsOfUse: string,
@@ -167,6 +200,8 @@ export interface Translations {
     }
   },
   qrPage: {
+    codeExpired: string;
+    codeValid: string;
     login: string,
     instruction: ReactNode
   },

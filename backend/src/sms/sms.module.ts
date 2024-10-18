@@ -1,8 +1,13 @@
-import { Module, HttpModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { SmsService } from './sms.service';
+import { ClubModule } from 'src/club/club.module';
 
 @Module({
-  imports: [HttpModule],
+  imports: [
+    ClubModule,
+    HttpModule
+  ],
   providers: [SmsService],
   exports: [SmsService],
 })

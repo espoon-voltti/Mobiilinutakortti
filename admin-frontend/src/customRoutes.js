@@ -5,7 +5,7 @@ import LogBookView from './components/logbook';
 import LogBookListView from './components/logbookList';
 import ChangePasswordView from './components/changePassword';
 import NewSeason from './components/newSeason';
-import DeleteExpiredUsers from './components/deleteExpiredUsers';
+import DeleteExpiredJuniors from './components/deleteExpiredJuniors';
 
 export const routes = [
     <Route exact path="/checkIn/:youthClubId" component={CheckInView} noLayout />,
@@ -14,7 +14,7 @@ export const routes = [
     <Route path="/password" component={ChangePasswordView} />
 ];
 
-export const superAdminRoutes = [
+export const adminRoutes = [
     <Route path="/newSeason" component={NewSeason} />,
-    <Route path="/deleteExpiredUsers" component={DeleteExpiredUsers} />
+    <Route path="/deleteExpiredJuniors" component={DeleteExpiredJuniors} />
 ];

@@ -43,3 +43,41 @@ The CSR was created using this data:
 Note: as the certificate is not used for TLS web traffic, the Common Name need not be a real URL. We use the one used to identify the Mobiilinutakortti service in IdP SAML2 metadata.
 
 The CSR file is not needed anymore. The CER file is your public key, the certificate used in the IdP metadata; the file is public as the name implies. The PEM file is your private key *and should not be put into version control*. It is required by the backend to sign and possibly decrypt the SAML2 messages.
+
+## Updating Suomi.fi SP certificates
+
+This concerns the files: nutakortti-test.cer, nutakortti-prod.cer.
+
+You will need the new certificate, its private key, and the Suomi.fi metadata file for Nutakortti. You'll find the metadata file stored in AWS S3 bucket if you don't have it.
+
+Then follow these steps:
+
+1. Update the new certificate to the metadata file.
+2. Ensure the technical contact person in the metadata file is up-to-date.
+3. Upload the new certificate to DVV. See note and detailed steps below.
+4. Write the new certificate over the file `nutakortti-prod.cer`.
+5. Update the private key to environment variable (`SP_PKEY`). See `README.md` for backend for more details.
+6. Restart the service with the new certificate file (step 4).
+7. Whatever the source for your metadata file was (S3 bucket or something else), remember to update it with the new version for next certificate update.
+
+Note: The step 3 (Upload the new certificate to DVV) needs a person who has permission to use DVV's "Palveluhallinnan Tunnistus" service. Vantaa has normally had a couple of persons with the permission. They should do as follows:
+
+1. Go to [DVV palveluhallinta](https://palveluhallinta.suomi.fi/fi/).
+2. Go to "tunnistuksen hallintaliittymä".
+3. Click on the service you would like to update, or "Lisää asiointipalvelu" if it's a new service.
+4. Click on "Rekisteröi ympäristö".
+5. Choose "käyttölupa" or fill in "käyttöluvan tiedot" (if it's a production environment metadata). If the use permission has been given before 2020, a text "vanha käyttölupa" instead of journal number is sufficient.
+6. Upload the new metadata. Choose production as the environment (if it is the production environment you're updating).
+7. Click on "Tallenna ympäristö". You will get a confirmation message (to the top right corner) if it's a success.
+
+The metadata file will be processed during the next maintenance day, which is usually mid-week. After the processing date is known, a developer should continue the steps 4-6 to restart the service on that day.
+
+## Updating Suomi.fi IdP certificates
+
+This concerns the files: tunnistus-test-1.cer, tunnistus-test-2.cer, tunnistus-prod-1.cer, tunnistus-prod-2.cer.
+
+Every other year Suomi.fi will release its new metadata file. There are two signing certificates in the file: first one is the new one, the second one is the previous one.
+
+When a new metadata file is released, you may replace one of the certificates (e.g. tunnistus-test-1.cer or tunnistus-test-2.cer) with the new certificate from the metadata file. This way you will not have to keep track when the new certificate takes over, as both can be used. When IdP starts to use the new certificate, you may copy the new one over the old certificate.
+
+Make the certificates a single line and remove any spaces.

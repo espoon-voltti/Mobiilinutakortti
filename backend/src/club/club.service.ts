@@ -10,6 +10,7 @@ import * as ageRanges from './logbookAgeRanges.json';
 import { Gender } from '../utils/constants';
 import { Cron } from '@nestjs/schedule';
 import { differenceInHours, sub } from 'date-fns';
+import { EditClubDto } from './dto/edit.dto';
 
 @Injectable()
 export class ClubService {
@@ -25,7 +26,7 @@ export class ClubService {
         private readonly clubRepo: Repository<Club>,
     ) {}
 
-    async getClubById(clubId: string): Promise<Club> {
+    async getClubById(clubId: number): Promise<Club> {
         return await this.clubRepo.findOneBy({ id: clubId });
     }
 
@@ -33,7 +34,7 @@ export class ClubService {
         return (await this.clubRepo.find()).map(club => new ClubViewModel(club));
     }
 
-    async checkIfAlreadyCheckedIn(juniorId: string, clubId: string): Promise<boolean> {
+    async checkIfAlreadyCheckedIn(juniorId: string, clubId: number): Promise<boolean> {
         const now = new Date();
         const checkIns = await this.getCheckinsForClub(clubId);
         return checkIns.some((checkIn) =>
@@ -41,18 +42,18 @@ export class ClubService {
         );
     }
 
-    async getCheckinsForClub(clubId: string): Promise<CheckIn[]> {
+    async getCheckinsForClub(clubId: number): Promise<CheckIn[]> {
         const club = await this.clubRepo.findOneBy({ id: clubId });
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
         return await this.checkInRepo.find({ where: { club }, relations: ['club', 'junior'] });
     }
 
-    async getCheckinsForClubForDate(logbookDetails: LogBookDto): Promise<CheckIn[]> {
-        const startOfDay = new Date(logbookDetails.date).setHours(0, 0, 0, 0);
-        const endOfDay = new Date(logbookDetails.date).setHours(23, 59, 59, 59);
+    // Get checkins for a time period by providing the time period in unix timestamp, otherwise checkins are returned for the selected day
+    async getCheckins(logbookDetails: LogBookDto, timePeriod?: number): Promise<CheckIn[]> {
+        const startOfTimePeriod = timePeriod ? new Date(logbookDetails.date).setHours(0, 0, 0, 0) - timePeriod : new Date(logbookDetails.date).setHours(0, 0, 0, 0);
+        const endOfTimePeriod = new Date(logbookDetails.date).setHours(23, 59, 59, 59);
         const clubCheckIns = (await this.getCheckinsForClub(logbookDetails.clubId))
-            .filter(checkIn => (this.isBetween(new Date(checkIn.checkInTime).getTime(), startOfDay, endOfDay)) && checkIn.junior);
-        if (clubCheckIns.length <= 0) { throw new BadRequestException(content.NoCheckins); }
+            .filter(checkIn => (this.isBetween(new Date(checkIn.checkInTime).getTime(), startOfTimePeriod, endOfTimePeriod)) && checkIn.junior);
         return clubCheckIns;
     }
 
@@ -67,8 +68,21 @@ export class ClubService {
         return true;
     }
 
+    async editClub(details: EditClubDto): Promise<string> {
+        const club = await this.clubRepo.findOneBy({ id: details.id });
+        if (!club) { throw new BadRequestException(content.ClubNotFound); };
+        club.id = details.id;
+        club.name = details.name;
+        club.postCode = details.postCode;
+        club.active = details.active;
+        club.messages = details.messages;
+
+        await this.clubRepo.save(club);
+        return `${details.id} ${content.Updated}`;
+    }
+
     async generateLogBook(logbookDetails: LogBookDto): Promise<LogBookViewModel> {
-        const checkIns = await this.getCheckinsForClubForDate(logbookDetails);
+        const checkIns = await this.getCheckins(logbookDetails);
         const uniqueJuniors: Junior[] = [];
         checkIns.forEach(checkIn => {
             if (uniqueJuniors.findIndex(junior => junior && junior.id === checkIn.junior.id) < 0) {
@@ -92,7 +106,8 @@ export class ClubService {
             [gender]: this.getAgesForLogBook(juniors.map(junior => new Date(junior.birthday))),
         }), {});
 
-        return new LogBookViewModel(checkIns[0].club.name, byGenderAndAge);
+        const clubName = (await this.getClubById(logbookDetails.clubId)).name;
+        return new LogBookViewModel(clubName, byGenderAndAge);
     }
 
     private getAgesForLogBook(allJuniorAges: Date[]): Map<string, number> {

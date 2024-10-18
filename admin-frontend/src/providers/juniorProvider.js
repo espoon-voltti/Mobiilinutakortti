@@ -43,6 +43,7 @@ export const juniorProvider = (type, params, httpClient) => {
         case CREATE: {
             const data = JSON.stringify({
                 phoneNumber: params.data.phoneNumber,
+                smsPermissionJunior: params.data.smsPermissionJunior,
                 lastName: params.data.lastName,
                 firstName: params.data.firstName,
                 nickName: params.data.nickName,
@@ -55,6 +56,10 @@ export const juniorProvider = (type, params, httpClient) => {
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
                 parentsPhoneNumber: params.data.parentsPhoneNumber,
+                smsPermissionParent: params.data.smsPermissionParent,
+                parentsEmail: params.data.parentsEmail,
+                emailPermissionParent: params.data.emailPermissionParent,
+                additionalContactInformation: params.data.additionalContactInformation,
                 status: params.data.status,
                 photoPermission: params.data.photoPermission
             });
@@ -76,6 +81,7 @@ export const juniorProvider = (type, params, httpClient) => {
             const data = {
                 id: params.data.id,
                 phoneNumber: params.data.phoneNumber,
+                smsPermissionJunior: params.data.smsPermissionJunior,
                 lastName: params.data.lastName,
                 firstName: params.data.firstName,
                 nickName: params.data.nickName,
@@ -88,6 +94,10 @@ export const juniorProvider = (type, params, httpClient) => {
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
                 parentsPhoneNumber: params.data.parentsPhoneNumber,
+                smsPermissionParent: params.data.smsPermissionParent,
+                parentsEmail: params.data.parentsEmail,
+                emailPermissionParent: params.data.emailPermissionParent,
+                additionalContactInformation: params.data.additionalContactInformation,
                 status: params.data.status,
                 photoPermission: params.data.photoPermission
             };
@@ -107,6 +117,13 @@ export const juniorProvider = (type, params, httpClient) => {
                 });
         }
         case GET_ONE: {
+            // A fix to react-admins delete -> get_one bug:
+            // Edit-page is refreshed after delete when id is already undefined, causing an unnecessary error
+            const deletedItem = localStorage.getItem("deletedItem");
+            localStorage.removeItem("deletedItem");
+            if (params.id === deletedItem) {
+                return Promise.reject();
+            };
             url = api.junior.base + params.id;
             options = {
                 method: 'GET'
@@ -129,6 +146,7 @@ export const juniorProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
+                    localStorage.setItem("deletedItem", params.id)
                     return { data: { id: params.id } }
                 });
         }
