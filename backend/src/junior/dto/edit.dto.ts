@@ -2,39 +2,38 @@ import { IsNotEmpty, Length, IsDateString, IsDate } from 'class-validator';
 import * as content from '../../content';
 
 export class EditJuniorDto {
+  @IsNotEmpty()
+  readonly id: string;
 
-    @IsNotEmpty()
-    readonly id: string;
+  phoneNumber: string;
 
-    phoneNumber: string;
+  firstName: string;
 
-    firstName: string;
+  lastName: string;
 
-    lastName: string;
+  nickName: string;
 
-    nickName: string;
+  postCode: string;
 
-    postCode: string;
+  school: string;
 
-    school: string;
+  class: string;
 
-    class: string;
+  parentsName: string;
 
-    parentsName: string;
+  parentsPhoneNumber: string;
 
-    parentsPhoneNumber: string;
+  @Length(1, 1)
+  gender: string;
 
-    @Length(1, 1)
-    gender: string;
+  @IsDateString({}, { message: content.NotADate })
+  birthday: string;
 
-    @IsDateString({ message: content.NotADate })
-    birthday: string;
+  homeYouthClub: string;
 
-    homeYouthClub: string;
+  communicationsLanguage: string;
 
-    communicationsLanguage: string;
+  status: string;
 
-    status: string;
-
-    photoPermission: boolean;
+  photoPermission: boolean;
 }
