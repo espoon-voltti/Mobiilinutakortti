@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as express from 'express';
+import * as session from 'express-session';
 import { join } from 'path';
 import { ConfigHelper } from './configHandler';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -23,14 +24,23 @@ async function bootstrap() {
     .setTitle('Nutakortti')
     .setDescription('API for Nutakortti project')
     .setVersion('1.0')
-    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'super-admin')
-    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'admin')
-    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'junior')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
+      'super-admin',
+    )
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
+      'admin',
+    )
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
+      'junior',
+    )
     .build();
 
-  const app = httpsOptions ?
-    await NestFactory.create(AppModule, { ...httpsOptions, bufferLogs: true }) :
-    await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = httpsOptions
+    ? await NestFactory.create(AppModule, { ...httpsOptions, bufferLogs: true })
+    : await NestFactory.create(AppModule, { bufferLogs: true });
   if (process.env.JSON_LOGS) {
     app.useLogger(app.get(Logger));
   }
@@ -38,6 +48,17 @@ async function bootstrap() {
   app.use('/', express.static(join(__dirname, '..', 'public')));
   app.use('/', express.static(join(__dirname, '..', 'public-admin')));
   app.use(cookieParser());
+
+  app.use(
+    session({
+      secret: 'your-session-secret',
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        maxAge: 60000,
+      },
+    }),
+  );
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/swagger', app, document);

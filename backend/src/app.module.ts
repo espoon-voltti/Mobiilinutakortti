@@ -20,6 +20,8 @@ import { ConfigModule } from '@nestjs/config';
 import { SsoModule } from './sso/sso.module';
 import { LoggerModule } from 'nestjs-pino';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AdSsoModule } from './ad-sso/ad-sso.module';
+import { AdSsoController } from './ad-sso/ad-sso.controller';
 
 @Module({
   imports: [
@@ -31,18 +33,25 @@ import { ScheduleModule } from '@nestjs/schedule';
     RolesModule,
     ClubModule,
     SmsModule,
+    AdSsoModule,
     SsoModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     LoggerModule.forRoot(),
   ],
   providers: [AppService],
-  controllers: [AppController, AdminController, JuniorController, AuthenticationController],
+  controllers: [
+    AppController,
+    AdminController,
+    JuniorController,
+    AuthenticationController,
+    AdSsoController,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
     consumer.apply(RoutersMiddleware).forRoutes('/**');
   }
 
-  constructor(private readonly connection: Connection) { }
+  constructor(private readonly connection: Connection) {}
 }
