@@ -35,8 +35,10 @@ const CustomLoginPage = () => {
 
   return (
     <div style={styles.container}>
-      <h1>Login</h1>
-      <a href="http://localhost:3000/api/saml-ad">AD-kirjautuminen</a>
+      <div style={styles.loginContainer}>
+        <h1>Kirjaudu</h1>
+        <a href="http://localhost:3000/api/saml-ad">AD-kirjautuminen</a>
+      </div>
     </div>
   );
 };
@@ -49,6 +51,19 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     height: '100vh',
+    backgroundSize: 'cover',
+    // backgroundImage:
+    //   'radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)',
+    backgroundImage: 'url(/nuta-admin-bg.jpg)',
+    backgroundRepeat: 'no-repeat',
+  },
+  loginContainer: {
+    backgroundColor: '#FFFFFF',
+    minWidth: '400px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '20px',
   },
   button: {
     padding: '10px 20px',
