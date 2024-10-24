@@ -8,12 +8,15 @@ import { JwtStrategy } from './jwt.strategy';
 import { JuniorModule } from '../junior/junior.module';
 
 @Module({
-  imports: [forwardRef(() => AdminModule), forwardRef(() => JuniorModule),
+  imports: [
+    forwardRef(() => AdminModule),
+    forwardRef(() => JuniorModule),
     PassportModule,
-  JwtModule.register({
-    secret: jwt.secret,
-  })],
+    JwtModule.register({
+      secret: jwt.secret,
+    }),
+  ],
   providers: [AuthenticationService, JwtStrategy],
   exports: [AuthenticationService],
 })
-export class AuthenticationModule { }
+export class AuthenticationModule {}

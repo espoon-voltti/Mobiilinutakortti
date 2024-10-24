@@ -44,21 +44,16 @@ async function bootstrap() {
   if (process.env.JSON_LOGS) {
     app.useLogger(app.get(Logger));
   }
-  app.enableCors();
+  app.enableCors({
+    //TODO: read from env
+    origin: 'http://localhost:3002',
+    credentials: true, // Allow sending credentials (cookies)
+  });
   app.use('/', express.static(join(__dirname, '..', 'public')));
   app.use('/', express.static(join(__dirname, '..', 'public-admin')));
-  app.use(cookieParser());
 
-  app.use(
-    session({
-      secret: 'your-session-secret',
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        maxAge: 60000,
-      },
-    }),
-  );
+  //TODO: read from env
+  app.use(cookieParser('A very hush hush cookie secret.'));
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/swagger', app, document);

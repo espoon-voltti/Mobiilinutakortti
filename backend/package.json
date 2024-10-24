@@ -45,6 +45,7 @@
     "cookie-parser": "^1.4.6",
     "date-fns": "^3.6.0",
     "express-session": "^1.18.1",
+    "lodash": "^4.17.21",
     "moment": "^2.24.0",
     "nestjs-pino": "^3.3.0",
     "passport": "^0.6.0",
@@ -56,7 +57,8 @@
     "rxjs": "^7.5.5",
     "saml2-js": "^4.0.2",
     "swagger-ui-express": "^4.1.6",
-    "typeorm": "^0.3.6"
+    "typeorm": "^0.3.6",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@babel/parser": "^7.9.4",
@@ -66,6 +68,7 @@
     "@nestjs/schematics": "^10.0.1",
     "@nestjs/testing": "^10.0.3",
     "@types/bcrypt": "^3.0.1",
+    "@types/cookie-parser": "^1.4.3",
     "@types/cron": "^2.0.0",
     "@types/jest": "^29.5.13",
     "@types/node": "^22.1.0",

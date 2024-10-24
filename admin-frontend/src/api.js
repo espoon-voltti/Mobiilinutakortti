@@ -1,4 +1,4 @@
-const appUrl = process.env.REACT_APP_ENDPOINT
+const appUrl = process.env.REACT_APP_ENDPOINT;
 
 const apiEndpoints = {
   junior: {
@@ -9,16 +9,17 @@ const apiEndpoints = {
     base: `${appUrl}/junior/`,
     dummynumber: `${appUrl}/junior/nextAvailableDummyPhoneNumber`,
     newSeason: `${appUrl}/junior/newSeason`,
-    deleteExpiredUsers:`${appUrl}/junior/newSeason/clearExpired`
+    deleteExpiredUsers: `${appUrl}/junior/newSeason/clearExpired`,
   },
   auth: {
-    login: `${appUrl}/admin/login`
+    login: `${appUrl}/admin/login`,
+    logout: `${appUrl}/saml-ad/logout`,
   },
   youthClub: {
     list: `${appUrl}/club/list`,
     checkIn: `${appUrl}/club/check-in`,
     logBook: `${appUrl}/club/logbook`,
-    checkIns: `${appUrl}/club/check-ins`
+    checkIns: `${appUrl}/club/check-ins`,
   },
   youthWorker: {
     create: `${appUrl}/admin/register`,
@@ -27,8 +28,8 @@ const apiEndpoints = {
     self: `${appUrl}/admin/getSelf`,
     refresh: `${appUrl}/admin/refresh`,
     password: `${appUrl}/admin/changePassword`,
-    base: `${appUrl}/admin/`
-  }
-}
+    base: `${appUrl}/admin/`,
+  },
+};
 
-export default apiEndpoints
+export default apiEndpoints;
