@@ -24,15 +24,19 @@ export class ConfigHelper {
   }
 
   static getFrontendPort(): string {
-    return process.env.FRONTEND_BASE_URL || 'http://localhost:3001';
+    return process.env.FRONTEND_BASE_URL || 'http://localhost:3001/';
   }
 
   static getAdminFrontEndBaseUrl(): string {
-    return process.env.FRONTEND_BASE_URL || 'http://localhost:3002';
+    return process.env.FRONTEND_BASE_URL || 'http://localhost:3002/';
   }
 
-  static getSamlConfig(): SamlConfig {
-    const adType = ![undefined, 'local', 'test'].some(
+  static getApiBaseUrl(): string {
+    return process.env.API_BASE_URL || 'http://localhost:3000/';
+  }
+
+  static getSamlConfig(): SamlConfig & { isMock: boolean } {
+    const adType = [undefined, 'local', 'test'].some(
       (env) => process.env.NODE_ENV === env,
     )
       ? 'mock'
@@ -40,6 +44,7 @@ export class ConfigHelper {
     // TODO: we need to support the fake for local environment and e2e tests
     if (adType === 'mock') {
       return {
+        isMock: true,
         entryPoint: 'http://localhost:3000/saml-auth/fake-login',
         issuer: 'mock-issuer',
         callbackUrl: 'http://localhost:3000/saml-auth/callback',
@@ -47,6 +52,7 @@ export class ConfigHelper {
       };
     }
     return {
+      isMock: false,
       callbackUrl: process.env.AD_SAML_CALLBACK_URL,
       logoutCallbackUrl: process.env.AD_SAML_LOGOUT_CALLBACK_URL,
       entryPoint: process.env.AD_SAML_ENTRYPOINT_URL,

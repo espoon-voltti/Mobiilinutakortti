@@ -80,4 +80,34 @@ export class AdSsoController {
     });
     return await this.adSsoService.samlLogoutCallbackPost(req, res);
   }
+
+  @Get('mock-login-form')
+  async getMockLoginForm(@Res() res: Response) {
+    res.set({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
+    });
+    await this.adSsoService.mockSamlLoginForm(res);
+  }
+
+  @Post('mock-login-callback')
+  async postMockLoginCallback(@Req() req: Request, @Res() res: Response) {
+    res.set({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
+    });
+    await this.adSsoService.mockSamlLoginCallBack(req, res);
+  }
+
+  @Get('mock-logout-callback')
+  async gettMockLogoutCallback(@Req() req: Request, @Res() res: Response) {
+    res.set({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
+    });
+    await this.adSsoService.mockSamlLogoutCallBack(req, res);
+  }
 }

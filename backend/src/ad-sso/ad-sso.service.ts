@@ -29,11 +29,26 @@ export interface RequestWithUser extends Request {
 
 const cookie = 'nutakortti.session';
 
+const mockUsers = [
+  {
+    externalId: 'ad:001',
+    name: 'Sanna Suunnittelija',
+    email: 'sanna@example.com',
+  },
+  {
+    externalId: 'ad:002',
+    name: 'Olli Ohjaaja',
+    email: 'olli@example.com',
+  },
+];
+
 @Injectable()
 export class AdSsoService {
   private readonly saml: SAML;
   private readonly logger = new Logger('Ad SSO Service');
   private readonly adminFrontEnBaseUrl: string;
+  private readonly apiBaseUrl: string;
+  private readonly isMock: boolean;
 
   constructor(
     @Inject(forwardRef(() => AdminService))
@@ -44,10 +59,17 @@ export class AdSsoService {
     const samlConfig = ConfigHelper.getSamlConfig();
     this.saml = new SAML(samlConfig);
     this.adminFrontEnBaseUrl = ConfigHelper.getAdminFrontEndBaseUrl();
+    this.apiBaseUrl = ConfigHelper.getApiBaseUrl();
+    this.isMock = samlConfig.isMock;
+    console.log(process.env);
   }
 
   async samlLogin(res: Response) {
-    console.log(ConfigHelper.getSamlConfig());
+    if (this.isMock) {
+      res.redirect(`${this.apiBaseUrl}api/saml-ad/mock-login-form`);
+      return;
+    }
+
     try {
       const redirectUrl = await this.saml.getAuthorizeUrlAsync(
         '',
@@ -117,6 +139,10 @@ export class AdSsoService {
 
   // Initiates SAML Single Logout (SLO) with the IdP
   async samlLogout(req: Request, res: Response) {
+    if (this.isMock) {
+      res.redirect(`${this.apiBaseUrl}api/saml-ad/mock-logout-callback`);
+      return;
+    }
     const session = req.signedCookies[cookie];
     console.log(session);
     if (!session) {
@@ -135,7 +161,6 @@ export class AdSsoService {
         'logout-success',
         {},
       );
-      console.log('REDIRECTING TO', redirectUrl);
       res.redirect(redirectUrl);
     }
   }
@@ -157,5 +182,81 @@ export class AdSsoService {
       console.log('ADIOS');
       res.redirect(`${this.adminFrontEnBaseUrl}#/logout-success`);
     }
+  }
+
+  async mockSamlLoginForm(res: Response) {
+    const userOptions = mockUsers.map((user, idx) => {
+      const { externalId, name } = user;
+      const json = JSON.stringify(user);
+      return `<div>
+                <input
+                  type="radio"
+                  id="${externalId}"
+                  name="userId"
+                  ${idx == 0 ? 'checked' : ''}
+                 value="${externalId}" />
+                <label for="${externalId}">${name}</label>
+              </div>`;
+    });
+
+    const formUri = `${this.apiBaseUrl}api/saml-ad/mock-login-callback`;
+
+    res.contentType('text/html').send(`
+              <html lang='fi'>
+              <body>
+                <h1>Devausympäristön AD-kirjautuminen</h1>
+                <form action="${formUri}" method="post">
+                    ${userOptions.join('\n')}
+                    <div style="margin-top: 20px">
+                      <button type="submit">Kirjaudu</button>
+                    </div>
+                </form>
+              </body>
+              </html>
+            `);
+  }
+
+  async mockSamlLoginCallBack(req: Request, res: Response) {
+    if (!this.isMock) {
+      return;
+    }
+    try {
+      const user = mockUsers.find((u) => u.externalId === req.body.userId);
+      const names = user.name.split(' ');
+      const upsertUser = {
+        email: user.email,
+        firstName: names[0],
+        lastName: names[1],
+      };
+      const result = await this.adminService.upsertAdmin(upsertUser);
+      const token = await this.authenticationService.signToken(result.id, true);
+
+      res.cookie(
+        cookie,
+        { issuer: 'mock', nameID: user.email, nameIDFormat: 'mock' },
+        {
+          signed: true,
+          httpOnly: true, // Prevent access to the cookie via JavaScript
+          secure: true, // Ensure the cookie is sent over HTTPS
+          sameSite: 'lax', // Prevent CSRF attacks
+        },
+      );
+
+      // Redirect the user to the frontend
+      res.redirect(
+        `${this.adminFrontEnBaseUrl}#/login?t=${token.access_token}`,
+      );
+    } catch (error) {
+      this.logger.error('Error: mockSamlLoginCallBack', error);
+      throw new InternalServerErrorException(error, content.FailedAdSsoLogin);
+    }
+  }
+
+  async mockSamlLogoutCallBack(req: Request, res: Response) {
+    if (!this.isMock) {
+      return;
+    }
+    res.clearCookie(cookie);
+    res.redirect(`${this.adminFrontEnBaseUrl}#/logout-success`);
   }
 }
