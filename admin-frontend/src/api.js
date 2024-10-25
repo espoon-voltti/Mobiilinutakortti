@@ -13,6 +13,9 @@ const apiEndpoints = {
   },
   auth: {
     login: `${appUrl}/admin/login`,
+  },
+  saml: {
+    login: `${appUrl}/saml-ad`,
     logout: `${appUrl}/saml-ad/logout`,
   },
   youthClub: {

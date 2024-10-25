@@ -28,18 +28,8 @@ const messages = {
 };
 
 const i18nProvider = polyglotI18nProvider((locale) => messages[locale], 'fi');
+
 const App = () => {
-  console.log('app.js render', window.location);
-  console.log(window.location.hash);
-  if (window.location.hash.startsWith('#/logout-success')) {
-    localStorage.removeItem('admin-token');
-    localStorage.removeItem('role');
-    console.log('Adios tokens');
-    return <h1>Hax2TheMax</h1>;
-  }
-  return <RealApp />;
-};
-const RealApp = () => {
   const { isSuperAdmin } = usePermissions();
   const customRoutes = routes.concat(...(isSuperAdmin ? superAdminRoutes : []));
 

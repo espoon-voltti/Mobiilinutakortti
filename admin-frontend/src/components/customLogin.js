@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { AUTH_CHECK, useNotify } from 'react-admin'; // React Admin hooks
 import { authProvider } from '../providers';
 import { token } from '../utils';
+import apiEndpoints from '../api';
 
 const CustomLoginPage = () => {
   const notify = useNotify(); // React Admin's notify for error handling
@@ -36,8 +37,10 @@ const CustomLoginPage = () => {
   return (
     <div style={styles.container}>
       <div style={styles.loginContainer}>
-        <h1>Kirjaudu</h1>
-        <a href="http://localhost:3000/api/saml-ad">AD-kirjautuminen</a>
+        <h2>Kirjaudu sisään</h2>
+        <a href={apiEndpoints.saml.login} style={styles.button}>
+          Espoo AD
+        </a>
       </div>
     </div>
   );
@@ -59,19 +62,50 @@ const styles = {
   },
   loginContainer: {
     backgroundColor: '#FFFFFF',
-    minWidth: '400px',
+    minWidth: '300px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: '20px',
+    padding: '60px',
   },
   button: {
-    padding: '10px 20px',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    border: 'none',
+    textSizeAdjust: '100%',
+    boxSizing: 'inherit',
+    height: '45px',
+    padding: '0 27px',
+    width: 'fit-content',
+    minWidth: '100px',
+    textAlign: 'center',
+    overflowX: 'hidden',
+    border: `1px solid rgb(0, 71, 182)`,
+    borderRadius: '4px',
+    outline: 'none',
     cursor: 'pointer',
-    fontSize: '16px',
+    fontFamily: "'Open Sans', sans-serif",
+    fontSize: '1rem',
+    lineHeight: '1rem',
+    fontWeight: '600',
+    whiteSpace: 'nowrap',
+    letterSpacing: '0.2px',
+    color: `rgb(255, 255, 255)`,
+    backgroundColor: `rgb(0, 71, 182)`,
+    marginRight: '0',
+    textDecoration: 'none',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    // Pseudo-classes as nested objects
+    '&:hover': {
+      backgroundColor: `#00358a`,
+    },
+    '&:focus': {
+      outline: `2px solid #4d7fcc`,
+      outlineOffset: '2px',
+    },
+    '&:active': {
+      backgroundColor: `#00358a`,
+    },
   },
 };
 
