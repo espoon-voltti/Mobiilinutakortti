@@ -41,14 +41,13 @@ async function bootstrap() {
   const app = httpsOptions
     ? await NestFactory.create(AppModule, { ...httpsOptions, bufferLogs: true })
     : await NestFactory.create(AppModule, { bufferLogs: true });
+
   if (process.env.JSON_LOGS) {
     app.useLogger(app.get(Logger));
   }
-  app.enableCors({
-    //TODO: read from env
-    origin: 'http://localhost:3002',
-    credentials: true, // Allow sending credentials (cookies)
-  });
+
+  app.enableCors();
+
   app.use('/', express.static(join(__dirname, '..', 'public')));
   app.use('/', express.static(join(__dirname, '..', 'public-admin')));
 

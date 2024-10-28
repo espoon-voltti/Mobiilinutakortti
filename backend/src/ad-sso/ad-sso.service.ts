@@ -103,8 +103,6 @@ export class AdSsoService {
             firstName: parseResult.data[AD_GIVEN_NAME_KEY],
             lastName: parseResult.data[AD_FAMILY_NAME_KEY],
           };
-          // TODO: to support logout parse saml specific fields from profile
-          //
 
           const result = await this.adminService.upsertAdmin(user);
           const token = await this.authenticationService.signToken(
