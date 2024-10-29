@@ -3,6 +3,7 @@ import { AdSsoController } from './ad-sso.controller';
 import { AdSsoService } from './ad-sso.service';
 import { AdminModule } from 'src/admin/admin.module';
 import { AuthenticationModule } from 'src/authentication/authentication.module';
+import { AppModule } from 'src/app.module';
 
 @Module({
   // Skip passport use plain node saml
@@ -10,6 +11,7 @@ import { AuthenticationModule } from 'src/authentication/authentication.module';
   //   PassportModule.register({ defaultStrategy: 'saml', session: true }), // SAML strategy is default in this module
   // ],
   imports: [
+    forwardRef(() => AppModule),
     forwardRef(() => AdminModule),
     forwardRef(() => AuthenticationModule),
   ],
