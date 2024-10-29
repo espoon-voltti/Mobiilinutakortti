@@ -115,7 +115,6 @@ export class AdSsoService {
             result.id,
             true,
           );
-          // TODO: create salattu cookie with sessionContext ('Profile': issuer, nameID, nameIDFormat)
           // Set the JWT in an HTTP-only cookie (security measure)
           const { issuer, nameID, nameIDFormat } = parseResult.data;
           res.cookie(
