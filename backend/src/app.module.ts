@@ -6,7 +6,7 @@ import { AdminController } from './admin/admin.controller';
 import { AdminModule } from './admin/admin.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { AuthenticationController } from './authentication/authentication.controller';
-import { ConfigHelper } from './configHandler';
+import { ConfigHelper, toRedisClientOpts } from './configHandler';
 import { JuniorModule } from './junior/junior.module';
 import { JuniorController } from './junior/junior.controller';
 import { AppService } from './app.service';
@@ -22,6 +22,30 @@ import { LoggerModule } from 'nestjs-pino';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AdSsoModule } from './ad-sso/ad-sso.module';
 import { AdSsoController } from './ad-sso/ad-sso.controller';
+import * as redis from 'redis';
+
+const redisClientProvider = {
+  provide: 'REDIS_CLIENT',
+  useFactory: async () => {
+    const redisOptions = ConfigHelper.getRedisOptions();
+
+    console.log('redisOptions', redisOptions);
+    console.log(
+      'toRedisClientOpts(redisOptions)',
+      toRedisClientOpts(redisOptions),
+    );
+
+    const redisClient = redis.createClient(toRedisClientOpts(redisOptions));
+    redisClient.on('error', (err) => console.log('Redis error', err));
+    redisClient.connect().catch((err) => {
+      console.log('Unable to connect to redis', err);
+    });
+    // Don't prevent the app from exiting if a redis connection is alive.
+    redisClient.unref();
+
+    return redisClient;
+  },
+};
 
 @Module({
   imports: [
@@ -39,7 +63,7 @@ import { AdSsoController } from './ad-sso/ad-sso.controller';
     ConfigModule.forRoot(),
     LoggerModule.forRoot(),
   ],
-  providers: [AppService],
+  providers: [AppService, redisClientProvider],
   controllers: [
     AppController,
     AdminController,
@@ -47,6 +71,7 @@ import { AdSsoController } from './ad-sso/ad-sso.controller';
     AuthenticationController,
     AdSsoController,
   ],
+  exports: [redisClientProvider],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

@@ -1,9 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as express from 'express';
-import * as session from 'express-session';
 import { join } from 'path';
-import { ConfigHelper } from './configHandler';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as fs from 'fs';
 import * as cookieParser from 'cookie-parser';
@@ -39,8 +37,13 @@ async function bootstrap() {
     .build();
 
   const app = httpsOptions
-    ? await NestFactory.create(AppModule, { ...httpsOptions, bufferLogs: true })
-    : await NestFactory.create(AppModule, { bufferLogs: true });
+    ? await NestFactory.create(AppModule, {
+        ...httpsOptions,
+        bufferLogs: true,
+      })
+    : await NestFactory.create(AppModule, {
+        bufferLogs: true,
+      });
 
   if (process.env.JSON_LOGS) {
     app.useLogger(app.get(Logger));

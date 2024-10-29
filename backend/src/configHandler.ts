@@ -1,5 +1,8 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { SamlConfig, ValidateInResponseTo } from '@node-saml/node-saml';
+import { RedisClientOptions } from 'redis';
+
+const localEnvs = [undefined, 'local', 'test'];
 
 export class ConfigHelper {
   static isTest() {
@@ -35,10 +38,26 @@ export class ConfigHelper {
     return process.env.API_BASE_URL || 'http://localhost:3000/';
   }
 
+  static getRedisOptions(): {
+    host: string | undefined;
+    port: number | undefined;
+    password: string | undefined;
+    tlsServerName: string | undefined;
+    disableSecurity: boolean;
+  } {
+    return {
+      host: process.env.REDIS_HOST ?? '127.0.0.1',
+      port: parseInteger(process.env.REDIS_HOST) ?? 6379,
+      password: process.env.REDIS_PASSWORD,
+      tlsServerName: process.env.REDIS_TLS_SERVER_NAME,
+      disableSecurity: localEnvs.some((env) => process.env.NODE_ENV === env)
+        ? true
+        : (parseBoolean(process.env.REDIS_DISABLE_SECURITY) ?? false),
+    };
+  }
+
   static getSamlConfig(): SamlConfig & { isMock: boolean } {
-    const adType = [undefined, 'local', 'test'].some(
-      (env) => process.env.NODE_ENV === env,
-    )
+    const adType = !localEnvs.some((env) => process.env.NODE_ENV === env)
       ? 'mock'
       : 'saml';
     // TODO: we need to support the fake for local environment and e2e tests
@@ -61,7 +80,7 @@ export class ConfigHelper {
       publicCert: process.env.AD_SAML_PUBLIC_CERT,
       idpCert: process.env.AD_SAML_IDP_CERT,
       privateKey: process.env.AD_SAML_PRIVATE_CERT,
-      validateInResponseTo: ValidateInResponseTo.never,
+      validateInResponseTo: ValidateInResponseTo.always,
       signatureAlgorithm: 'sha256',
       identifierFormat: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
       acceptedClockSkewMs: 0,
@@ -73,4 +92,44 @@ export class ConfigHelper {
       wantAuthnResponseSigned: false,
     };
   }
+}
+
+interface RedisConfig {
+  host: string | undefined;
+  port: number | undefined;
+  password: string | undefined;
+  tlsServerName: string | undefined;
+  disableSecurity: boolean;
+}
+
+export const toRedisClientOpts = (config: RedisConfig): RedisClientOptions => ({
+  socket: {
+    host: config.host,
+    port: config.port,
+    ...(config.disableSecurity
+      ? undefined
+      : { tls: true, servername: config.tlsServerName }),
+  },
+  ...(config.disableSecurity ? undefined : { password: config.password }),
+});
+
+function parseInteger(value: string) {
+  const result = Number.parseInt(value, 10);
+  if (Number.isNaN(result)) {
+    console.log('ERROR: Invalid integer');
+    return undefined;
+  }
+  return result;
+}
+
+const booleans: Record<string, boolean> = {
+  1: true,
+  0: false,
+  true: true,
+  false: false,
+};
+
+function parseBoolean(value: string) {
+  if (value in booleans) return booleans[value];
+  return undefined;
 }

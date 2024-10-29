@@ -21,13 +21,14 @@ import {
 import { AdminService } from 'src/admin/admin.service';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import * as content from '../content';
+import redisCacheProvider, { RedisClient } from './redis-cache-provider';
 
 export interface RequestWithUser extends Request {
   samlLogoutRequest?: any;
   user?: any;
 }
 
-const cookie = 'nutakortti.session';
+const sessionCookieName = 'nutakortti.session';
 
 const mockUsers = [
   {
@@ -55,13 +56,16 @@ export class AdSsoService {
     private readonly adminService: AdminService,
     @Inject(forwardRef(() => AuthenticationService))
     private readonly authenticationService: AuthenticationService,
+    @Inject('REDIS_CLIENT') private readonly redisClient: RedisClient,
   ) {
     const samlConfig = ConfigHelper.getSamlConfig();
-    this.saml = new SAML(samlConfig);
+    const cacheProvider = redisCacheProvider(redisClient, {
+      keyPrefix: 'ad-saml-resp:',
+    });
+    this.saml = new SAML({ ...samlConfig, cacheProvider });
     this.adminFrontEnBaseUrl = ConfigHelper.getAdminFrontEndBaseUrl();
     this.apiBaseUrl = ConfigHelper.getApiBaseUrl();
     this.isMock = samlConfig.isMock;
-    console.log(process.env);
   }
 
   async samlLogin(res: Response) {
@@ -76,7 +80,6 @@ export class AdSsoService {
         undefined,
         {},
       );
-      console.log('redirecting to: ', redirectUrl);
       res.redirect(redirectUrl);
       return;
     } catch (error) {
@@ -113,7 +116,7 @@ export class AdSsoService {
           // Set the JWT in an HTTP-only cookie (security measure)
           const { issuer, nameID, nameIDFormat } = parseResult.data;
           res.cookie(
-            cookie,
+            sessionCookieName,
             { issuer, nameID, nameIDFormat },
             {
               signed: true,
@@ -137,11 +140,14 @@ export class AdSsoService {
 
   // Initiates SAML Single Logout (SLO) with the IdP
   async samlLogout(req: Request, res: Response) {
+    // Pre-emptively clear the cookie, so even if something fails later, we
+    // will end up clearing the cookie in the response
+    res.clearCookie(sessionCookieName);
     if (this.isMock) {
       res.redirect(`${this.apiBaseUrl}api/saml-ad/mock-logout-callback`);
       return;
     }
-    const session = req.signedCookies[cookie];
+    const session = req.signedCookies[sessionCookieName];
     console.log(session);
     if (!session) {
       console.log('No cookie thats needed for the saml', session);
@@ -167,7 +173,6 @@ export class AdSsoService {
   }
 
   async samlLogoutCallbackPost(req: Request, res: Response) {
-    console.log('samlLogoutCallbackPOST');
     const { profile, loggedOut } = await this.saml.validatePostResponseAsync(
       req.body,
     );
@@ -175,9 +180,7 @@ export class AdSsoService {
     console.log(profile, loggedOut);
     if (loggedOut) {
       // TODO: Match the profile fields to the cookie values
-      // res.clearCookie(cookie);
       // Redirect the browser to locout success page which will clear the frontend token
-      console.log('ADIOS');
       res.redirect(`${this.adminFrontEnBaseUrl}#/logout-success`);
     }
   }
@@ -230,7 +233,7 @@ export class AdSsoService {
       const token = await this.authenticationService.signToken(result.id, true);
 
       res.cookie(
-        cookie,
+        sessionCookieName,
         { issuer: 'mock', nameID: user.email, nameIDFormat: 'mock' },
         {
           signed: true,
@@ -254,7 +257,7 @@ export class AdSsoService {
     if (!this.isMock) {
       return;
     }
-    res.clearCookie(cookie);
+    res.clearCookie(sessionCookieName);
     res.redirect(`${this.adminFrontEnBaseUrl}#/logout-success`);
   }
 }
