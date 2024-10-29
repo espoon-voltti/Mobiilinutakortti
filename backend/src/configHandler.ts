@@ -57,10 +57,9 @@ export class ConfigHelper {
   }
 
   static getSamlConfig(): SamlConfig & { isMock: boolean } {
-    const adType = !localEnvs.some((env) => process.env.NODE_ENV === env)
+    const adType = localEnvs.some((env) => process.env.NODE_ENV === env)
       ? 'mock'
       : 'saml';
-    // TODO: we need to support the fake for local environment and e2e tests
     if (adType === 'mock') {
       return {
         isMock: true,
