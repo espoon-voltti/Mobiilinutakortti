@@ -123,8 +123,6 @@ New env variables added for ad integration
 - `REDIS_PASSWORD`: Redis password
 - `REDIS_TLS_SERVER_NAME`:
 - `REDIS_DISABLE_SECURITY`:
-- `AD_SAML_CALLBACK_URL`: Our api address for saml login callback
-- `AD_SAML_LOGOUT_CALLBACK_URL`: Our api address for saml logout callback
 - `AD_SAML_ENTRYPOINT_URL`: Ad saml address
 - `AD_SAML_LOGOUT_URL`: Ad saml logout address
 - `AD_SAML_ISSUER`:

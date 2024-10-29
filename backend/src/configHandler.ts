@@ -63,16 +63,16 @@ export class ConfigHelper {
     if (adType === 'mock') {
       return {
         isMock: true,
-        entryPoint: 'http://localhost:3000/saml-auth/fake-login',
+        entryPoint: `${process.env.API_BASE_URL}saml-auth/fake-login`,
         issuer: 'mock-issuer',
-        callbackUrl: 'http://localhost:3000/saml-auth/callback',
+        callbackUrl: `${process.env.API_BASE_URL}saml-auth/callback`,
         idpCert: 'fake cert',
       };
     }
     return {
       isMock: false,
-      callbackUrl: process.env.AD_SAML_CALLBACK_URL,
-      logoutCallbackUrl: process.env.AD_SAML_LOGOUT_CALLBACK_URL,
+      callbackUrl: `${process.env.API_BASE_URL}api/saml-ad/login/callback`,
+      logoutCallbackUrl: `${process.env.API_BASE_URL}api/saml-ad/logout/callback`,
       entryPoint: process.env.AD_SAML_ENTRYPOINT_URL,
       logoutUrl: process.env.AD_SAML_LOGOUT_URL,
       issuer: process.env.AD_SAML_ISSUER,
