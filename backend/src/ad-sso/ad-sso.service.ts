@@ -22,6 +22,7 @@ import { AdminService } from 'src/admin/admin.service';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import * as content from '../content';
 import redisCacheProvider, { RedisClient } from './redis-cache-provider';
+import { decrypt, encrypt } from 'src/utils/helpers';
 
 export interface RequestWithUser extends Request {
   samlLogoutRequest?: any;
@@ -50,6 +51,7 @@ export class AdSsoService {
   private readonly adminFrontEnBaseUrl: string;
   private readonly apiBaseUrl: string;
   private readonly isMock: boolean;
+  private readonly cryptoSecretKey: string;
 
   constructor(
     @Inject(forwardRef(() => AdminService))
@@ -66,6 +68,7 @@ export class AdSsoService {
     this.adminFrontEnBaseUrl = ConfigHelper.getAdminFrontEndBaseUrl();
     this.apiBaseUrl = ConfigHelper.getApiBaseUrl();
     this.isMock = samlConfig.isMock;
+    this.cryptoSecretKey = ConfigHelper.getCryptoSecretKey();
   }
 
   async samlLogin(res: Response) {
@@ -117,7 +120,7 @@ export class AdSsoService {
           const { issuer, nameID, nameIDFormat } = parseResult.data;
           res.cookie(
             sessionCookieName,
-            { issuer, nameID, nameIDFormat },
+            encrypt(this.cryptoSecretKey, { issuer, nameID, nameIDFormat }),
             {
               signed: true,
               httpOnly: true, // Prevent access to the cookie via JavaScript
@@ -147,10 +150,14 @@ export class AdSsoService {
       res.redirect(`${this.apiBaseUrl}api/saml-ad/mock-logout-callback`);
       return;
     }
-    const session = req.signedCookies[sessionCookieName];
-    console.log(session);
+    const session = decrypt(
+      this.cryptoSecretKey,
+      req.signedCookies[sessionCookieName],
+    );
+
     if (!session) {
-      console.log('No cookie thats needed for the saml', session);
+      this.logger.error('No cookie thats needed for the saml');
+      return;
     }
     const parseResult = zSession.safeParse(session);
     if (!parseResult.success) {
@@ -158,6 +165,7 @@ export class AdSsoService {
         'Error: samlLogout: parseResult.success',
         parseResult.error,
       );
+      return;
     } else {
       const { issuer, nameID, nameIDFormat } = parseResult.data;
       const redirectUrl = await this.saml.getLogoutUrlAsync(
@@ -234,7 +242,11 @@ export class AdSsoService {
 
       res.cookie(
         sessionCookieName,
-        { issuer: 'mock', nameID: user.email, nameIDFormat: 'mock' },
+        encrypt(this.cryptoSecretKey, {
+          issuer: 'mock',
+          nameID: user.email,
+          nameIDFormat: 'mock',
+        }),
         {
           signed: true,
           httpOnly: true, // Prevent access to the cookie via JavaScript

@@ -92,6 +92,10 @@ export class ConfigHelper {
       wantAuthnResponseSigned: false,
     };
   }
+
+  static getCryptoSecretKey(): string {
+    return process.env.CRYPTO_SECRET_KEY;
+  }
 }
 
 interface RedisConfig {
