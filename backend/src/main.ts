@@ -54,8 +54,7 @@ async function bootstrap() {
   app.use('/', express.static(join(__dirname, '..', 'public')));
   app.use('/', express.static(join(__dirname, '..', 'public-admin')));
 
-  //TODO: read from env
-  app.use(cookieParser('A very hush hush cookie secret.'));
+  app.use(cookieParser(process.env.COOKIE_SECRET));
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/swagger', app, document);

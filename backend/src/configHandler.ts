@@ -47,7 +47,7 @@ export class ConfigHelper {
   } {
     return {
       host: process.env.REDIS_HOST ?? '127.0.0.1',
-      port: parseInteger(process.env.REDIS_HOST) ?? 6379,
+      port: parseInteger(process.env.REDIS_PORT) ?? 6379,
       password: process.env.REDIS_PASSWORD,
       tlsServerName: process.env.REDIS_TLS_SERVER_NAME,
       disableSecurity: localEnvs.some((env) => process.env.NODE_ENV === env)
@@ -120,7 +120,6 @@ export const toRedisClientOpts = (config: RedisConfig): RedisClientOptions => ({
 function parseInteger(value: string) {
   const result = Number.parseInt(value, 10);
   if (Number.isNaN(result)) {
-    console.log('ERROR: Invalid integer');
     return undefined;
   }
   return result;
