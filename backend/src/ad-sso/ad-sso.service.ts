@@ -116,10 +116,25 @@ export class AdSsoService {
             true,
           );
           // Set the JWT in an HTTP-only cookie (security measure)
-          const { issuer, nameID, nameIDFormat } = parseResult.data;
+          const {
+            issuer,
+            nameID,
+            nameIDFormat,
+            nameQualifier,
+            spNameQualifier,
+            sessionIndex,
+          } = parseResult.data;
+
           res.cookie(
             sessionCookieName,
-            encrypt(this.cryptoSecretKey, { issuer, nameID, nameIDFormat }),
+            encrypt(this.cryptoSecretKey, {
+              issuer,
+              nameID,
+              nameIDFormat,
+              nameQualifier,
+              spNameQualifier,
+              sessionIndex,
+            }),
             {
               signed: true,
               httpOnly: true, // Prevent access to the cookie via JavaScript
@@ -166,9 +181,24 @@ export class AdSsoService {
       );
       return;
     } else {
-      const { issuer, nameID, nameIDFormat } = parseResult.data;
+      const {
+        issuer,
+        nameID,
+        nameIDFormat,
+        nameQualifier,
+        spNameQualifier,
+        sessionIndex,
+      } = parseResult.data;
+
       const redirectUrl = await this.saml.getLogoutUrlAsync(
-        { issuer, nameID, nameIDFormat },
+        {
+          issuer,
+          nameID,
+          nameIDFormat,
+          nameQualifier,
+          spNameQualifier,
+          sessionIndex,
+        },
         'logout-success',
         {},
       );

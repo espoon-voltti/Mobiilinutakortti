@@ -20,6 +20,9 @@ export const zSession = z.object({
   issuer: z.string(),
   nameID: z.string(),
   nameIDFormat: z.string(),
+  nameQualifier: z.string(),
+  spNameQualifier: z.string(),
+  sessionIndex: z.string(),
 });
 
 export const zPorfileWithSession = zProfile.merge(zSession);
