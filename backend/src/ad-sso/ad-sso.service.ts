@@ -213,10 +213,7 @@ export class AdSsoService {
     const { profile, loggedOut } = await this.saml.validatePostResponseAsync(
       req.body,
     );
-    // Profile seems to be null?
-    console.log(profile, loggedOut);
     if (loggedOut) {
-      // TODO: Match the profile fields to the cookie values
       // Redirect the browser to locout success page which will clear the frontend token
       res.redirect(`${this.adminFrontEnBaseUrl}#/logout-success`);
     }
