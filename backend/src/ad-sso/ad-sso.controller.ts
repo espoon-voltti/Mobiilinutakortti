@@ -26,10 +26,7 @@ export class AdSsoController {
 
   // SAML Single Logout (SLO) - logs out from IdP and the application
   @Get('logout')
-  async singleLogout(
-    @Req() req: Request & { session: any },
-    @Res() res: Response,
-  ) {
+  async singleLogout(@Req() req: Request, @Res() res: Response) {
     setCacheHeaders(res);
     await this.adSsoService.samlLogout(req, res);
   }
