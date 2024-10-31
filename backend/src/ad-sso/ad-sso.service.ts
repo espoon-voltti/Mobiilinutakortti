@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -15,7 +14,6 @@ import {
   AD_FAMILY_NAME_KEY,
   AD_GIVEN_NAME_KEY,
   zPorfileWithSession,
-  zProfile,
   zSession,
 } from './ad-sso-helper';
 import { AdminService } from 'src/admin/admin.service';
@@ -48,7 +46,8 @@ const mockUsers = [
 export class AdSsoService {
   private readonly saml: SAML;
   private readonly logger = new Logger('Ad SSO Service');
-  private readonly adminFrontEnBaseUrl: string;
+  private readonly loginSuccessUrl: string;
+  private readonly logoutSuccessUrl: string;
   private readonly apiBaseUrl: string;
   private readonly isMock: boolean;
   private readonly cryptoSecretKey: string;
@@ -65,7 +64,9 @@ export class AdSsoService {
       keyPrefix: 'ad-saml-resp:',
     });
     this.saml = new SAML({ ...samlConfig, cacheProvider });
-    this.adminFrontEnBaseUrl = ConfigHelper.getAdminFrontEndBaseUrl();
+    const adminFrontEnBaseUrl = ConfigHelper.getAdminFrontEndBaseUrl();
+    this.loginSuccessUrl = `${adminFrontEnBaseUrl}#/login?t=`;
+    this.logoutSuccessUrl = `${adminFrontEnBaseUrl}#/logout-success`;
     this.apiBaseUrl = ConfigHelper.getApiBaseUrl();
     this.isMock = samlConfig.isMock;
     this.cryptoSecretKey = ConfigHelper.getCryptoSecretKey();
@@ -142,11 +143,8 @@ export class AdSsoService {
               sameSite: 'lax', // Prevent CSRF attacks
             },
           );
-
           // Redirect the user to the frontend
-          res.redirect(
-            `${this.adminFrontEnBaseUrl}#/login?t=${token.access_token}`,
-          );
+          res.redirect(`${this.loginSuccessUrl}${token.access_token}`);
         }
       }
     } catch (error) {
@@ -160,62 +158,71 @@ export class AdSsoService {
     // Pre-emptively clear the cookie, so even if something fails later, we
     // will end up clearing the cookie in the response
     res.clearCookie(sessionCookieName);
+
     if (this.isMock) {
       res.redirect(`${this.apiBaseUrl}api/saml-ad/mock-logout-callback`);
       return;
     }
-    const session = decrypt(
-      this.cryptoSecretKey,
-      req.signedCookies[sessionCookieName],
-    );
 
-    if (!session) {
-      this.logger.error('No cookie thats needed for the saml');
-      return;
-    }
-    const parseResult = zSession.safeParse(session);
-    if (!parseResult.success) {
-      this.logger.error(
-        'Error: samlLogout: parseResult.success',
-        parseResult.error,
+    try {
+      const session = decrypt(
+        this.cryptoSecretKey,
+        req.signedCookies[sessionCookieName],
       );
-      return;
-    } else {
-      const {
-        issuer,
-        nameID,
-        nameIDFormat,
-        nameQualifier,
-        spNameQualifier,
-        sessionIndex,
-      } = parseResult.data;
 
-      const redirectUrl = await this.saml.getLogoutUrlAsync(
-        {
-          issuer,
-          nameID,
-          nameIDFormat,
-          nameQualifier,
-          spNameQualifier,
-          sessionIndex,
-        },
-        'logout-success',
-        {},
-      );
-      res.redirect(redirectUrl);
+      if (!session) {
+        this.logger.error('No cookie thats needed for the saml');
+        res.redirect(this.logoutSuccessUrl);
+      } else {
+        const parseResult = zSession.safeParse(session);
+        if (!parseResult.success) {
+          this.logger.error(
+            'Error: samlLogout: parseResult.success',
+            parseResult.error,
+          );
+          res.redirect(this.logoutSuccessUrl);
+        } else {
+          const {
+            issuer,
+            nameID,
+            nameIDFormat,
+            nameQualifier,
+            spNameQualifier,
+            sessionIndex,
+          } = parseResult.data;
+
+          const redirectUrl = await this.saml.getLogoutUrlAsync(
+            {
+              issuer,
+              nameID,
+              nameIDFormat,
+              nameQualifier,
+              spNameQualifier,
+              sessionIndex,
+            },
+            'logout-success',
+            {},
+          );
+
+          res.redirect(redirectUrl);
+        }
+      }
+    } catch (error) {
+      this.logger.error('Error: samlLogout', error);
+      res.redirect(this.logoutSuccessUrl);
     }
-  }
-  async samlLogoutCallbackGet(req: Request, res: Response) {
-    console.log('samlLogoutCallbackGet');
   }
 
   async samlLogoutCallbackPost(req: Request, res: Response) {
-    const { profile, loggedOut } = await this.saml.validatePostResponseAsync(
-      req.body,
-    );
-    if (loggedOut) {
-      // Redirect the browser to locout success page which will clear the frontend token
-      res.redirect(`${this.adminFrontEnBaseUrl}#/logout-success`);
+    try {
+      const { loggedOut } = await this.saml.validatePostResponseAsync(req.body);
+      if (loggedOut) {
+        // Redirect the browser to locout success page which will clear the frontend token
+        res.redirect(this.logoutSuccessUrl);
+      }
+    } catch (error) {
+      this.logger.error('Error: samlLogoutCallbackPost', error);
+      res.redirect(this.logoutSuccessUrl);
     }
   }
 
@@ -282,9 +289,7 @@ export class AdSsoService {
       );
 
       // Redirect the user to the frontend
-      res.redirect(
-        `${this.adminFrontEnBaseUrl}#/login?t=${token.access_token}`,
-      );
+      res.redirect(`${this.loginSuccessUrl}${token.access_token}`);
     } catch (error) {
       this.logger.error('Error: mockSamlLoginCallBack', error);
       throw new InternalServerErrorException(error, content.FailedAdSsoLogin);
@@ -296,6 +301,6 @@ export class AdSsoService {
       return;
     }
     res.clearCookie(sessionCookieName);
-    res.redirect(`${this.adminFrontEnBaseUrl}#/logout-success`);
+    res.redirect(this.logoutSuccessUrl);
   }
 }
