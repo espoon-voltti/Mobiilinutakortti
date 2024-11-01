@@ -2,8 +2,6 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { SamlConfig, ValidateInResponseTo } from '@node-saml/node-saml';
 import { RedisClientOptions } from 'redis';
 
-const localEnvs = [undefined, 'local', 'test'];
-
 export class ConfigHelper {
   static isTest() {
     return process.env.NODE_ENV === 'test';
@@ -50,19 +48,15 @@ export class ConfigHelper {
       port: parseInteger(process.env.REDIS_PORT) ?? 6379,
       password: process.env.REDIS_PASSWORD,
       tlsServerName: process.env.REDIS_TLS_SERVER_NAME,
-      disableSecurity: localEnvs.some((env) => process.env.NODE_ENV === env)
-        ? true
-        : (parseBoolean(process.env.REDIS_DISABLE_SECURITY) ?? false),
+      disableSecurity:
+        parseBoolean(process.env.REDIS_DISABLE_SECURITY) ?? false,
     };
   }
 
   static getSamlConfig(): SamlConfig & { isMock: boolean } {
-    console.log('NODE_ENV', process.env.NODE_ENV);
-    const adType = !localEnvs.some((env) => process.env.NODE_ENV === env)
-      ? 'mock'
-      : 'saml';
+    const adMock = parseBoolean(process.env.AD_MOCK);
 
-    if (adType === 'mock') {
+    if (adMock) {
       return {
         isMock: true,
         entryPoint: `${process.env.API_BASE_URL}saml-auth/fake-login`,
