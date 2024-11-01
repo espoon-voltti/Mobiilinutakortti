@@ -29,7 +29,10 @@ export class ConfigHelper {
   }
 
   static getAdminFrontEndBaseUrl(): string {
-    return process.env.FRONTEND_BASE_URL || 'http://localhost:3002/';
+    return (
+      `${process.env.FRONTEND_BASE_URL}/nuorisotyontekijat` ||
+      'http://localhost:3002/'
+    );
   }
 
   static getApiBaseUrl(): string {
@@ -48,8 +51,7 @@ export class ConfigHelper {
       port: parseInteger(process.env.REDIS_PORT) ?? 6379,
       password: process.env.REDIS_PASSWORD,
       tlsServerName: process.env.REDIS_TLS_SERVER_NAME,
-      disableSecurity:
-        parseBoolean(process.env.REDIS_DISABLE_SECURITY) ?? false,
+      disableSecurity: parseBoolean(process.env.REDIS_DISABLE_SECURITY) ?? true,
     };
   }
 
