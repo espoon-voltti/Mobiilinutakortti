@@ -77,7 +77,7 @@ export class ConfigHelper {
       publicCert: process.env.AD_SAML_PUBLIC_CERT,
       idpCert: process.env.AD_SAML_IDP_CERT,
       privateKey: process.env.AD_SAML_PRIVATE_CERT,
-      validateInResponseTo: ValidateInResponseTo.ifPresent,
+      validateInResponseTo: ValidateInResponseTo.always,
       signatureAlgorithm: 'sha256',
       identifierFormat: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
       acceptedClockSkewMs: 0,

@@ -87,7 +87,7 @@ export class AdSsoService {
         undefined,
         {},
       );
-      this.logger.log('saml.getAuthorizeUrlAsync got response', redirectUrl);
+      this.logger.log('saml.getAuthorizeUrlAsync got response' + redirectUrl);
       res.redirect(redirectUrl);
       return;
     } catch (error) {
@@ -103,7 +103,7 @@ export class AdSsoService {
       const { profile, loggedOut } = await this.saml.validatePostResponseAsync(
         req.body,
       );
-      this.logger.log('samlLoginCallBack().profile', profile);
+      this.logger.log('samlLoginCallBack().profile' + profile);
 
       if (!loggedOut) {
         const parseResult = zPorfileWithSession.safeParse(profile);
@@ -152,8 +152,8 @@ export class AdSsoService {
             },
           );
           this.logger.log(
-            'samlLoginCallBack().redirect',
-            `${this.loginSuccessUrl}${token.access_token}`,
+            'samlLoginCallBack().redirect' +
+              `${this.loginSuccessUrl}${token.access_token}`,
           );
 
           // Redirect the user to the frontend
@@ -219,7 +219,7 @@ export class AdSsoService {
             'logout-success',
             {},
           );
-          this.logger.log('samlLogout().getLogoutUrlAsync', redirectUrl);
+          this.logger.log('samlLogout().getLogoutUrlAsync:' + redirectUrl);
 
           res.redirect(redirectUrl);
         }
@@ -236,11 +236,13 @@ export class AdSsoService {
     try {
       const { loggedOut } = await this.saml.validatePostResponseAsync(req.body);
       this.logger.log(
-        'samlLogoutCallbackPost().validatePostResponseAsync',
-        loggedOut,
+        'samlLogoutCallbackPost().validatePostResponseAsync: ' + loggedOut,
       );
 
       if (loggedOut) {
+        this.logger.log(
+          'samlLogoutCallbackPost().redirecting to: ' + this.logoutSuccessUrl,
+        );
         // Redirect the browser to locout success page which will clear the frontend token
         res.redirect(this.logoutSuccessUrl);
       }
