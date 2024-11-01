@@ -73,7 +73,10 @@ export class AdSsoService {
   }
 
   async samlLogin(res: Response) {
+    this.logger.log('samlLogin().start');
+
     if (this.isMock) {
+      this.logger.log('samlLogin() returning mock url');
       res.redirect(`${this.apiBaseUrl}api/saml-ad/mock-login-form`);
       return;
     }
@@ -84,6 +87,7 @@ export class AdSsoService {
         undefined,
         {},
       );
+      this.logger.log('saml.getAuthorizeUrlAsync got response', redirectUrl);
       res.redirect(redirectUrl);
       return;
     } catch (error) {
@@ -94,9 +98,13 @@ export class AdSsoService {
 
   async samlLoginCallBack(req: Request, res: Response) {
     try {
+      this.logger.log('samlLoginCallBack().start');
+
       const { profile, loggedOut } = await this.saml.validatePostResponseAsync(
         req.body,
       );
+      this.logger.log('samlLoginCallBack().profile', profile);
+
       if (!loggedOut) {
         const parseResult = zPorfileWithSession.safeParse(profile);
         if (!parseResult.success) {
@@ -143,6 +151,11 @@ export class AdSsoService {
               sameSite: 'lax', // Prevent CSRF attacks
             },
           );
+          this.logger.log(
+            'samlLoginCallBack().redirect',
+            `${this.loginSuccessUrl}${token.access_token}`,
+          );
+
           // Redirect the user to the frontend
           res.redirect(`${this.loginSuccessUrl}${token.access_token}`);
         }
@@ -155,11 +168,14 @@ export class AdSsoService {
 
   // Initiates SAML Single Logout (SLO) with the IdP
   async samlLogout(req: Request, res: Response) {
+    this.logger.log('samlLogout().start');
     // Pre-emptively clear the cookie, so even if something fails later, we
     // will end up clearing the cookie in the response
     res.clearCookie(sessionCookieName);
 
     if (this.isMock) {
+      this.logger.log('samlLogout().isMock');
+
       res.redirect(`${this.apiBaseUrl}api/saml-ad/mock-logout-callback`);
       return;
     }
@@ -203,6 +219,7 @@ export class AdSsoService {
             'logout-success',
             {},
           );
+          this.logger.log('samlLogout().getLogoutUrlAsync', redirectUrl);
 
           res.redirect(redirectUrl);
         }
@@ -214,8 +231,15 @@ export class AdSsoService {
   }
 
   async samlLogoutCallbackPost(req: Request, res: Response) {
+    this.logger.log('samlLogoutCallbackPost().start');
+
     try {
       const { loggedOut } = await this.saml.validatePostResponseAsync(req.body);
+      this.logger.log(
+        'samlLogoutCallbackPost().validatePostResponseAsync',
+        loggedOut,
+      );
+
       if (loggedOut) {
         // Redirect the browser to locout success page which will clear the frontend token
         res.redirect(this.logoutSuccessUrl);
