@@ -50,7 +50,7 @@ export class AdSsoController {
   @Post('/logout/callback')
   async postLogoutCallback(@Req() req: Request, @Res() res: Response) {
     setCacheHeaders(res);
-    return await this.adSsoService.samlLogoutCallbackPost(req, res);
+    await this.adSsoService.samlLogoutCallbackPost(req, res);
   }
 
   // Mock endpoints

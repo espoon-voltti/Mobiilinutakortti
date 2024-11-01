@@ -57,9 +57,11 @@ export class ConfigHelper {
   }
 
   static getSamlConfig(): SamlConfig & { isMock: boolean } {
-    const adType = localEnvs.some((env) => process.env.NODE_ENV === env)
+    console.log('NODE_ENV', process.env.NODE_ENV);
+    const adType = !localEnvs.some((env) => process.env.NODE_ENV === env)
       ? 'mock'
       : 'saml';
+
     if (adType === 'mock') {
       return {
         isMock: true,
@@ -79,7 +81,7 @@ export class ConfigHelper {
       publicCert: process.env.AD_SAML_PUBLIC_CERT,
       idpCert: process.env.AD_SAML_IDP_CERT,
       privateKey: process.env.AD_SAML_PRIVATE_CERT,
-      validateInResponseTo: ValidateInResponseTo.always,
+      validateInResponseTo: ValidateInResponseTo.ifPresent,
       signatureAlgorithm: 'sha256',
       identifierFormat: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
       acceptedClockSkewMs: 0,
