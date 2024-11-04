@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Res, Req } from '@nestjs/common';
+import { Controller, Post, Get, Res, Req, Query } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Routes } from '../content';
 import { ApiTags } from '@nestjs/swagger';
@@ -31,26 +31,10 @@ export class AdSsoController {
     await this.adSsoService.samlLogout(req, res);
   }
 
-  // The IDP makes the browser either GET or POST one of these endpoints in two
-  // separate logout flows.
-  // 1. SP-initiated logout. In this case the logout flow started from us
-  //   (= /auth/saml/logout endpoint), and a SAML LogoutResponse is included
-  //   in the request. (This is the one we want to support)
-
-  // Cannot support this
-  // 2. IDP-initiated logout (= SAML single logout). In this case the logout
-  //   flow started from the IDP, and a SAML LogoutRequest is included in the
-  //   request.
-  // @Get('/logout/callback')
-  // getLogoutCallBack(@Req() req: Request, @Res() res: Response) {
-  //   console.log('get.getLogoutCallBack');
-  //   // This was called by voltti callback
-  //   this.adSsoService.samlLogoutCallbackGet(req, res);
-  // }
-  @Post('/logout/callback')
+  @Get('/logout/callback')
   async postLogoutCallback(@Req() req: Request, @Res() res: Response) {
     setCacheHeaders(res);
-    await this.adSsoService.samlLogoutCallbackPost(req, res);
+    await this.adSsoService.samlLogoutCallbackGet(req, res);
   }
 
   // Mock endpoints

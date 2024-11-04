@@ -21,6 +21,7 @@ import { AuthenticationService } from 'src/authentication/authentication.service
 import * as content from '../content';
 import redisCacheProvider, { RedisClient } from './redis-cache-provider';
 import { decrypt, encrypt } from 'src/utils/helpers';
+import * as url from 'url';
 
 export interface RequestWithUser extends Request {
   samlLogoutRequest?: any;
@@ -219,8 +220,6 @@ export class AdSsoService {
             'logout-success',
             {},
           );
-          this.logger.log('samlLogout().getLogoutUrlAsync:' + redirectUrl);
-
           res.redirect(redirectUrl);
         }
       }
@@ -230,24 +229,27 @@ export class AdSsoService {
     }
   }
 
-  async samlLogoutCallbackPost(req: Request, res: Response) {
-    this.logger.log('samlLogoutCallbackPost().start');
+  async samlLogoutCallbackGet(req: Request, res: Response) {
+    this.logger.log('samlLogoutCallbackGet().start');
 
     try {
-      const { loggedOut } = await this.saml.validatePostResponseAsync(req.body);
-      this.logger.log(
-        'samlLogoutCallbackPost().validatePostResponseAsync: ' + loggedOut,
+      const originalQuery = url.parse(req.url).query ?? '';
+
+      const { loggedOut } = await this.saml.validateRedirectAsync(
+        req.query,
+        originalQuery,
       );
 
       if (loggedOut) {
         this.logger.log(
-          'samlLogoutCallbackPost().redirecting to: ' + this.logoutSuccessUrl,
+          'samlLogoutCallbackGet().loggedOut = true: redirecting',
         );
         // Redirect the browser to locout success page which will clear the frontend token
         res.redirect(this.logoutSuccessUrl);
       }
     } catch (error) {
-      this.logger.error('Error: samlLogoutCallbackPost', error);
+      this.logger.error('Error: samlLogoutCallbackGet');
+      this.logger.error(JSON.stringify(error));
       res.redirect(this.logoutSuccessUrl);
     }
   }
