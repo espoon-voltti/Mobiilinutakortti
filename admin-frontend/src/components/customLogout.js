@@ -1,5 +1,6 @@
 import React from 'react';
 import apiEndpoints from '../api';
+import { token } from '../utils';
 
 const CustomLogoutButton = () => {
   return (
@@ -7,6 +8,10 @@ const CustomLogoutButton = () => {
       className="linkButton"
       style={styles.linkButton}
       href={apiEndpoints.saml.logout}
+      onClick={() => {
+        localStorage.removeItem(token);
+        localStorage.removeItem('role');
+      }}
     >
       Kirjaudu ulos
     </a>

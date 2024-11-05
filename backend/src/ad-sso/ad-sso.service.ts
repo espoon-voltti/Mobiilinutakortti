@@ -67,7 +67,7 @@ export class AdSsoService {
     this.saml = new SAML({ ...samlConfig, cacheProvider });
     const adminFrontEnBaseUrl = ConfigHelper.getAdminFrontEndBaseUrl();
     this.loginSuccessUrl = `${adminFrontEnBaseUrl}#/login?t=`;
-    this.logoutSuccessUrl = `${adminFrontEnBaseUrl}#/logout-success`;
+    this.logoutSuccessUrl = `${adminFrontEnBaseUrl}#/login`;
     this.apiBaseUrl = ConfigHelper.getApiBaseUrl();
     this.isMock = samlConfig.isMock;
     this.cryptoSecretKey = ConfigHelper.getCryptoSecretKey();
@@ -239,11 +239,9 @@ export class AdSsoService {
         req.query,
         originalQuery,
       );
+      this.logger.log('samlLogoutCallbackGet().loggedOut' + loggedOut);
 
       if (loggedOut) {
-        this.logger.log(
-          'samlLogoutCallbackGet().loggedOut = true: redirecting',
-        );
         // Redirect the browser to locout success page which will clear the frontend token
         res.redirect(this.logoutSuccessUrl);
       }
