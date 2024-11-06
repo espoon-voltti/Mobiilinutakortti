@@ -11,7 +11,7 @@ import {
   BadRequestException,
   Delete,
 } from '@nestjs/common';
-import { RegisterAdminDto, LoginAdminDto, EditAdminDto } from './dto';
+import { RegisterAdminDto, EditAdminDto } from './dto';
 import { AdminService } from './admin.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -88,17 +88,19 @@ export class AdminController {
   }
 
   /**
-   * A route that attempts to log an admin into the system (generating a JWT).
+   * A simple route that allows the frontend to tell whether the current token is valid, and belongs to an Admin/Super Admin
    *
-   * @param userData - LoginAdminDto
-   * @returns - { access_token }
+   * @returns - true if successful, false otherwise.
    */
-  @UsePipes(new ValidationPipe({ transform: true }))
-  @Post('login')
-  async login(@Body() userData: LoginAdminDto): Promise<JWTToken> {
-    return await this.authenticationService.loginAdmin(userData);
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @AllowedRoles(Roles.ADMIN)
+  @Get('login')
+  @ApiBearerAuth('super-admin')
+  @ApiBearerAuth('admin')
+  async autoLogin(@Admin() adminData: any): Promise<JWTToken> {
+    // This is a simple route the frontend can hit to verify a valid JWT.
+    return await this.authenticationService.loginAdmin(adminData);
   }
-
   /**
    * A route used to allow superusers to edit other admins.
    *
