@@ -5,11 +5,7 @@ import finnishMessages from 'ra-language-finnish';
 import { authProvider, dataProvider } from './providers';
 import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
 import { YouthClubList } from './components/youthClub';
-import {
-  YouthWorkerList,
-  YouthWorkerCreate,
-  YouthWorkerEdit,
-} from './components/youthWorker';
+import { YouthWorkerList, YouthWorkerEdit } from './components/youthWorker';
 import { routes, superAdminRoutes } from './customRoutes';
 import ChildCareIcon from '@material-ui/icons/ChildCare';
 import { httpClient } from './httpClients';
@@ -20,8 +16,6 @@ import polyglotI18nProvider from 'ra-i18n-polyglot';
 import usePermissions from './hooks/usePermissions';
 import CustomLoginPage from './components/customLogin';
 import CustomLogoutButton from './components/customLogout';
-
-// const CustomLoginPage = () => <Login backgroundImage="/nuta-admin-bg.jpg" />;
 
 const messages = {
   fi: finnishMessages,
@@ -95,7 +89,6 @@ const App = () => {
             name="youthWorker"
             options={{ label: 'Nuorisotyöntekijät' }}
             list={YouthWorkerList}
-            create={YouthWorkerCreate}
             edit={YouthWorkerEdit}
           />
         ) : null,

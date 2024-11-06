@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import apiEndpoints from '../api';
 import { token } from '../utils';
 
-const CustomLogoutButton = () => {
+const CustomLogoutButton = forwardRef(() => {
   return (
     <a
       className="linkButton"
@@ -16,7 +16,7 @@ const CustomLogoutButton = () => {
       Kirjaudu ulos
     </a>
   );
-};
+});
 
 const styles = {
   linkButton: {
