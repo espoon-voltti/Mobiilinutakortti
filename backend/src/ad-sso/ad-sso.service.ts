@@ -104,14 +104,18 @@ export class AdSsoService {
       const { profile, loggedOut } = await this.saml.validatePostResponseAsync(
         req.body,
       );
-      this.logger.log('samlLoginCallBack().profile' + profile);
+      this.logger.log('samlLoginCallBack().profile' + JSON.stringify(profile));
 
       if (!loggedOut) {
+        this.logger.log(
+          'samlLoginCallBack().loggedIn' + JSON.stringify(profile),
+        );
+
         const parseResult = zPorfileWithSession.safeParse(profile);
         if (!parseResult.success) {
           this.logger.error(
             'Error: samlLoginCallBack: parseResult.error',
-            parseResult.error,
+            JSON.stringify(parseResult),
           );
         } else {
           const user = {
@@ -162,7 +166,7 @@ export class AdSsoService {
         }
       }
     } catch (error) {
-      this.logger.error('Error: samlLoginCallBack', error);
+      this.logger.error('Error: samlLoginCallBack', JSON.stringify(error));
       throw new InternalServerErrorException(error, content.FailedAdSsoLogin);
     }
   }
