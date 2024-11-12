@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -104,7 +105,6 @@ export class AdSsoService {
       const { profile, loggedOut } = await this.saml.validatePostResponseAsync(
         req.body,
       );
-      this.logger.log('samlLoginCallBack().profile' + JSON.stringify(profile));
 
       if (!loggedOut) {
         this.logger.log(
@@ -117,6 +117,8 @@ export class AdSsoService {
             'Error: samlLoginCallBack: parseResult.error',
             JSON.stringify(parseResult),
           );
+          // TODO: Add custom error for this
+          throw new BadRequestException(content.UserNotFound);
         } else {
           const user = {
             email: parseResult.data[AD_EMAIL_KEY],
