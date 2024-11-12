@@ -9,8 +9,9 @@ const CustomLogoutButton = forwardRef(() => {
       style={styles.linkButton}
       href={apiEndpoints.saml.logout}
       onClick={() => {
-        localStorage.removeItem(token);
-        localStorage.removeItem('role');
+        localStorage.clear();
+        // localStorage.removeItem(token);
+        // localStorage.removeItem('role');
       }}
     >
       Kirjaudu ulos
