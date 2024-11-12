@@ -6,10 +6,6 @@ import { AuthenticationModule } from 'src/authentication/authentication.module';
 import { AppModule } from 'src/app.module';
 
 @Module({
-  // Skip passport use plain node saml
-  // imports: [
-  //   PassportModule.register({ defaultStrategy: 'saml', session: true }), // SAML strategy is default in this module
-  // ],
   imports: [
     forwardRef(() => AppModule),
     forwardRef(() => AdminModule),

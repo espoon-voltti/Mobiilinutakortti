@@ -24,11 +24,6 @@ import redisCacheProvider, { RedisClient } from './redis-cache-provider';
 import { decrypt, encrypt } from 'src/utils/helpers';
 import * as url from 'url';
 
-export interface RequestWithUser extends Request {
-  samlLogoutRequest?: any;
-  user?: any;
-}
-
 const sessionCookieName = 'nutakortti.session';
 
 const mockUsers = [
