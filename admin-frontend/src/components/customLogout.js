@@ -10,6 +10,8 @@ const CustomLogoutButton = forwardRef(() => {
       href={apiEndpoints.saml.logout}
       onClick={() => {
         localStorage.clear();
+        window.location.reload();
+        return true;
         // localStorage.removeItem(token);
         // localStorage.removeItem('role');
       }}
