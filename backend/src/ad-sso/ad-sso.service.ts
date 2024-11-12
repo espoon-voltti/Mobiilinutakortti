@@ -75,10 +75,7 @@ export class AdSsoService {
   }
 
   async samlLogin(res: Response) {
-    this.logger.log('samlLogin().start');
-
     if (this.isMock) {
-      this.logger.log('samlLogin() returning mock url');
       res.redirect(`${this.apiBaseUrl}api/saml-ad/mock-login-form`);
       return;
     }
@@ -89,28 +86,21 @@ export class AdSsoService {
         undefined,
         {},
       );
-      this.logger.log('saml.getAuthorizeUrlAsync got response' + redirectUrl);
       res.redirect(redirectUrl);
       return;
     } catch (error) {
-      this.logger.error('Error: samlLogin', error);
+      this.logger.error('Error: samlLogin', JSON.stringify(error));
       throw new InternalServerErrorException(error, content.FailedAdSsoLogin);
     }
   }
 
   async samlLoginCallBack(req: Request, res: Response) {
     try {
-      this.logger.log('samlLoginCallBack().start');
-
       const { profile, loggedOut } = await this.saml.validatePostResponseAsync(
         req.body,
       );
 
       if (!loggedOut) {
-        this.logger.log(
-          'samlLoginCallBack().loggedIn' + JSON.stringify(profile),
-        );
-
         const parseResult = zPorfileWithSession.safeParse(profile);
         if (!parseResult.success) {
           this.logger.error(
@@ -118,7 +108,10 @@ export class AdSsoService {
             JSON.stringify(parseResult),
           );
           // TODO: Add custom error for this
-          throw new BadRequestException(content.UserNotFound);
+          throw new InternalServerErrorException(
+            'Error parsing the profile fields',
+            content.FailedAdSsoLogin,
+          );
         } else {
           const user = {
             email: parseResult.data[AD_EMAIL_KEY],
@@ -158,11 +151,6 @@ export class AdSsoService {
               sameSite: 'lax', // Prevent CSRF attacks
             },
           );
-          this.logger.log(
-            'samlLoginCallBack().redirect' +
-              `${this.loginSuccessUrl}${token.access_token}`,
-          );
-
           // Redirect the user to the frontend
           res.redirect(`${this.loginSuccessUrl}${token.access_token}`);
         }
@@ -175,14 +163,12 @@ export class AdSsoService {
 
   // Initiates SAML Single Logout (SLO) with the IdP
   async samlLogout(req: Request, res: Response) {
-    this.logger.log('samlLogout().start');
     // Pre-emptively clear the cookie, so even if something fails later, we
     // will end up clearing the cookie in the response
     res.clearCookie(sessionCookieName);
 
     if (this.isMock) {
       this.logger.log('samlLogout().isMock');
-
       res.redirect(`${this.apiBaseUrl}api/saml-ad/mock-logout-callback`);
       return;
     }
@@ -201,7 +187,7 @@ export class AdSsoService {
         if (!parseResult.success) {
           this.logger.error(
             'Error: samlLogout: parseResult.success',
-            parseResult.error,
+            JSON.stringify(parseResult.error),
           );
           res.redirect(this.logoutSuccessUrl);
         } else {
@@ -230,14 +216,12 @@ export class AdSsoService {
         }
       }
     } catch (error) {
-      this.logger.error('Error: samlLogout', error);
+      this.logger.error('Error: samlLogout', JSON.stringify(error));
       res.redirect(this.logoutSuccessUrl);
     }
   }
 
   async samlLogoutCallbackGet(req: Request, res: Response) {
-    this.logger.log('samlLogoutCallbackGet().start');
-
     try {
       const originalQuery = url.parse(req.url).query ?? '';
 
@@ -245,15 +229,13 @@ export class AdSsoService {
         req.query,
         originalQuery,
       );
-      this.logger.log('samlLogoutCallbackGet().loggedOut' + loggedOut);
 
       if (loggedOut) {
         // Redirect the browser to locout success page which will clear the frontend token
         res.redirect(this.logoutSuccessUrl);
       }
     } catch (error) {
-      this.logger.error('Error: samlLogoutCallbackGet');
-      this.logger.error(JSON.stringify(error));
+      this.logger.error('Error: samlLogoutCallbackGet', JSON.stringify(error));
       res.redirect(this.logoutSuccessUrl);
     }
   }
