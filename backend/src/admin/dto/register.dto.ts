@@ -8,7 +8,6 @@ export class RegisterAdminDto {
   @IsNotEmpty()
   readonly email: string;
 
-  // @IsNotEmpty()
   readonly password: string;
 
   @IsNotEmpty()
