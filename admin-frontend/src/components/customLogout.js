@@ -1,8 +1,11 @@
 import React, { forwardRef } from 'react';
+import { useHistory } from 'react-router-dom';
 import apiEndpoints from '../api';
 import { token } from '../utils';
 
 const CustomLogoutButton = forwardRef(() => {
+  const history = useHistory();
+
   return (
     <a
       className="linkButton"
@@ -11,7 +14,7 @@ const CustomLogoutButton = forwardRef(() => {
       onClick={() => {
         localStorage.removeItem(token);
         localStorage.removeItem('role');
-        window.location.reload();
+        history.replace('/');
         return true;
       }}
     >
