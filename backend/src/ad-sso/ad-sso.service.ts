@@ -220,14 +220,22 @@ export class AdSsoService {
     try {
       const originalQuery = url.parse(req.url).query ?? '';
 
-      const { loggedOut } = await this.saml.validateRedirectAsync(
+      const { profile, loggedOut } = await this.saml.validateRedirectAsync(
         req.query,
         originalQuery,
       );
-
       if (loggedOut) {
-        // Redirect the browser to locout success page which will clear the frontend token
-        res.redirect(this.logoutSuccessUrl);
+        if (profile) {
+          const url = await this.saml.getLogoutResponseUrlAsync(
+            profile,
+            '',
+            {},
+            false,
+          );
+          res.redirect(url);
+        } else {
+          res.redirect(this.logoutSuccessUrl);
+        }
       }
     } catch (error) {
       this.logger.error('Error: samlLogoutCallbackGet', JSON.stringify(error));
