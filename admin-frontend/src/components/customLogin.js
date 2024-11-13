@@ -14,7 +14,6 @@ const CustomLoginPage = () => {
     const hash = window.location.hash; // Get the hash fragment
     const urlParams = new URLSearchParams(hash.split('?')[1]); // Extract query parameters from the hash
     const jwtToken = urlParams.get('t'); // Get the token from the query params
-
     if (jwtToken) {
       localStorage.setItem(token, jwtToken);
     }
@@ -28,7 +27,7 @@ const CustomLoginPage = () => {
     try {
       // Pass the token to React Admin's login function
       await authProvider(AUTH_CHECK);
-      history.push('/'); // Redirect to home/dashboard after successful login
+      history.replace('/'); // Redirect to home/dashboard after successful login
     } catch (error) {
       notify('Login failed'); // Show error notification if login fails
     }
