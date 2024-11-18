@@ -32,6 +32,7 @@ const apiEndpoints = {
     refresh: `${appUrl}/admin/refresh`,
     password: `${appUrl}/admin/changePassword`,
     base: `${appUrl}/admin/`,
+    setMainYouthClub: `${appUrl}/admin/setMainYouthClub`,
   },
 };
 

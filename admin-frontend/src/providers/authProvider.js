@@ -14,6 +14,7 @@ export const authProvider = (type, params) => {
     if (status === 401 || status === 403) {
       localStorage.removeItem(token);
       localStorage.removeItem('role');
+      localStorage.removeItem('main-youth-club');
       return Promise.reject();
     }
     return Promise.resolve();
@@ -34,12 +35,14 @@ export const authProvider = (type, params) => {
         } else {
           localStorage.setItem('role', 'ADMIN');
         }
+        localStorage.setItem('main-youth-club', response.mainYouthClub);
       },
     );
   }
   if (type === AUTH_LOGOUT) {
     localStorage.removeItem(token);
     localStorage.removeItem('role');
+    localStorage.removeItem('main-youth-club');
     return Promise.resolve();
   }
 
