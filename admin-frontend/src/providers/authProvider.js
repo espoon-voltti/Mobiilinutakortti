@@ -36,6 +36,8 @@ export const authProvider = (type, params) => {
           localStorage.setItem('role', 'ADMIN');
         }
         localStorage.setItem('main-youth-club', response.mainYouthClub);
+        // Dirty hack; forces recalculation of custom routes based on user role inside App.js
+        window.location.reload();
       },
     );
   }
