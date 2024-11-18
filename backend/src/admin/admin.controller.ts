@@ -1,8 +1,17 @@
 import {
-  Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, UseInterceptors,
-  Get, Param, BadRequestException, Delete
+  Controller,
+  Post,
+  Body,
+  UsePipes,
+  ValidationPipe,
+  UseGuards,
+  UseInterceptors,
+  Get,
+  Param,
+  BadRequestException,
+  Delete,
 } from '@nestjs/common';
-import { RegisterAdminDto, LoginAdminDto, EditAdminDto } from './dto';
+import { RegisterAdminDto, EditAdminDto } from './dto';
 import { AdminService } from './admin.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -18,7 +27,6 @@ import { Message, Check } from '../common/vm';
 // The same note is made for the earlier imported BadRequestException
 import { ConfigHelper } from '../configHandler';
 import * as content from '../content';
-import { ChangePasswordDto } from './dto/changePassword.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 /**
@@ -34,7 +42,7 @@ export class AdminController {
   constructor(
     private readonly adminService: AdminService,
     private readonly authenticationService: AuthenticationService,
-  ) { }
+  ) {}
 
   /**
    * This is used to inject a new super user. For security, needs environment variable set to work.
@@ -43,9 +51,11 @@ export class AdminController {
    */
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('registerSuperAdmin')
-  async registerSuperAdmin(@Body() userData: RegisterAdminDto): Promise<Message> {
-    const allow = process.env.SUPER_ADMIN_FEATURES || "no";
-    if ( allow === "yes" ) {
+  async registerSuperAdmin(
+    @Body() userData: RegisterAdminDto,
+  ): Promise<Message> {
+    const allow = process.env.SUPER_ADMIN_FEATURES || 'no';
+    if (allow === 'yes') {
       return new Message(await this.adminService.registerAdmin(userData));
     }
     throw new BadRequestException(content.NonProdFeature);
@@ -62,7 +72,9 @@ export class AdminController {
   @ApiBearerAuth('super-admin')
   @ApiBearerAuth('admin')
   async getSelf(@Admin() adminData: any): Promise<AdminUserViewModel> {
-    return new AdminUserViewModel(await this.adminService.getAdmin(adminData.userId));
+    return new AdminUserViewModel(
+      await this.adminService.getAdmin(adminData.userId),
+    );
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -85,38 +97,10 @@ export class AdminController {
   @Get('login')
   @ApiBearerAuth('super-admin')
   @ApiBearerAuth('admin')
-  async autoLogin(@Admin() adminData: any): Promise<Check> {
+  async autoLogin(@Admin() adminData: any): Promise<JWTToken> {
     // This is a simple route the frontend can hit to verify a valid JWT.
-    return new Check(!(await this.adminService.isLockedOut(adminData.userId)));
+    return await this.authenticationService.loginAdmin(adminData);
   }
-
-  /**
-   * A route that attempts to log an admin into the system (generating a JWT).
-   *
-   * @param userData - LoginAdminDto
-   * @returns - { access_token }
-   */
-  @UsePipes(new ValidationPipe({ transform: true }))
-  @Post('login')
-  async login(@Body() userData: LoginAdminDto): Promise<JWTToken> {
-    return await this.authenticationService.loginAdmin(userData);
-  }
-
-  /**
-   * A route used to register new admins.
-   *
-   * @param userData - RegisterAdminDto
-   * @returns string - success message
-   */
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @AllowedRoles(Roles.SUPERUSER)
-  @UsePipes(new ValidationPipe({ transform: true }))
-  @Post('register')
-  @ApiBearerAuth('super-admin')
-  async create(@Body() userData: RegisterAdminDto): Promise<Message> {
-    return new Message(await this.adminService.registerAdmin(userData));
-  }
-
   /**
    * A route used to allow superusers to edit other admins.
    *
@@ -131,15 +115,6 @@ export class AdminController {
   @ApiBearerAuth('super-admin')
   async edit(@Body() userData: EditAdminDto): Promise<Message> {
     return new Message(await this.adminService.editAdmin(userData));
-  }
-
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @AllowedRoles(Roles.SUPERUSER, Roles.ADMIN)
-  @UsePipes(new ValidationPipe({ transform: true }))
-  @Post('changePassword')
-  @ApiBearerAuth('super-admin')
-  async changePassword(@Admin() adminData: any, @Body() userDate: ChangePasswordDto): Promise<Message> {
-    return new Message(await this.adminService.changePassword(adminData.userId, userDate));
   }
 
   /**
@@ -180,5 +155,4 @@ export class AdminController {
   async deleteAdmin(@Param('id') id: string): Promise<Message> {
     return new Message(await this.adminService.deleteAdmin(id));
   }
-
 }

@@ -9,10 +9,11 @@ import { getTestDB } from '../../test/testdb';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { AdminModule } from '../admin/admin.module';
 import { Admin } from '../admin/entities';
-import { ConflictException, HttpModule } from '@nestjs/common';
+import { ConflictException } from '@nestjs/common';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto } from './dto';
 import { Challenge, Junior } from './entities';
 import { SmsModule } from '../sms/sms.module';
+import { HttpModule } from '@nestjs/axios';
 
 describe('JuniorService', () => {
   let module: TestingModule;
@@ -32,29 +33,42 @@ describe('JuniorService', () => {
     birthday: new Date('05-05-2005').toISOString(),
     homeYouthClub: 'Tikkurila',
     status: 'a',
-    photoPermission: true
+    photoPermission: true,
   } as RegisterJuniorDto;
   let testLoginYouth: LoginJuniorDto;
   let juniorToEdit: EditJuniorDto;
 
-  const phoneNumberTransformer = (str: string) => str.charAt(0) === '0' ? str.replace('0', '358') : str;
+  const phoneNumberTransformer = (str: string) =>
+    str.charAt(0) === '0' ? str.replace('0', '358') : str;
 
   beforeAll(async () => {
     connection = await getTestDB();
     module = await Test.createTestingModule({
-      imports: [AppModule, JuniorModule, AdminModule, AuthenticationModule, SmsModule, HttpModule],
-      providers: [JuniorService, {
-        provide: getRepositoryToken(Admin),
-        useFactory: repositoryMockFactory,
-      }, {
+      imports: [
+        AppModule,
+        JuniorModule,
+        AdminModule,
+        AuthenticationModule,
+        SmsModule,
+        HttpModule,
+      ],
+      providers: [
+        JuniorService,
+        {
+          provide: getRepositoryToken(Admin),
+          useFactory: repositoryMockFactory,
+        },
+        {
           provide: getRepositoryToken(Junior),
           useFactory: repositoryMockFactory,
         },
         {
           provide: getRepositoryToken(Challenge),
           useFactory: repositoryMockFactory,
-        }],
-    }).overrideProvider(Connection)
+        },
+      ],
+    })
+      .overrideProvider(Connection)
       .useValue(connection)
       .compile();
 
@@ -75,17 +89,27 @@ describe('JuniorService', () => {
       await service.registerJunior(testRegisterYouth);
     }),
       it('should return a value (currently challenge data whilst waiting for further workflow)', async () => {
-        const challenge = await service.getChallengeByPhoneNumber(testRegisterYouth.phoneNumber);
+        const challenge = await service.getChallengeByPhoneNumber(
+          testRegisterYouth.phoneNumber,
+        );
         testLoginYouth = {
-          id: challenge.id, challenge: challenge.challenge,
+          id: challenge.id,
+          challenge: challenge.challenge,
         };
         expect(testLoginYouth.challenge).toBeDefined();
       }),
       it('should add the user to the database following a succesful registration', async () => {
-        const response = await service.getJuniorByPhoneNumber(testRegisterYouth.phoneNumber);
-        expect(response.phoneNumber === phoneNumberTransformer(testRegisterYouth.phoneNumber.toLowerCase()) &&
-          response.firstName === testRegisterYouth.firstName &&
-          response.lastName === testRegisterYouth.lastName).toBeTruthy();
+        const response = await service.getJuniorByPhoneNumber(
+          testRegisterYouth.phoneNumber,
+        );
+        expect(
+          response.phoneNumber ===
+            phoneNumberTransformer(
+              testRegisterYouth.phoneNumber.toLowerCase(),
+            ) &&
+            response.firstName === testRegisterYouth.firstName &&
+            response.lastName === testRegisterYouth.lastName,
+        ).toBeTruthy();
       }),
       it('should thrown a Conflict if the phone number already exists', async () => {
         const error = new ConflictException();
@@ -102,7 +126,11 @@ describe('JuniorService', () => {
     it('Should return an array containing all juniors', async () => {
       const response = await service.listAllJuniors();
       const isAnArray = Array.isArray(response);
-      const containsJuniors = response.some(e => e.phoneNumber === phoneNumberTransformer(testRegisterYouth.phoneNumber));
+      const containsJuniors = response.some(
+        (e) =>
+          e.phoneNumber ===
+          phoneNumberTransformer(testRegisterYouth.phoneNumber),
+      );
       expect(isAnArray && containsJuniors).toBeTruthy();
     });
   });
@@ -117,10 +145,19 @@ describe('JuniorService', () => {
           phoneNumber: '04122345600',
         } as EditJuniorDto;
         await service.editJunior(dto);
-        const updatedJunior = await service.getJuniorByPhoneNumber(dto.phoneNumber);
+        const updatedJunior = await service.getJuniorByPhoneNumber(
+          dto.phoneNumber,
+        );
         const updatedList = await service.listAllJuniors();
-        expect(updatedJunior.phoneNumber === phoneNumberTransformer(dto.phoneNumber)
-          && (!updatedList.some(e => e.phoneNumber === phoneNumberTransformer(juniorToEdit.phoneNumber.toLowerCase())))).toBeTruthy();
+        expect(
+          updatedJunior.phoneNumber ===
+            phoneNumberTransformer(dto.phoneNumber) &&
+            !updatedList.some(
+              (e) =>
+                e.phoneNumber ===
+                phoneNumberTransformer(juniorToEdit.phoneNumber.toLowerCase()),
+            ),
+        ).toBeTruthy();
       });
   });
 
@@ -132,7 +169,7 @@ describe('JuniorService', () => {
       it('Should delete the user provided', async () => {
         await service.deleteJunior(juniorToDelete);
         const juniorList = await service.listAllJuniors();
-        expect(juniorList.findIndex(j => j.id === juniorToDelete) < 0);
+        expect(juniorList.findIndex((j) => j.id === juniorToDelete) < 0);
       });
   });
 });

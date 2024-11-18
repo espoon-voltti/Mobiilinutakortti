@@ -1,4 +1,5 @@
-import { Module, HttpModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { SmsService } from './sms.service';
 
 @Module({
@@ -6,4 +7,4 @@ import { SmsService } from './sms.service';
   providers: [SmsService],
   exports: [SmsService],
 })
-export class SmsModule { }
+export class SmsModule {}

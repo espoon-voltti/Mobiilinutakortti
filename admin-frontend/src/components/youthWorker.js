@@ -6,14 +6,12 @@ import {
   FunctionField,
   BooleanField,
   BooleanInput,
-  Create,
   SimpleForm,
   TextInput,
   SelectInput,
-  required,
   EditButton,
   Edit,
-  SelectField
+  SelectField,
 } from 'react-admin';
 import { getYouthClubs } from '../utils';
 
@@ -27,45 +25,33 @@ export const YouthWorkerList = (props) => {
     addYouthClubsToState();
   }, []);
 
-
   if (youthClubs.length === 0) {
-    return null
+    return null;
   }
 
   return (
-    <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
+    <List
+      title="Nuorisotyöntekijät"
+      bulkActionButtons={false}
+      exporter={false}
+      pagination={false}
+      {...props}
+    >
       <Datagrid>
-        <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
+        <FunctionField
+          label="Nimi"
+          render={(record) => `${record.firstName} ${record.lastName}`}
+        />
         <TextField label="Sähköposti" source="email" />
-        <SelectField label="Kotinuorisotila" source="mainYouthClub" choices={youthClubs} />
+        <SelectField
+          label="Kotinuorisotila"
+          source="mainYouthClub"
+          choices={youthClubs}
+        />
         <BooleanField label="Ylläpitäjä" source="isSuperUser" />
         <EditButton />
       </Datagrid>
     </List>
-  );
-}
-
-export const YouthWorkerCreate = (props) => {
-  const [youthClubs, setYouthClubs] = useState([]);
-  useEffect(() => {
-    const addYouthClubsToState = async () => {
-      const parsedYouthClubs = await getYouthClubs();
-      setYouthClubs(parsedYouthClubs);
-    };
-    addYouthClubsToState();
-  }, []);
-
-  return (
-    <Create title="Rekisteröi nuorisotyöntekijä" {...props}>
-      <SimpleForm variant="standard" margin="normal" redirect="list">
-        <TextInput label="Sähköposti" source="email" type="email" validate={required()} />
-        <TextInput label="Salasana" source="password" type="password" validate={required()} />
-        <TextInput label="Etunimi" source="firstName" validate={required()} />
-        <TextInput label="Sukunimi" source="lastName" validate={required()} />
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubs} />
-        <BooleanInput label="Ylläpitäjä" source="isSuperUser" defaultValue={false} />
-      </SimpleForm>
-    </Create>
   );
 };
 
@@ -73,8 +59,8 @@ export const YouthWorkerEdit = (props) => {
   const [youthClubs, setYouthClubs] = useState([]);
   useEffect(() => {
     const addYouthClubsToState = async () => {
-        const parsedYouthClubs = await getYouthClubs();
-        setYouthClubs(parsedYouthClubs);
+      const parsedYouthClubs = await getYouthClubs();
+      setYouthClubs(parsedYouthClubs);
     };
     addYouthClubsToState();
   }, []);
@@ -86,7 +72,8 @@ export const YouthWorkerEdit = (props) => {
     const checkTitles = () => {
       const title = document.getElementById('alert-dialog-title');
       if (title) {
-        title.getElementsByTagName("h2")[0].innerHTML = 'Poista nuorisotyöntekijä';
+        title.getElementsByTagName('h2')[0].innerHTML =
+          'Poista nuorisotyöntekijä';
       }
     };
     const observer = new MutationObserver(checkTitles);
@@ -94,8 +81,8 @@ export const YouthWorkerEdit = (props) => {
 
     return () => {
       observer.disconnect();
-    }
-  }, [])
+    };
+  }, []);
 
   return (
     <Edit title="Muokkaa nuorisotyöntekijää" {...props} undoable={false}>
@@ -103,9 +90,14 @@ export const YouthWorkerEdit = (props) => {
         <TextInput label="Sähköposti" source="email" type="email" />
         <TextInput label="Etunimi" source="firstName" />
         <TextInput label="Sukunimi" source="lastName" />
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubs} />
+        <SelectInput
+          label="Kotinuorisotila"
+          source="mainYouthClub"
+          allowEmpty
+          choices={youthClubs}
+        />
         <BooleanInput label="Ylläpitäjä" source="isSuperUser" />
       </SimpleForm>
-    </Edit >
+    </Edit>
   );
 };

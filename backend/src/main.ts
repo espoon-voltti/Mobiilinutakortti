@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as express from 'express';
 import { join } from 'path';
-import { ConfigHelper } from './configHandler';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as fs from 'fs';
 import * as cookieParser from 'cookie-parser';
@@ -23,21 +22,39 @@ async function bootstrap() {
     .setTitle('Nutakortti')
     .setDescription('API for Nutakortti project')
     .setVersion('1.0')
-    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'super-admin')
-    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'admin')
-    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'junior')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
+      'super-admin',
+    )
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
+      'admin',
+    )
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
+      'junior',
+    )
     .build();
 
-  const app = httpsOptions ?
-    await NestFactory.create(AppModule, { ...httpsOptions, bufferLogs: true }) :
-    await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = httpsOptions
+    ? await NestFactory.create(AppModule, {
+        ...httpsOptions,
+        bufferLogs: true,
+      })
+    : await NestFactory.create(AppModule, {
+        bufferLogs: true,
+      });
+
   if (process.env.JSON_LOGS) {
     app.useLogger(app.get(Logger));
   }
+
   app.enableCors();
+
   app.use('/', express.static(join(__dirname, '..', 'public')));
   app.use('/', express.static(join(__dirname, '..', 'public-admin')));
-  app.use(cookieParser());
+
+  app.use(cookieParser(process.env.COOKIE_SECRET));
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/swagger', app, document);

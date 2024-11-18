@@ -12,13 +12,13 @@ import { JwtStrategy } from '../authentication/jwt.strategy';
 import { getTestDB } from '../../test/testdb';
 import { AdminModule } from '../admin/admin.module';
 import { AppModule } from '../app.module';
-import { HttpModule } from '@nestjs/common';
 import { JuniorModule } from '../junior/junior.module';
 import { Challenge, Junior } from '../junior/entities';
 import { SmsModule } from '../sms/sms.module';
 import { SecurityContextDto, AcsDto } from './dto';
 import { sign } from 'cookie-signature';
 import { secretString } from './secret';
+import { HttpModule } from '@nestjs/axios';
 
 describe('AuthenticationService', () => {
   let module: TestingModule;
@@ -28,16 +28,27 @@ describe('AuthenticationService', () => {
   beforeAll(async () => {
     connection = await getTestDB();
     module = await Test.createTestingModule({
-      imports: [AuthenticationModule, AdminModule, AppModule, JuniorModule, SmsModule, HttpModule, JwtModule.register({
-        secret: jwt.secret,
-      })],
-      providers: [AuthenticationService, {
-        provide: getRepositoryToken(Admin),
-        useFactory: repositoryMockFactory,
-      }, {
-        provide: getRepositoryToken(Junior),
-        useFactory: repositoryMockFactory,
-      },
+      imports: [
+        AuthenticationModule,
+        AdminModule,
+        AppModule,
+        JuniorModule,
+        SmsModule,
+        HttpModule,
+        JwtModule.register({
+          secret: jwt.secret,
+        }),
+      ],
+      providers: [
+        AuthenticationService,
+        {
+          provide: getRepositoryToken(Admin),
+          useFactory: repositoryMockFactory,
+        },
+        {
+          provide: getRepositoryToken(Junior),
+          useFactory: repositoryMockFactory,
+        },
         {
           provide: getRepositoryToken(Challenge),
           useFactory: repositoryMockFactory,
@@ -45,8 +56,11 @@ describe('AuthenticationService', () => {
         {
           provide: getRepositoryToken(Lockout),
           useFactory: repositoryMockFactory,
-        }, JwtStrategy],
-    }).overrideProvider(Connection)
+        },
+        JwtStrategy,
+      ],
+    })
+      .overrideProvider(Connection)
       .useValue(connection)
       .compile();
 
@@ -69,15 +83,23 @@ describe('AuthenticationService', () => {
     const lastName = 'Test2';
     const zipCode = '12345';
     let signedString = '';
-    const twoHoursAgo = (new Date().getTime() / 1000) - (3600 * 2);
-    const twoHoursLeft = (new Date().getTime() / 1000) + (3600 * 2);
+    const twoHoursAgo = new Date().getTime() / 1000 - 3600 * 2;
+    const twoHoursLeft = new Date().getTime() / 1000 + 3600 * 2;
     it('should generate security context', async () => {
-      const acsData = { sessionIndex, nameId, firstName, lastName, zipCode } as AcsDto;
-      const expectedSecurityContext = sign(`${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`, secretString);
+      const acsData = {
+        sessionIndex,
+        nameId,
+        firstName,
+        lastName,
+        zipCode,
+      } as AcsDto;
+      const expectedSecurityContext = sign(
+        `${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`,
+        secretString,
+      );
       signedString = service.generateSecurityContext(acsData).signedString;
       expect(signedString).toEqual(expectedSecurityContext);
     }),
-
       it('should validate security context to true ', async () => {
         const scData = {
           sessionIndex,
@@ -90,7 +112,6 @@ describe('AuthenticationService', () => {
         } as SecurityContextDto;
         expect(service.validateSecurityContext(scData)).toEqual(true);
       }),
-
       it('should validate security context to false when expired ', async () => {
         const scData = {
           sessionIndex: '12345',
@@ -103,7 +124,6 @@ describe('AuthenticationService', () => {
         } as SecurityContextDto;
         expect(service.validateSecurityContext(scData)).toEqual(false);
       }),
-
       it('should validate security context to false when signature wrong ', async () => {
         signedString = 'test';
         const scData = {

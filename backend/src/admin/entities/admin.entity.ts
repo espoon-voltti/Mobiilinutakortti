@@ -7,26 +7,25 @@ import { lowercase, jsonDataToBoolean } from '../../common/transformers';
  */
 @Entity()
 export class Admin {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @Column()
+  firstName: string;
 
-    @Column()
-    firstName: string;
+  @Column()
+  lastName: string;
 
-    @Column()
-    lastName: string;
+  @Column({ nullable: true })
+  password: string;
 
-    @Column()
-    password: string;
+  @IsEmail()
+  @Column({ unique: true, transformer: lowercase })
+  email: string;
 
-    @IsEmail()
-    @Column({ unique: true, transformer: lowercase })
-    email: string;
+  @Column({ default: false, transformer: jsonDataToBoolean })
+  isSuperUser: boolean;
 
-    @Column({ default: false, transformer: jsonDataToBoolean })
-    isSuperUser: boolean;
-
-    @Column({ default: '', nullable: true })
-    mainYouthClub: string;
+  @Column({ default: '', nullable: true })
+  mainYouthClub: string;
 }

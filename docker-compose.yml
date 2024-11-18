@@ -1,4 +1,4 @@
-version: '3.3'
+version: "3.3"
 
 services:
   nutakortti:
@@ -31,3 +31,17 @@ services:
       TELIA_PASSWORD:
       TELIA_USER:
       TELIA_USERNAME:
+      API_BASE_URL:
+      REDIS_HOST:
+      REDIS_PORT:
+      REDIS_PASSWORD:
+      REDIS_TLS_SERVER_NAME:
+      REDIS_DISABLE_SECURITY:
+      AD_SAML_ENTRYPOINT_URL:
+      AD_SAML_LOGOUT_URL:
+      AD_SAML_ISSUER:
+      AD_SAML_PUBLIC_CERT:
+      AD_SAML_IDP_CERT:
+      AD_SAML_PRIVATE_CERT:
+      CRYPTO_SECRET_KEY:
+      COOKIE_SECRET:
