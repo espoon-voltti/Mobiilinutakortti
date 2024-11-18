@@ -56,8 +56,8 @@ export const LandingPage = () => {
 
   return (
     <div style={{ marginLeft: '20%', marginTop: '3em' }}>
-      <p>Tervetuloa</p>
-      <div>
+      <p style={{ fontSize: '2rem', marginBottom: '1rem' }}>Tervetuloa</p>
+      <div style={{ fontSize: '1.2rem' }}>
         Jatka nuorten&nbsp;
         <button
           style={{
@@ -65,7 +65,7 @@ export const LandingPage = () => {
             border: 'none',
             color: '-webkit-link',
             cursor: 'pointer',
-            fontSize: '1rem',
+            fontSize: '1.2rem',
             padding: '0',
             textDecoration: 'underline',
           }}
@@ -76,7 +76,12 @@ export const LandingPage = () => {
         <select
           ref={dropdownRef}
           onChange={handleYouthClubChange}
-          style={{ fontSize: '1rem', marginLeft: '0.5rem', marginTop: '1rem' }}
+          style={{
+            fontSize: '1.2rem',
+            marginLeft: '0.5rem',
+            marginTop: '1rem',
+            padding: '0.3em',
+          }}
         >
           <option key="" value="-1"></option>
           {youthClubs.map((yc) => (
@@ -94,7 +99,7 @@ export const LandingPage = () => {
                 border: 'none',
                 color: '-webkit-link',
                 cursor: 'pointer',
-                fontSize: '1rem',
+                fontSize: '1.2rem',
                 padding: '0',
                 textDecoration: 'underline',
               }}
@@ -104,14 +109,11 @@ export const LandingPage = () => {
             </button>
           )}
       </div>
-      <p>
+      <p style={{ fontSize: '1.2rem' }}>
         tai listaa <a href="#/junior">kaikki nuoret</a>.
       </p>
-      {/* {(useEntraID || userInfo.current?.passwordLastChanged) ? null : (<div style={{marginTop: '3em'}}>
-        <p>Muistutus: sinun tulee <a href='#/password'>vaihtaa salasanasi</a>.</p>
-      </div>)} */}
       {!usersYouthClubId && (
-        <div style={{ marginTop: '3em' }}>
+        <div style={{ fontSize: '1.2rem', color: '#555' }}>
           <p>Voit asettaa itsellesi oletusnuorisotilan yltä.</p>
         </div>
       )}

@@ -304,7 +304,6 @@ export class AdSsoService {
           sameSite: 'lax', // Prevent CSRF attacks
         },
       );
-
       // Redirect the user to the frontend
       res.redirect(`${this.loginSuccessUrl}${token.access_token}`);
     } catch (error) {
