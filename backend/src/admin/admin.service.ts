@@ -133,11 +133,7 @@ export class AdminService {
     if (!admin) {
       throw new BadRequestException(content.UserNotFound);
     }
-    try {
-      admin.mainYouthClub = clubId;
-    } catch {
-      throw new BadRequestException(content.ClubNotFound);
-    }
+    admin.mainYouthClub = clubId;
     await this.adminRepo.save(admin);
     return true;
   }
