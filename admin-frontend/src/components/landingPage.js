@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNotify } from 'react-admin';
-import { getYouthClubs, token } from '../utils';
+import { getYouthClubs } from '../utils';
 import { httpClient } from '../httpClients';
 import api from '../api';
 
@@ -8,7 +8,9 @@ export const LandingPage = () => {
   const notify = useNotify();
   const [youthClubs, setYouthClubs] = useState([]);
   const dropdownRef = useRef(null);
-  const usersYouthClubId = localStorage.getItem('main-youth-club');
+  const [usersYouthClubId, setUsersYouthClubId] = useState(
+    localStorage.getItem('main-youth-club'),
+  );
 
   useEffect(() => {
     const token = localStorage.getItem('admin-token');
@@ -41,6 +43,7 @@ export const LandingPage = () => {
     });
     if (response) {
       localStorage.setItem('main-youth-club', selectedYouthClub);
+      setUsersYouthClubId(selectedYouthClub);
       notify('Oletusnuorisotila asetettu');
     } else {
       notify('Virhe asettaessa nuorisotilaa');
