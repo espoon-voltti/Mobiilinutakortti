@@ -29,10 +29,9 @@ export class ConfigHelper {
   }
 
   static getAdminFrontEndBaseUrl(): string {
-    return (
-      `${process.env.FRONTEND_BASE_URL}/nuorisotyontekijat` ||
-      'http://localhost:3002/'
-    );
+    return process.env.FRONTEND_BASE_URL
+      ? `${process.env.FRONTEND_BASE_URL}/nuorisotyontekijat`
+      : 'http://localhost:3002/';
   }
 
   static getApiBaseUrl(): string {

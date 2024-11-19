@@ -16,6 +16,7 @@ import polyglotI18nProvider from 'ra-i18n-polyglot';
 import usePermissions from './hooks/usePermissions';
 import CustomLoginPage from './components/customLogin';
 import CustomLogoutButton from './components/customLogout';
+import { LandingPage } from './components/landingPage';
 
 const messages = {
   fi: finnishMessages,
@@ -55,6 +56,7 @@ const App = () => {
 
   return (
     <Admin
+      dashboard={LandingPage}
       layout={CustomLayout}
       loginPage={CustomLoginPage}
       i18nProvider={i18nProvider}

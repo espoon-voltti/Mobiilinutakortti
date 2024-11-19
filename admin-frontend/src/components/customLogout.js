@@ -14,6 +14,7 @@ const CustomLogoutButton = forwardRef(() => {
       onClick={() => {
         localStorage.removeItem(token);
         localStorage.removeItem('role');
+        localStorage.removeItem('main-youth-club');
         history.replace('/login');
         return true;
       }}

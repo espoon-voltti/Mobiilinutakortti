@@ -127,4 +127,14 @@ export class AdminService {
     // Save functions like upser
     return await this.adminRepo.save({ ...user, ...loginData });
   }
+
+  async setMainYouthClub(clubId: string, userId: string): Promise<boolean> {
+    const admin = await this.getAdmin(userId);
+    if (!admin) {
+      throw new BadRequestException(content.UserNotFound);
+    }
+    admin.mainYouthClub = clubId;
+    await this.adminRepo.save(admin);
+    return true;
+  }
 }

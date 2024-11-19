@@ -155,4 +155,22 @@ export class AdminController {
   async deleteAdmin(@Param('id') id: string): Promise<Message> {
     return new Message(await this.adminService.deleteAdmin(id));
   }
+
+  /**
+   * Sets the main (default) youth club for the youth worker for whom the bearer token belongs to.
+   */
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @AllowedRoles(Roles.ADMIN)
+  @Post('setMainYouthClub')
+  @ApiBearerAuth('admin')
+  @ApiBearerAuth('youthWorker')
+  async setMainYouthClub(
+    @Admin() admin: { userId: string },
+    @Body() body: { clubId: string },
+  ): Promise<Check> {
+    return new Check(
+      await this.adminService.setMainYouthClub(body.clubId, admin.userId),
+    );
+  }
 }
