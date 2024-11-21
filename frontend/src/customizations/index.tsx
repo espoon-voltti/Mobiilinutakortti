@@ -6,7 +6,7 @@ export const languages: Language[] = ['fi', 'sv', 'en']
 export const hiddenFormFields: CustomizableFormField[] = []
 
 const TopLogo = styled(function TopLogo({ className }: { className?: string }) {
-  return <h2 className={className}>Vantaa</h2>
+  return <h2 className={className}>Espoo</h2>
 })`
   max-width: 800px;
   margin: 0 auto;

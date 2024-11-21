@@ -96,7 +96,7 @@ Currently, there's no user interface for creating youth clubs. You can insert th
 
 ## Testing SMS functionality
 
-To test SMS functionality locally, rename `.env.template` file to `.env` in */backend* and update the Telia username/password/user fields with right values *(check in Microsoft Teams - Vantaan Kaupunki Wiki page to see whom to contact to get the values)*
+To test SMS functionality locally, rename `.env.template` file to `.env` in */backend* and update the Telia username/password/user fields with right values
 
 ## Creating test data
 
@@ -137,50 +137,3 @@ There's a lot of files under node_modules and they are all being watched, reachi
     echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
 Increasing memory limits for Docker might also help if for example you are using the Docker Desktop app to constrain them in the first place.
-
-## Environments, AWS and CI
-
-### CI
-
-GitHub uses github-actions to push master branch to test-environment, when push or merge occurs to the master branch. For more information, see the "Actions" tab in GitHub.
-
-### Test environment
-
-Application runs in Elastic Container Service (eu-west-1), with 3 different services:
-
-* [youth-club-server-service](https://api.mobiilinuta-admin-test.com/api)
-* [youth-club-mobile-front](http://youth-club-mobile-lb-74625212.eu-west-1.elb.amazonaws.com)
-* [youth-club-admin-front-2](https://mobiilinuta-admin-test.com)
-
-Application images are stored in Elastic Container Registry.
-You shouldn't need to update images or services manually, since Github does that for you.
-
-### Production environment
-
-Application runs in Elastic Beanstalk in a single container (using Dockerfile) and is deployed via command-line manually. The name is **nutakortti-vantaa-prod**. See next section for updating the production environment using EB CLI tools.
-
-* [Junior-app](https://nutakortti.vantaa.fi)
-* [Admin-app](https://nutakortti.vantaa.fi/nuorisotyontekijat)
-* [Api](https://nutakortti.vantaa.fi/api)
-
-Production logs are found in AWS CloudWatch under `/aws/elasticbeanstalk/nutakortti-vantaa-prod/var/log/` (just go to CloudWatch and select Log groups from the left panel). The current app log and nginx access/error logs are of most interest.
-
-### Updating the production environment using EB CLI tools
-
-Install the tools (for quick setup, follow the README in GitHub):
-* [AWS docs](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html)
-* [GitHub](https://github.com/aws/aws-elastic-beanstalk-cli-setup)
-* Remember to add EB CLI to PATH (e.g. `export PATH="/home/username/.ebcli-virtual-env/executables:$PATH"`).
-
-Configure the EB CLI:
-* [AWS docs](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-configuration.html)
-* Note: this process only initializes the current directory/repository on your computer. The relevant files have been added to gitignore.
-1. Go to project directory root (where this file is). Type: `eb init`.
-2. Select `eu-central-1` as the location (unless something's been changed).
-3. If you haven't set up your AWS credentials yet, provide your personal Access key ID and Secret access key. You got them when receiving the AWS credentials (you should have got the following: **User name,Password,Access key ID,Secret access key,Console login link**). On Linux/OS X, the credentials will be stored in `~/.aws/config`.
-4. Select the `Nutakortti` as application. Don't continue with CodeCommit (defaults to N).
-5. Ensure the environment is set up by typing `eb list`. You should see **nutakortti-vantaa-prod**.
-
-**Deploy a new version to production:**
-* While in the project root directory, type: `eb deploy nutakortti-vantaa-prod`
-* To see how things are progressing, type: `eb events -f`

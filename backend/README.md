@@ -79,7 +79,7 @@ The application needs at least one admin user to work properly. See the generic 
 
 ## Testing SMS functionality
 
-To test SMS functionality locally, rename `.env.template` file to `.env` and update the Telia username/password/user fields with right values _(check in Microsoft Teams - Vantaan Kaupunki Wiki page to see whom to contact to get the values)_
+To test SMS functionality locally, rename `.env.template` file to `.env` and update the Telia username/password/user fields with right values
 
 ## Task definition / environment variables / secrets
 
@@ -112,8 +112,8 @@ The environment variables are:
 
 Additionally, the frontend apps require these environment variables:
 
-- `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
-- `REACT_APP_ADMIN_FRONTEND_URL`: (only for admin-frontend) URL where to go when an admin logouts, e.g. "https://nutakortti.vantaa.fi/nuorisotyontekijat/"
+- `REACT_APP_ENDPOINT`: the base API URL
+- `REACT_APP_ADMIN_FRONTEND_URL`: (only for admin-frontend) URL where to go when an admin logouts
 
 New env variables added for ad integration
 
