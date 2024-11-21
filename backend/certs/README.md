@@ -3,7 +3,7 @@
 ## Terminology
 
 * IdP: Identity provider, in this case the Suomi.fi Tunnistus service.
-* SP: Service provider, or Vantaan Mobiilinutakortti (i.e. this application).
+* SP: Service provider
 * SAML2: SAML 2.0, an XML-based protocol which is in this case used to pass information about the end user between the IdP and SP.
 * X.509: a standard defining the format of public key certificates.
 * CA: Certificate Authority, an entity that issues digital certificates.
@@ -18,9 +18,11 @@ The certificate used in SAML2 communication is different to the TLS certificate 
 
 ## Production environment
 
-For production environment, a certificate issued by a CA is needed. This is handled via the city of Vantaa and their agreements with a CA.
+For production environment, a certificate issued by a CA is needed. This is handled via the city of Espoo and their agreements with a CA.
 
 ## Test environment
+
+** This contains legacy example values from the vantaa repository that this repository was originally forked from **
 
 For the test environment, a self-signed certificate is used. The procedure for creating the certificate using OpenSSL is as follows:
 
