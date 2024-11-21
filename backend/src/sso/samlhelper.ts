@@ -19,7 +19,7 @@ export class SAMLHelper {
 
     Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient" (a constant)
     NameQualifier="https://testi.apro.tunnistus.fi/idp1" (the IdP)
-    SPNameQualifier="https://nutakortti-test.vantaa.fi" (the EntityID)
+    SPNameQualifier=(Espoo EntityID)
 
   If these attributes are not provided, the StatusCode in the Response SAML will be erroneous.
   Saml2-js builds the XML using xmlbuilder but does not provide a way at the moment for giving extra attributes.
