@@ -114,6 +114,10 @@ export const Button = styled.button`
 
 export const LogoutButton = styled(Button)`
     margin: 1em;
+    &:focus {
+        outline: 2px solid #007bff; /* Highlight color */
+        outline-offset: 2px; /* Space between outline and element */
+    }
 `;
 
 //Form components
