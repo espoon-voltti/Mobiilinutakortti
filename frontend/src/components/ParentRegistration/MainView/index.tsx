@@ -76,6 +76,10 @@ const LogoContainer = styled.div`
 const MainButton = styled(Button)`
     color: ${p => p.theme.pages.parentRedirect.description.buttonText};
     background: ${p => p.theme.pages.parentRedirect.description.buttonBackground};
+    :focus {
+    outline: 2px solid #4d7fcc;
+    outline-offset: 2px;
+    }
 `
 
 const PrivacyPolicyLink = styled.a`

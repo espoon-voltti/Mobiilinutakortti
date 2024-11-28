@@ -10,6 +10,10 @@ import styled, { useTheme } from 'styled-components'
 const ErrorButton = styled(Button)`
   color: ${p => p.theme.pages.registration.errorButtonText};
   background: ${p => p.theme.pages.registration.errorButtonBackground};
+  :focus {
+    outline: 2px solid #4d7fcc;
+    outline-offset: 2px;
+  }
 `
 
 export const ConfirmationLink = styled.a`
