@@ -15,3 +15,45 @@ code {
 .linkButton:hover {
   background-color: #0000000a; /* Custom hover color */
 }
+
+.loginButton {
+  text-size-adjust: 100%;
+  box-sizing: inherit;
+  height: 45px;
+  padding: 0 27px;
+  width: fit-content;
+  min-width: 100px;
+  text-align: center;
+  overflow-x: hidden;
+  border: 1px solid rgb(0, 71, 182);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1rem;
+  line-height: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+  color: rgb(255, 255, 255);
+  background-color: rgb(0, 71, 182);
+  margin-right: 0;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginButton:hover {
+  background-color: #00358a
+}
+
+.loginButton:focus {
+  outline: 2px solid #4d7fcc;
+  outline-offset: 2px;
+}
+
+.loginButton:active {
+  background-color: #00358a
+
+}
