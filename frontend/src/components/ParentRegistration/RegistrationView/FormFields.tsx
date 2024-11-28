@@ -65,6 +65,20 @@ const RadioField: React.FC<RadioProps & FieldProps> = ({
     form,
     ...props
   }) => {
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLLabelElement>) => {
+        if (event.key === 'Enter') {
+          // Trigger the onChange event
+          const changeEvent = {
+            target: {
+              name: field.name,
+              value: data.value,
+            },
+          } as React.ChangeEvent<HTMLInputElement>;
+          field.onChange(changeEvent);
+        }
+      };
+
     return (
         <SelectOption>
             <Radio type="radio" id={data.value}
@@ -75,7 +89,7 @@ const RadioField: React.FC<RadioProps & FieldProps> = ({
                 {...props}
                 onBlur={field.onBlur}
                 />
-            <SelectLabel htmlFor={data.value}>{data.label}</SelectLabel>
+            <SelectLabel htmlFor={data.value} tabIndex={0} onKeyDown={handleKeyDown}>{data.label}</SelectLabel>
         </SelectOption>
     )
 }
@@ -98,7 +112,7 @@ export const SelectGroup: React.FC<GroupProps> = ({
 }) => {
     const t = useTranslations()
     const inputs = options.map(option => (
-        <Field key={option.value} component={RadioField} name={name} data={option}/>
+        <Field key={option.value} component={RadioField} name={name} data={option} />
     ));
     return(
         <div>
