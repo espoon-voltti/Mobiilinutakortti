@@ -308,6 +308,11 @@ export const Dropdown = styled.div`
         & > option {
             color: #000;
         }
+
+        &:focus {
+            outline: 4px solid #007BFF;
+            background-color: #f0f8ff;
+        }
     }
     &::after {
         content: "\\2228";
