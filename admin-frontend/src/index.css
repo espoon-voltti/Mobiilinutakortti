@@ -45,7 +45,7 @@ code {
 }
 
 .loginButton:hover {
-  background-color: #00358a
+  background-color: #00358a;
 }
 
 .loginButton:focus {
@@ -54,6 +54,15 @@ code {
 }
 
 .loginButton:active {
-  background-color: #00358a
+  background-color: #00358a;
+}
 
+.focusable:focus {
+  outline: 2px solid #4d7fcc;
+  outline-offset: 2px;
+}
+
+.toggleField:focus-within label {
+  outline: 2px solid #4d7fcc;
+  outline-offset: 2px;
 }
