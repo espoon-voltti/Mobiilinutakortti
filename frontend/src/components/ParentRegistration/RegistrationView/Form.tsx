@@ -70,16 +70,20 @@ const InnerForm = (props: FormikProps<FormValues>) => {
     >
       <Column>
         <Fieldset>
-          <FieldTitle>{t.parentRegistration.form.juniorHeading}</FieldTitle>
+          <FieldTitle tabIndex={0}>
+            {t.parentRegistration.form.juniorHeading}
+          </FieldTitle>
           <Field
             name="juniorFirstName"
             component={InputField}
             title={t.parentRegistration.form.juniorFirstName}
+            aria-label={t.parentRegistration.form.juniorFirstName}
           />
           <Field
             name="juniorLastName"
             component={InputField}
             title={t.parentRegistration.form.juniorLastName}
+            aria-label={t.parentRegistration.form.juniorLastName}
           />
           {valueOrNull(
             "juniorNickName",
@@ -87,6 +91,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
               name="juniorNickName"
               component={InputField}
               title={t.parentRegistration.form.juniorNickName}
+              aria-label={t.parentRegistration.form.juniorNickName}
             />
           )}
           <Field
@@ -94,12 +99,14 @@ const InnerForm = (props: FormikProps<FormValues>) => {
             component={InputField}
             title={t.parentRegistration.form.juniorBirthday}
             placeholder={t.parentRegistration.form.juniorBirthdayPlaceholder}
+            aria-label={t.parentRegistration.form.juniorBirthday}
           />
           <Field
             name="juniorPhoneNumber"
             component={InputField}
             type="phone"
             title={t.parentRegistration.form.juniorPhoneNumber}
+            aria-label={t.parentRegistration.form.juniorPhoneNumber}
           />
           {valueOrNull(
             "postCode",
@@ -107,6 +114,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
               name="postCode"
               component={InputField}
               title={t.parentRegistration.form.postCode}
+              aria-label={t.parentRegistration.form.postCode}
             />
           )}
           {valueOrNull(
@@ -115,6 +123,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
               name="school"
               component={InputField}
               title={t.parentRegistration.form.school}
+              aria-label={t.parentRegistration.form.school}
             />
           )}
           {valueOrNull(
@@ -123,6 +132,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
               name="class"
               component={InputField}
               title={t.parentRegistration.form.class}
+              aria-label={t.parentRegistration.form.class}
             />
           )}
 
@@ -130,6 +140,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
             error={errors.juniorGender}
             touched={touched.juniorGender}
             title={t.parentRegistration.form.juniorGender}
+            aria-label={t.parentRegistration.form.juniorGender}
             name="juniorGender"
             options={[
               {
@@ -172,33 +183,41 @@ const InnerForm = (props: FormikProps<FormValues>) => {
       </Column>
       <Column>
         <Fieldset>
-          <FieldTitle>{t.parentRegistration.form.parentHeading}</FieldTitle>
+          <FieldTitle tabIndex={0}>
+            {t.parentRegistration.form.parentHeading}
+          </FieldTitle>
           <Field
             disabled
             name="parentFirstName"
             component={InputField}
             title={t.parentRegistration.form.parentFirstName}
+            aria-label={t.parentRegistration.form.parentFirstName}
           />
           <Field
             disabled
             name="parentLastName"
             component={InputField}
             title={t.parentRegistration.form.parentLastName}
+            aria-label={t.parentRegistration.form.parentLastName}
           />
           <Field
             name="parentPhoneNumber"
             component={InputField}
             type="phone"
             title={t.parentRegistration.form.parentPhoneNumber}
+            aria-label={t.parentRegistration.form.parentPhoneNumber}
           />
         </Fieldset>
 
         <Fieldset>
-          <FieldTitle>{t.parentRegistration.form.youthClubHeading}</FieldTitle>
+          <FieldTitle tabIndex={0}>
+            {t.parentRegistration.form.youthClubHeading}
+          </FieldTitle>
           <Field
             name="youthClub"
             component={DropdownField}
             title={t.parentRegistration.form.youthClubHeading}
+            aria-label={t.parentRegistration.form.youthClubHeading}
             options={status.clubs}
             defaultChoice={t.parentRegistration.form.youthClubDefault}
             description={t.parentRegistration.form.youthClubDescription}
@@ -206,13 +225,14 @@ const InnerForm = (props: FormikProps<FormValues>) => {
         </Fieldset>
 
         <Fieldset>
-          <FieldTitle>
+          <FieldTitle tabIndex={0}>
             {t.parentRegistration.form.communicationsLanguage}
           </FieldTitle>
           <Field
             name="communicationsLanguage"
             component={DropdownField}
             title={t.parentRegistration.form.communicationsLanguage}
+            aria-label={t.parentRegistration.form.communicationsLanguage}
             options={languages.map((lang) => ({
               value: lang,
               label: t.languages[lang],
@@ -236,13 +256,13 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                   tabIndex={0}
                   onKeyDown={(event) => {
                     if (event.key === " ") {
-                      const newValue = !field.value
+                      const newValue = !field.value;
                       const changeEvent = {
                         target: {
                           name: field.name,
                           value: newValue,
                         },
-                      } 
+                      };
                       field.onChange(changeEvent);
                     }
                   }}
