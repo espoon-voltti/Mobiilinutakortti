@@ -36,7 +36,7 @@ const CustomLoginPage = () => {
   return (
     <div style={styles.container}>
       <div style={styles.loginContainer}>
-        <h2>Kirjaudu sisään</h2>
+        <h2 aria-label='Kirjaudu sisään'>Kirjaudu sisään</h2>
         <a
           className="loginButton"
           href={apiEndpoints.saml.login}
