@@ -114,6 +114,10 @@ export const Button = styled.button`
 
 export const LogoutButton = styled(Button)`
     margin: 1em;
+    &:focus {
+        outline: 2px solid #007bff; /* Highlight color */
+        outline-offset: 2px; /* Space between outline and element */
+    }
 `;
 
 //Form components
@@ -303,6 +307,11 @@ export const Dropdown = styled.div`
         cursor: pointer;
         & > option {
             color: #000;
+        }
+
+        &:focus {
+            outline: 4px solid #007BFF;
+            background-color: #f0f8ff;
         }
     }
     &::after {

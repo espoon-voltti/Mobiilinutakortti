@@ -49,7 +49,7 @@ export const YouthWorkerList = (props) => {
           choices={youthClubs}
         />
         <BooleanField label="Ylläpitäjä" source="isSuperUser" />
-        <EditButton />
+        <EditButton className="focusable"/>
       </Datagrid>
     </List>
   );
@@ -96,7 +96,7 @@ export const YouthWorkerEdit = (props) => {
           allowEmpty
           choices={youthClubs}
         />
-        <BooleanInput label="Ylläpitäjä" source="isSuperUser" />
+        <BooleanInput label="Ylläpitäjä" source="isSuperUser" className="toggleField"/>
       </SimpleForm>
     </Edit>
   );

@@ -36,8 +36,11 @@ const CustomLoginPage = () => {
   return (
     <div style={styles.container}>
       <div style={styles.loginContainer}>
-        <h2>Kirjaudu sisään</h2>
-        <a href={apiEndpoints.saml.login} style={styles.button}>
+        <h2 aria-label='Kirjaudu sisään'>Kirjaudu sisään</h2>
+        <a
+          className="loginButton"
+          href={apiEndpoints.saml.login}
+        >
           Espoo AD
         </a>
       </div>
@@ -66,45 +69,6 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     padding: '60px',
-  },
-  button: {
-    textSizeAdjust: '100%',
-    boxSizing: 'inherit',
-    height: '45px',
-    padding: '0 27px',
-    width: 'fit-content',
-    minWidth: '100px',
-    textAlign: 'center',
-    overflowX: 'hidden',
-    border: `1px solid rgb(0, 71, 182)`,
-    borderRadius: '4px',
-    outline: 'none',
-    cursor: 'pointer',
-    fontFamily: "'Open Sans', sans-serif",
-    fontSize: '1rem',
-    lineHeight: '1rem',
-    fontWeight: '600',
-    whiteSpace: 'nowrap',
-    letterSpacing: '0.2px',
-    color: `rgb(255, 255, 255)`,
-    backgroundColor: `rgb(0, 71, 182)`,
-    marginRight: '0',
-    textDecoration: 'none',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-
-    // Pseudo-classes as nested objects
-    '&:hover': {
-      backgroundColor: `#00358a`,
-    },
-    '&:focus': {
-      outline: `2px solid #4d7fcc`,
-      outlineOffset: '2px',
-    },
-    '&:active': {
-      backgroundColor: `#00358a`,
-    },
   },
 };
 

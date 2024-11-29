@@ -84,7 +84,7 @@ let LogBookListView = (props) => {
                             <LogBookCardHeader title="Valitse Päivämäärä" />
                             <LogBookCardContentSelect>
                                 <DateInput label="Päivämäärä" source="queryDate" />
-                                <Button type="submit">Hae</Button>
+                                <Button type="submit" className="focusable">Hae</Button>
                             </LogBookCardContentSelect>
                         </LogBookCard>
                     </form>

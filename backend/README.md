@@ -132,6 +132,9 @@ New env variables added for ad integration
 - `CRYPTO_SECRET_KEY`: Secret key for encryption (32 characters for AES-256-CBC)
 - `COOKIE_SECRET`: Secret key for cookies
 
+Use the variable AD_MOCK if you want to mock the AD for the local development
+- `AD_MOCK=true`
+
 ## Swagger documentation
 
 Swagger documentation endpoint located at "api/swagger". The documentation is configured so that endpoints are auto generated, along with their comments. Future endpoint only need to mark which tag it belong to and which authentication level it have. Optional comments can be added for context.
