@@ -50,7 +50,7 @@ To change password for a PostgreSQL user, use the psql command `\password <user>
    - For example: `export RDS_HOSTNAME=localhost` would use a PostgreSQL install on localhost without editing the file.
    - The username and password are for PostgreSQL
    - PostgreSQL roles can be checked with psql using the command `\du`.
-3. Run the backend locally via `npm run start:dev`
+3. Run the backend locally via `AD_MOCK=true npm run start:dev`
 
 Once the backend and database are up and running locally, to make sure the everything is working fine - navigate to [http://localhost:3000/api](http://localhost:3000/api) and you'll see the message _"API is running"_.
 
