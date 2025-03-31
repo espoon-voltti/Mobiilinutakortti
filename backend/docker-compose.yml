@@ -23,11 +23,11 @@ services:
       timeout: 5s
       retries: 5
 
-    app:
-      image: mobiilinutakortti_backend
-      depends_on:
-        - db
-      ports:
-        - 3000:3000
+  app:
+    image: mobiilinutakortti_backend
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
 volumes:
   db-data:
