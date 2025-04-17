@@ -1,4 +1,4 @@
-const appUrl = process.env.REACT_APP_ENDPOINT;
+const appUrl = import.meta.env.VITE_ENDPOINT;
 
 const apiEndpoints = {
   junior: {
