@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Notification } from 'react-admin';
 import NavigationPrompt from 'react-router-navigation-prompt';
 import ConfirmNavigationModal from '../ConfirmNavigationModal';
-import QrReader from 'react-qr-reader';
+import QrReader from './qrReader';
 import QrCheckResultScreen from './qrCheckResultScreen';
 import LoadingMessage from '../loadingMessage';
 import { useNotify } from 'react-admin';
@@ -154,10 +154,6 @@ const CheckInView = (props) => {
     }
   };
 
-  const handleError = () => {
-    notify('Jokin meni pieleen! Kokeile uudestaan.', 'warning');
-  };
-
   // Calculate minutes and seconds from remaining time
   const minutes = String(Math.floor(remainingTime / 60)).padStart(2, '0');
   const seconds = String(remainingTime % 60).padStart(2, '0');
@@ -193,7 +189,6 @@ const CheckInView = (props) => {
           <QrReader
             delay={300}
             onScan={handleScan}
-            onError={handleError}
             facingMode={facingMode}
             style={{ width: '100%', height: '100%' }}
           />
