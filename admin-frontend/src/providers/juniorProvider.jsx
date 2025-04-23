@@ -133,6 +133,6 @@ export const juniorProvider = (type, params, httpClient) => {
                 });
         }
         default:
-            throw new Error(`Unsupported Data Provider request type ${type}`);
+            return Promise.reject(new Error(`Unsupported Data Provider request type ${type}`));
     }
 }

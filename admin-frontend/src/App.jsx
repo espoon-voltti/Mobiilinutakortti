@@ -1,22 +1,25 @@
 import React, { useEffect } from 'react';
-import { Admin, Resource } from 'react-admin';
+import { Admin, CustomRoutes, Resource } from 'react-admin';
+import { Route } from 'react-router-dom';
 
 import finnishMessages from 'ra-language-finnish';
 import { authProvider, dataProvider } from './providers';
 import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
 import { YouthClubList } from './components/youthClub';
 import { YouthWorkerList, YouthWorkerEdit } from './components/youthWorker';
-import { routes, superAdminRoutes } from './customRoutes';
 import ChildCareIcon from '@material-ui/icons/ChildCare';
 import { httpClient } from './httpClients';
 import api from './api';
-import { AUTH_LOGOUT } from 'react-admin';
 import CustomLayout from './customLayout';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
-import usePermissions from './hooks/usePermissions';
 import CustomLoginPage from './components/customLogin';
 import CustomLogoutButton from './components/customLogout';
 import { LandingPage } from './components/landingPage';
+import CheckInView from './components/checkIn/checkIn';
+import LogBookView from './components/logbook';
+import LogBookListView from './components/logbookList';
+import NewSeason from './components/newSeason';
+import DeleteExpiredUsers from './components/deleteExpiredUsers';
 
 const messages = {
   fi: finnishMessages,
@@ -25,9 +28,6 @@ const messages = {
 const i18nProvider = polyglotI18nProvider((locale) => messages[locale], 'fi');
 
 const App = () => {
-  const { isSuperAdmin } = usePermissions();
-  const customRoutes = routes.concat(...(isSuperAdmin ? superAdminRoutes : []));
-
   useEffect(() => {
     let validCheck = setInterval(async () => {
       const url = api.auth.login;
@@ -41,7 +41,7 @@ const App = () => {
             response.statusCode >= 300 ||
             response.result === false
           ) {
-            await authProvider(AUTH_LOGOUT, {});
+            await authProvider.logout();
             window.location.reload();
           }
         });
@@ -62,39 +62,41 @@ const App = () => {
       i18nProvider={i18nProvider}
       dataProvider={dataProvider}
       authProvider={authProvider}
-      customRoutes={customRoutes}
       disableTelemetry
       logoutButton={CustomLogoutButton}
     >
-      {(permissions) => [
-        permissions === 'SUPERADMIN' || permissions === 'ADMIN' ? (
-          <Resource
-            name="junior"
-            options={{ label: 'Nuoret' }}
-            list={JuniorList}
-            create={JuniorCreate}
-            icon={ChildCareIcon}
-            edit={JuniorEdit}
-          />
-        ) : null,
+      <Resource
+        name="junior"
+        options={{ label: 'Nuoret' }}
+        list={JuniorList}
+        create={JuniorCreate}
+        icon={ChildCareIcon}
+        edit={JuniorEdit}
+      />
 
-        permissions === 'SUPERADMIN' || permissions === 'ADMIN' ? (
-          <Resource
-            name="youthClub"
-            options={{ label: 'Nuorisotilat' }}
-            list={YouthClubList}
-          />
-        ) : null,
+      <Resource
+        name="youthClub"
+        options={{ label: 'Nuorisotilat' }}
+        list={YouthClubList}
+      />
 
-        permissions === 'SUPERADMIN' ? (
-          <Resource
-            name="youthWorker"
-            options={{ label: 'Nuorisotyöntekijät' }}
-            list={YouthWorkerList}
-            edit={YouthWorkerEdit}
-          />
-        ) : null,
-      ]}
+      <Resource
+        name="youthWorker"
+        options={{ label: 'Nuorisotyöntekijät' }}
+        list={YouthWorkerList}
+        edit={YouthWorkerEdit}
+      />
+
+      <CustomRoutes noLayout>
+        <Route exact path="/checkIn/:youthClubId" element={<CheckInView />} />
+      </CustomRoutes>
+      <CustomRoutes>
+        <Route exact path="/logbook/:youthClubId" element={<LogBookView />} />
+        <Route exact path="/checkIns/:youthClubId" element={<LogBookListView />} />
+        <Route path="/newSeason" element={<NewSeason />} />
+        <Route path="/deleteExpiredUsers" element={<DeleteExpiredUsers />} />
+      </CustomRoutes>
+
     </Admin>
   );
 };

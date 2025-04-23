@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { DateInput, useNotify } from 'react-admin';
-import { Form } from 'react-final-form';
+import { Button, DateInput, Form, useNotify } from 'react-admin';
+import { useParams } from 'react-router-dom';
 import {
-    Button, Table, TableHead,
+    Table, TableHead,
     TableRow, TableCell, TableBody,
     Link
 } from '@material-ui/core';
@@ -17,7 +17,8 @@ import {
 import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
 
-let LogBookListView = (props) => {
+let LogBookListView = () => {
+    const { youthClubId } = useParams();
     const [clubName, setClubName] = useState('');
     const [table, setTable] = useState([]);
     const [searchDate, setSearchDate] = useState('');
@@ -53,7 +54,7 @@ let LogBookListView = (props) => {
         if (!isNaN(date.getTime())) {
             const url = api.youthClub.checkIns;
             const body = JSON.stringify({
-                clubId: props.match.params.youthClubId,
+                clubId: youthClubId,
                 date: date
             });
             const options = {
@@ -76,20 +77,15 @@ let LogBookListView = (props) => {
 
     return (
         <Container>
-            <Form
-                onSubmit={getCheckIns}
-                render={({ handleSubmit }) => (
-                    <form onSubmit={handleSubmit}>
-                        <LogBookCard>
-                            <LogBookCardHeader title="Valitse Päivämäärä" />
-                            <LogBookCardContentSelect>
-                                <DateInput label="Päivämäärä" source="queryDate" />
-                                <Button type="submit" className="focusable">Hae</Button>
-                            </LogBookCardContentSelect>
-                        </LogBookCard>
-                    </form>
-                )}
-            />
+            <Form onSubmit={getCheckIns}>
+                <LogBookCard>
+                    <LogBookCardHeader title="Valitse Päivämäärä" />
+                    <LogBookCardContentSelect>
+                        <DateInput label="Päivämäärä" source="queryDate" />
+                        <Button type="submit" className="focusable">Hae</Button>
+                    </LogBookCardContentSelect>
+                </LogBookCard>
+            </Form>
             <VerticalCardPadding />
             {clubName !== '' &&
                 <LogBookCard>

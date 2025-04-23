@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { DateInput, useNotify } from 'react-admin';
-import { Form } from 'react-final-form';
-import { Button } from '@material-ui/core';
+import { useParams } from 'react-router-dom';
+import { Button, DateInput, Form, useNotify } from 'react-admin';
 import {
     Container,
     LogBookCard,
@@ -16,14 +15,15 @@ import {
 import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
 
-// Alternative labels for mapping the genders 1-to-1 to LogBook 
+// Alternative labels for mapping the genders 1-to-1 to LogBook
 const genderLabel = {
     m: 'Poika',
     f: 'Tyttö',
     o: 'Ei binäärinen',
 };
-  
-let LogBookView = (props) => {
+
+const LogBookView = () => {
+    const { youthClubId } = useParams();
     const [clubName, setClubName] = useState('');
     const [data, setData] = useState([]);
     const [searchDate, setSearchDate] = useState('');
@@ -34,13 +34,13 @@ let LogBookView = (props) => {
         setData([]);
         setSearchDate('');
     }
-    
+
     const getLogBookEntry = async values => {
         const date = new Date(values.queryDate);
         if (!isNaN(date.getTime())) {
             const url = api.youthClub.logBook;
             const body = JSON.stringify({
-                clubId: props.match.params.youthClubId,
+                clubId: youthClubId,
                 date: date
             });
             const options = {
@@ -63,20 +63,15 @@ let LogBookView = (props) => {
 
     return (
         <Container>
-            <Form 
-                onSubmit={getLogBookEntry}
-                render={({ handleSubmit }) => (
-                    <form onSubmit={handleSubmit}>
-                        <LogBookCard>
-                            <LogBookCardHeader title="Valitse Päivämäärä" />
-                            <LogBookCardContentSelect>
-                                <DateInput label="Päivämäärä" source="queryDate" />
-                                <Button type="submit" className="focusable">Hae</Button>
-                            </LogBookCardContentSelect>
-                        </LogBookCard>
-                    </form>
-                )}
-            />
+            <Form onSubmit={getLogBookEntry} >
+                <LogBookCard>
+                    <LogBookCardHeader title="Valitse Päivämäärä" />
+                    <LogBookCardContentSelect>
+                        <DateInput label="Päivämäärä" source="queryDate" />
+                        <Button type="submit" className="focusable">Hae</Button>
+                    </LogBookCardContentSelect>
+                </LogBookCard>
+            </Form>
             <VerticalCardPadding />
             {clubName !== '' &&
                 <LogBookCard>

@@ -1,11 +1,12 @@
 import React from 'react';
 import {
+  Button,
   List,
   Datagrid,
   TextField,
+  useRecordContext,
 } from 'react-admin';
 import { Link } from 'react-router-dom';
-import Button from '@material-ui/core/Button';
 import { successSound, errorSound } from '../audio/audio';
 
 const prepareCheckIn = (id, facingMode, continuousCheckIn) => {
@@ -24,36 +25,40 @@ const prepareCheckIn = (id, facingMode, continuousCheckIn) => {
   errorSound.volume = 1;
 };
 
-const OpenCheckInButton = (props) => {
+const OpenCheckInButton = () => {
+  const record = useRecordContext();
   return (
     <Link to={{
-      pathname: `/checkIn/${props.record.id}`,
-      state: { record: props.record },
+      pathname: `/checkIn/${record.id}`,
+      state: { record },
     }}>
-      <Button onClick={() => prepareCheckIn(props.record.id, 'user', false)} variant="contained">Kirjautuminen</Button>
+      <Button onClick={() => prepareCheckIn(record.id, 'user', false)} variant="outlined">Kirjautuminen</Button>
     </Link>
   );
 };
 
-const OpenContinuousCheckInButton = (props) => {
+const OpenContinuousCheckInButton = () => {
+  const record = useRecordContext();
   return (
     <Link to={{
-      pathname: `/checkIn/${props.record.id}`,
-      state: { record: props.record },
+      pathname: `/checkIn/${record.id}`,
+      state: { record },
     }}>
-      <Button onClick={() => prepareCheckIn(props.record.id, 'environment', true)} variant="contained">Jatkuva
+      <Button onClick={() => prepareCheckIn(record.id, 'environment', true)} variant="outlined">Jatkuva
         kirjautuminen</Button>
     </Link>
   );
 };
 
-const OpenLogBookButton = (props) => (
-  <Button variant="contained" href={`#/logbook/${props.record.id}`}>Logbook</Button>
-);
+const OpenLogBookButton = () => {
+  const record = useRecordContext();
+  return <Button variant="outlined" href={`#/logbook/${record.id}`}>Logbook</Button>;
+};
 
-const OpenLogBookCheckInsButton = (props) => (
-  <Button variant="contained" href={`#/checkIns/${props.record.id}`}>Kirjautumiset</Button>
-);
+const OpenLogBookCheckInsButton = () => {
+  const record = useRecordContext();
+  return <Button variant="outlined" href={`#/checkIns/${record.id}`}>Kirjautumiset</Button>;
+};
 
 export const YouthClubList = (props) => (
   <List title="Nuorisotilat" bulkActionButtons={false} exporter={false} pagination={false} {...props}>

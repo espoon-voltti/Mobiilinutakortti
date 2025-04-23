@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Notification } from 'react-admin';
-import NavigationPrompt from 'react-router-navigation-prompt';
+import { useBlocker, useLocation, useParams } from 'react-router-dom';
 import ConfirmNavigationModal from '../ConfirmNavigationModal';
 import QrReader from './qrReader';
 import QrCheckResultScreen from './qrCheckResultScreen';
@@ -32,7 +32,9 @@ const QrReaderContainer = styled.div`
 
 let youthClubName = '';
 
-const CheckInView = (props) => {
+const CheckInView = () => {
+  const location = useLocation();
+  const { youthClubId } = useParams();
   const [showQRCode, setShowQRCode] = useState(true);
   const [showQrCheckNotification, setShowQrCheckNotification] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -61,7 +63,7 @@ const CheckInView = (props) => {
     if (continuousCheckIn == 'false') {
       localStorage.removeItem('admin-token');
       const initialCheckIn = sessionStorage.getItem('initialCheckIn');
-      const path = props.location.pathname;
+      const path = location.pathname;
       const m = path.match(/\d+/);
       const id = m !== null ? m.shift() : null;
       if (id !== initialCheckIn) {
@@ -90,11 +92,11 @@ const CheckInView = (props) => {
   }, []);
 
   useEffect(() => {
-    if (props.location.state !== undefined) {
-      localStorage.setItem('youthClubName', JSON.stringify(props.location.state.record.name));
-      youthClubName = props.location.state.record.name;
+    if (location.state != null) {
+      localStorage.setItem('youthClubName', JSON.stringify(location.state.record.name));
+      youthClubName = location.state.record.name;
     }
-    if (props.location.state === undefined) {
+    if (location.state === undefined) {
       youthClubName = JSON.parse(localStorage.getItem('youthClubName'));
     }
   }, []);
@@ -134,7 +136,7 @@ const CheckInView = (props) => {
 
       const url = api.youthClub.checkIn;
       const body = JSON.stringify({
-        clubId: props.match.params.youthClubId,
+        clubId: youthClubId,
         juniorId: qrData,
       });
       const options = {
@@ -161,25 +163,20 @@ const CheckInView = (props) => {
   const continuousCheckIn = sessionStorage.getItem('continuousCheckIn');
   const facingMode = sessionStorage.getItem('facingMode') || 'user';
 
+  // TODO: const blocker = useBlocker(continuousCheckIn == 'false');
+
   return (
     <Container>
       <Notification />
       <CheckinBackground />
 
-      {continuousCheckIn == 'false' && (
-        <NavigationPrompt
-          afterConfirm={logout}
-          disableNative={true}
-          when={true}
-        >
-          {({ onConfirm, onCancel }) => (
-            <ConfirmNavigationModal
-              onCancel={onCancel}
-              onConfirm={onConfirm}
-            />
-          )}
-        </NavigationPrompt>
-      )}
+      {/* TODO */}
+      {/*{blocker.state === 'blocked' && (*/}
+      {/*  <ConfirmNavigationModal*/}
+      {/*    onCancel={() => blocker.reset()}*/}
+      {/*    onConfirm={() => logout()}*/}
+      {/*  />*/}
+      {/*)}*/}
       {continuousCheckIn == 'true' && (
         <p>Kirjaudutaan ulos: {minutes}:{seconds}</p>
       )}

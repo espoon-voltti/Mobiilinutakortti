@@ -1,22 +1,8 @@
-import { useEffect, useState } from 'react';
-import { AUTH_GET_PERMISSIONS } from 'react-admin';
-import { authProvider } from '../providers';
+import { usePermissions as usePermissionsRA } from 'react-admin';
 
 const usePermissions = () => {
-  const [isSuperAdmin, setstate] = useState(false);
-
-  const getPermissions = async () => {
-    const permissions = await authProvider(AUTH_GET_PERMISSIONS);
-    setstate(permissions === 'SUPERADMIN');
-  };
-
-  useEffect(() => {
-    getPermissions();
-  });
-
-  return {
-    isSuperAdmin,
-  };
+  const { permissions } = usePermissionsRA();
+  return { isSuperAdmin: permissions === 'SUPERADMIN' };
 };
 
 export default usePermissions;

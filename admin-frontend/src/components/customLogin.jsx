@@ -1,42 +1,27 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { AUTH_CHECK, useNotify } from 'react-admin'; // React Admin hooks
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useNotify } from 'react-admin'; // React Admin hooks
 import { authProvider } from '../providers';
 import { token } from '../utils';
 import apiEndpoints from '../api';
 
 const CustomLoginPage = () => {
-  const notify = useNotify(); // React Admin's notify for error handling
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Watch the URL fragment to extract the token
   useEffect(() => {
-    const hash = window.location.hash; // Get the hash fragment
-    const urlParams = new URLSearchParams(hash.split('?')[1]); // Extract query parameters from the hash
+    const urlParams = new URLSearchParams(location.search.slice(1));
     const jwtToken = urlParams.get('t'); // Get the token from the query params
     if (jwtToken) {
       localStorage.setItem(token, jwtToken);
+      navigate('/', { replace: true }); // Redirect to home/dashboard after successful login
     }
-
-    if (jwtToken) {
-      handleLogin(jwtToken); // Handle login if token is found
-    }
-  }, [history.location]); // Re-run when the location changes
-
-  const handleLogin = async (token) => {
-    try {
-      // Pass the token to React Admin's login function
-      await authProvider(AUTH_CHECK);
-      history.replace('/'); // Redirect to home/dashboard after successful login
-    } catch (error) {
-      notify('Login failed'); // Show error notification if login fails
-    }
-  };
+  }, [location.search, navigate]); // Re-run when the location changes
 
   return (
     <div style={styles.container}>
       <div style={styles.loginContainer}>
-        <h2 aria-label='Kirjaudu sisään'>Kirjaudu sisään</h2>
+        <h2 aria-label="Kirjaudu sisään">Kirjaudu sisään</h2>
         <a
           className="loginButton"
           href={apiEndpoints.saml.login}

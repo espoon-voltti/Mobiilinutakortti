@@ -1,10 +1,10 @@
 import React, { forwardRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import apiEndpoints from '../api';
 import { token } from '../utils';
 
 const CustomLogoutButton = forwardRef(() => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return (
     <a
@@ -15,7 +15,7 @@ const CustomLogoutButton = forwardRef(() => {
         localStorage.removeItem(token);
         localStorage.removeItem('role');
         localStorage.removeItem('main-youth-club');
-        history.replace('/login');
+        navigate('login', { replace: true });
         return true;
       }}
     >
