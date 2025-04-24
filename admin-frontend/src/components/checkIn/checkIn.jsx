@@ -163,20 +163,19 @@ const CheckInView = () => {
   const continuousCheckIn = sessionStorage.getItem('continuousCheckIn');
   const facingMode = sessionStorage.getItem('facingMode') || 'user';
 
-  // TODO: const blocker = useBlocker(continuousCheckIn == 'false');
+  const blocker = useBlocker(continuousCheckIn == 'false');
 
   return (
     <Container>
       <Notification />
       <CheckinBackground />
 
-      {/* TODO */}
-      {/*{blocker.state === 'blocked' && (*/}
-      {/*  <ConfirmNavigationModal*/}
-      {/*    onCancel={() => blocker.reset()}*/}
-      {/*    onConfirm={() => logout()}*/}
-      {/*  />*/}
-      {/*)}*/}
+      {blocker.state === 'blocked' && (
+        <ConfirmNavigationModal
+          onCancel={() => blocker.reset()}
+          onConfirm={() => logout()}
+        />
+      )}
       {continuousCheckIn == 'true' && (
         <p>Kirjaudutaan ulos: {minutes}:{seconds}</p>
       )}

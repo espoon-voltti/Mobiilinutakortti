@@ -10,7 +10,6 @@ const MyMenu = () => {
   const { isSuperAdmin } = usePermissions();
   return (
     <Menu>
-      <Menu.DashboardItem />
       <Menu.Item
         to="/junior"
         primaryText="Nuoret"

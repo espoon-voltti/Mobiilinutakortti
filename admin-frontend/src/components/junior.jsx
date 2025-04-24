@@ -66,7 +66,7 @@ export const JuniorList = (props) => {
       title="Nuoret"
       pagination={<CustomPagination />}
       debounce={1000}
-      // TODO: filters={<JuniorFilter youthClubs={youthClubs} />}
+      filters={<JuniorFilter youthClubs={youthClubs} />}
       bulkActionButtons={false}
       exporter={false}
       {...props}
