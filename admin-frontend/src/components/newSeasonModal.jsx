@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Button } from 'react-admin';
-import { TextField } from '@material-ui/core';
+import { TextField } from '@mui/material';
 import { STATE } from '../state';
 
 const ModalContainer = styled.div`

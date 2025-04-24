@@ -1,9 +1,9 @@
 import React from 'react';
 import { Menu } from 'react-admin';
-import ChildCareIcon from '@material-ui/icons/ChildCare';
-import ListIcon from '@material-ui/icons/ViewList';
-import NewSeasonIcon from '@material-ui/icons/Autorenew';
-import DeleteIcon from '@material-ui/icons/DeleteForever';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
+import ListIcon from '@mui/icons-material/ViewList';
+import NewSeasonIcon from '@mui/icons-material/Autorenew';
+import DeleteIcon from '@mui/icons-material/DeleteForever';
 import usePermissions from './hooks/usePermissions';
 
 const MyMenu = () => {

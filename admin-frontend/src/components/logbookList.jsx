@@ -5,7 +5,7 @@ import {
     Table, TableHead,
     TableRow, TableCell, TableBody,
     Link
-} from '@material-ui/core';
+} from '@mui/material';
 import {
     Container,
     LogBookCard,

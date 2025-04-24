@@ -7,7 +7,7 @@ import { authProvider, dataProvider } from './providers';
 import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
 import { YouthClubList } from './components/youthClub';
 import { YouthWorkerList, YouthWorkerEdit } from './components/youthWorker';
-import ChildCareIcon from '@material-ui/icons/ChildCare';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
 import { httpClient } from './httpClients';
 import api from './api';
 import CustomLayout from './customLayout';
