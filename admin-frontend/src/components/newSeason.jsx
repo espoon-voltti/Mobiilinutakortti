@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Title, useNotify } from 'react-admin';
-import { Redirect } from 'react-router-dom';
-import Card from '@material-ui/core/Card';
-import Button from '@material-ui/core/Button';
-import CardContent from '@material-ui/core/CardContent';
+import { Button, Title, useNotify } from 'react-admin';
+import { Navigate } from 'react-router-dom';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
 import { STATE } from '../state';
@@ -34,7 +33,7 @@ const NewSeason = () => {
   };
 
   if (state === STATE.DONE) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" />;
   }
 
   return (
@@ -50,8 +49,7 @@ const NewSeason = () => {
         <p>Oletko varma, että haluat jatkaa?</p>
         <Button
           onClick={() => setModalVisible(true)}
-          variant="contained"
-          color="primary"
+          variant="outlined"
           size="large"
         >
           Kyllä

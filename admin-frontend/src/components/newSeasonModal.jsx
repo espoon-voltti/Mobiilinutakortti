@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Button } from '@material-ui/core';
-import { TextField } from '@material-ui/core';
+import { Button } from 'react-admin';
+import { TextField } from '@mui/material';
 import { STATE } from '../state';
 
 const ModalContainer = styled.div`
@@ -67,8 +67,7 @@ const NewSeasonModal = ({ onConfirm, onCancel, loadingState }) => {
           <Button
             onClick={() => onConfirm(date)}
             disabled={disabled}
-            variant="contained"
-            color="primary"
+            variant="outlined"
             className={'modal-button'}
           >
             {disabled ? 'Odota' : 'Aloita uusi kausi'}
@@ -76,7 +75,7 @@ const NewSeasonModal = ({ onConfirm, onCancel, loadingState }) => {
           <Button
             onClick={onCancel}
             disabled={disabled}
-            variant="contained"
+            variant="outlined"
             className={'modal-button'}
           >
             Peruuta

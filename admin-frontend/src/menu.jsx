@@ -1,52 +1,46 @@
 import React from 'react';
-import { MenuItemLink } from 'react-admin';
-import styled from 'styled-components';
-import ChildCareIcon from '@material-ui/icons/ChildCare';
-import ListIcon from '@material-ui/icons/ViewList';
-import NewSeasonIcon from '@material-ui/icons/Autorenew';
-import DeleteIcon from '@material-ui/icons/DeleteForever';
+import { Menu } from 'react-admin';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
+import ListIcon from '@mui/icons-material/ViewList';
+import NewSeasonIcon from '@mui/icons-material/Autorenew';
+import DeleteIcon from '@mui/icons-material/DeleteForever';
 import usePermissions from './hooks/usePermissions';
 
-const MenuContainer = styled.div`
-  margin-top: 1.5em;
-`;
-
-const Menu = () => {
+const MyMenu = () => {
   const { isSuperAdmin } = usePermissions();
-
   return (
-    <MenuContainer>
-      <MenuItemLink
+    <Menu>
+      <Menu.Item
         to="/junior"
         primaryText="Nuoret"
         leftIcon={<ChildCareIcon />}
       />
-      <MenuItemLink
+      <Menu.Item
         to="/youthClub"
         primaryText="Nuorisotilat"
         leftIcon={<ListIcon />}
       />
       {isSuperAdmin && (
-        <React.Fragment>
-          <MenuItemLink
+        <>
+          <Menu.Item
             to="/youthWorker"
             primaryText="Nuorisotyöntekijät"
             leftIcon={<ListIcon />}
           />
-          <MenuItemLink
+          <Menu.Item
             to="/newSeason"
             primaryText="Aloita uusi kausi"
             leftIcon={<NewSeasonIcon />}
           />
-          <MenuItemLink
+          <Menu.Item
             to="/deleteExpiredUsers"
             primaryText="Poista vanhat käyttäjät"
             leftIcon={<DeleteIcon />}
           />
-        </React.Fragment>
+        </>
       )}
-    </MenuContainer>
+    </Menu>
   );
 };
 
-export default Menu;
+export default MyMenu;

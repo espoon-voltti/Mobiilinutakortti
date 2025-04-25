@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Title, useNotify, GET_LIST } from 'react-admin';
-import { Redirect } from 'react-router-dom';
-import Card from '@material-ui/core/Card';
-import Button from '@material-ui/core/Button';
-import CardContent from '@material-ui/core/CardContent';
-import TextField from '@material-ui/core/TextField';
+import { Button, Title, useNotify, GET_LIST } from 'react-admin';
+import { Navigate } from 'react-router-dom';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import TextField from '@mui/material/TextField';
 import { juniorProvider } from '../providers/juniorProvider';
 import { httpClient } from '../httpClients';
 import { STATE } from '../state';
@@ -66,7 +65,7 @@ const DeleteExpiredUsers = () => {
   };
 
   if (state === STATE.DONE) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" />;
   }
 
   return (
@@ -80,9 +79,8 @@ const DeleteExpiredUsers = () => {
         </p>
         <Button
           onClick={handleClick}
-          variant="contained"
+          variant="outlined"
           disabled={state !== STATE.INITIAL || !expiredUserCount}
-          color="primary"
           label="Kyllä"
           size="large"
         >

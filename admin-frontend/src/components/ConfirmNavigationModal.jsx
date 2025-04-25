@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Button } from '@material-ui/core';
+import { Button } from 'react-admin';
 
 const ModalContainer = styled.div`
   position: fixed; 
@@ -36,8 +36,8 @@ const ConfirmNavigationModal = ({onConfirm, onCancel}) => (
     <div className={"modal-content"}>
       <span>Näytöstä poistuminen vaatii uuden sisäänkirjautumisen</span>
       <div className={"buttons-container"}>
-        <Button onClick={onConfirm} variant="contained" className={"modal-button"}>Jatka</Button>
-        <Button onClick={onCancel} variant="contained" className={"modal-button"}>Peruuta</Button>
+        <Button onClick={onConfirm} variant="outlined" className={"modal-button"}>Jatka</Button>
+        <Button onClick={onCancel} variant="outlined" className={"modal-button"}>Peruuta</Button>
       </div>
     </div>
   </ModalContainer>

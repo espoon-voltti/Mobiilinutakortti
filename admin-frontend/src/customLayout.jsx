@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Notification } from 'react-admin';
 import styled from 'styled-components';
-import Menu from './menu';
+import MyMenu from './menu';
 
 const CustomNotification = styled(Notification)`
   display: flex;
@@ -16,7 +16,7 @@ const CustomNotification = styled(Notification)`
 `;
 
 const CustomLayout = (props) => (
-  <Layout {...props} notification={CustomNotification} menu={Menu} />
+  <Layout {...props} notification={CustomNotification} menu={MyMenu} />
 );
 
 export default CustomLayout;

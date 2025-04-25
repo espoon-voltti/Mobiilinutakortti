@@ -1,47 +1,46 @@
-version: "3.3"
+version: '3'
 
 services:
-  nutakortti:
-    ports:
-      - 3000:3000
+  app:
     build:
       context: ./
       dockerfile: Dockerfile
-    image: nutakortti/latest
     environment:
-      AUTH_SIGNKEY:
-      CERT_SELECTION:
-      FRONTEND_BASE_URL:
-      IDP_ENTITY_ID:
-      NODE_ENV: production
-      RDS_DB_NAME:
-      RDS_HOSTNAME:
-      RDS_PASSWORD:
-      RDS_PORT:
-      RDS_USERNAME:
-      REACT_APP_ADMIN_FRONTEND_URL:
-      REACT_APP_ENDPOINT:
-      SP_ASSERT_ENDPOINT:
-      SP_ENTITY_ID:
-      SP_PKEY:
-      SSO_LOGIN_URL:
-      SSO_LOGOUT_URL:
-      SUPER_ADMIN_FEATURES:
-      TELIA_ENDPOINT:
-      TELIA_PASSWORD:
-      TELIA_USER:
-      TELIA_USERNAME:
-      API_BASE_URL:
-      REDIS_HOST:
-      REDIS_PORT:
-      REDIS_PASSWORD:
-      REDIS_TLS_SERVER_NAME:
-      REDIS_DISABLE_SECURITY:
-      AD_SAML_ENTRYPOINT_URL:
-      AD_SAML_LOGOUT_URL:
-      AD_SAML_ISSUER:
-      AD_SAML_PUBLIC_CERT:
-      AD_SAML_IDP_CERT:
-      AD_SAML_PRIVATE_CERT:
-      CRYPTO_SECRET_KEY:
-      COOKIE_SECRET:
+      AD_MOCK: 'true'
+      COOKIE_SECRET: 'verysecret'
+      CRYPTO_SECRET_KEY: '01234567890123456789012345678901'
+      API_BASE_URL: 'http://localhost:3000/'
+      FRONTEND_BASE_URL: 'http://localhost:3000'
+      RDS_DB_NAME: 'nuta'
+      RDS_HOSTNAME: 'db'
+      RDS_PASSWORD: 'password'
+      REDIS_HOST: 'redis'
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'password'
+      POSTGRES_DB: 'nuta'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: '[ "$$(redis-cli -h 127.0.0.1 ping)" == "PONG" ]'
+      interval: 1s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:

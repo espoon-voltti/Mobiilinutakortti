@@ -1,7 +1,6 @@
 import { httpClient } from './';
 import api from '../api';
 import { token } from '../utils';
-import { AUTH_LOGOUT } from 'react-admin';
 import { authProvider } from '../providers';
 
 export const httpClientWithResponse = (url, options = {}, disableAuth = false) => {
@@ -17,7 +16,7 @@ export const httpClientWithResponse = (url, options = {}, disableAuth = false) =
     return fetch(api.youthWorker.refresh, refreshOptions).then(refreshResponse => {
         refreshResponse = refreshResponse.json();
         if (refreshResponse.statusCode < 200 || refreshResponse.statusCode >= 300) {
-            authProvider(AUTH_LOGOUT, {});
+            authProvider.logout();
             window.location.reload();
             return Promise.resolve();
         } else {
