@@ -2,10 +2,8 @@
 
 The application consists of three subprojects: backend, frontend and admin-frontend.
 
-* Admin-frontend is used by the youth workers to handle registered members and their info. The QR code reading is also
-  part of this.
-* Frontend is the end user web application used by the youth to see information about the youth clubs and generate a
-  personal QR code for checking in.
+* Admin-frontend is used by the youth workers to handle registered members and their info. The QR code reading is also part of this.
+* Frontend is the end user web application used by the youth to see information about the youth clubs and generate a personal QR code for checking in.
 * Backend has endpoints for both frontends and for Suomi.fi identification. It uses PostgreSQL for database.
 
 More detailed documentation is found in a README in respective directories of each project.
