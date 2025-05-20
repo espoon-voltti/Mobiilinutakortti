@@ -29,12 +29,6 @@ const redisClientProvider = {
   useFactory: async () => {
     const redisOptions = ConfigHelper.getRedisOptions();
 
-    console.log('redisOptions', redisOptions);
-    console.log(
-      'toRedisClientOpts(redisOptions)',
-      toRedisClientOpts(redisOptions),
-    );
-
     const redisClient = redis.createClient(toRedisClientOpts(redisOptions));
     redisClient.on('error', (err) => console.log('Redis error', err));
     redisClient.connect().catch((err) => {
