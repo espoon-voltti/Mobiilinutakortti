@@ -10,7 +10,8 @@
         "ordered-imports": false,
         "quotemark": false,
         "no-console": false,
-        "jsx-no-lambda": false
+        "jsx-no-lambda": false,
+        "jsx-boolean-value": false
     },
     "rulesDirectory": [
     ],
