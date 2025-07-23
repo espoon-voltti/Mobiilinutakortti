@@ -15,8 +15,8 @@ describe('Phone number validation', () => {
     const validationPipe = new PhoneNumberValidationPipe();
 
     it('passes valid phone numbers', () => {
-      for (let prefix of validPrefixes) {
-        for (let validNumber of validNumbers) {
+      for (const prefix of validPrefixes) {
+        for (const validNumber of validNumbers) {
           const phoneNumber = `${prefix}${validNumber}`;
           const value = {
             phoneNumber,
@@ -93,8 +93,8 @@ describe('Phone number validation', () => {
     const validationPipe = new ResetPhoneNumberValidationPipe();
 
     it('passes valid phone numbers', () => {
-      for (let prefix of validPrefixes) {
-        for (let validNumber of validNumbers) {
+      for (const prefix of validPrefixes) {
+        for (const validNumber of validNumbers) {
           const phoneNumber = `${prefix}${validNumber}`;
           const value = { phoneNumber };
           expect(validationPipe.transform(value)).toBe(value);

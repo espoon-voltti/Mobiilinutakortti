@@ -84,7 +84,7 @@ export const ExpiredSmsContent = {
   ) =>
     'Hi\n\n' +
     `The Nuta card of child ${recipientName} awaits renewal for season ${period}. ` +
-    "By clicking the link below you can renew the child's application and update the contact information. " +
+    'By clicking the link below you can renew the child\'s application and update the contact information. ' +
     `The QR code for the previous season stops working at ${expiredDate}.\n\n` +
     `${link}\n\n` +
     'Best regards,\nVantaa youth services',
