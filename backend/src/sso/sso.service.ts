@@ -1,3 +1,5 @@
+/* tslint:disable variable-name */
+
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import * as saml2 from 'saml2-js';
@@ -131,14 +133,14 @@ export class SsoService {
           .replace(/\+/g, '-')
           .replace(/\//g, '_')
           .replace(/\=+$/, '');
-        const url = `${this.frontend_base_url}/hakemus?sc=${querystr}`;
-        res.redirect(url);
+        const redirectUrl = `${this.frontend_base_url}/hakemus?sc=${querystr}`;
+        res.redirect(redirectUrl);
       },
     );
   }
 
   getLogoutRequestUrl(req: Request, res: Response) {
-    let sc_token = {};
+    let sc_token: any = {};
     const token = req.headers.authorization;
     if (token.startsWith('Bearer ')) {
       const b64sc = token.slice(7, token.length);
@@ -150,13 +152,13 @@ export class SsoService {
       return;
     }
     const sc = {
-      sessionIndex: sc_token['sessionIndex'],
-      nameId: sc_token['nameId'],
-      firstName: sc_token['firstName'],
-      lastName: sc_token['lastName'],
-      zipCode: sc_token['zipCode'],
-      expiryTime: sc_token['expiryTime'],
-      signedString: sc_token['signedString'],
+      sessionIndex: sc_token.sessionIndex,
+      nameId: sc_token.nameId,
+      firstName: sc_token.firstName,
+      lastName: sc_token.lastName,
+      zipCode: sc_token.zipCode,
+      expiryTime: sc_token.expiryTime,
+      signedString: sc_token.signedString,
     } as SecurityContextDto;
 
     if (!this.authenticationService.validateSecurityContext(sc)) {
@@ -165,8 +167,8 @@ export class SsoService {
     }
 
     const options = {
-      name_id: sc_token['nameId'],
-      session_index: sc_token['sessionIndex'],
+      name_id: sc_token.nameId,
+      session_index: sc_token.sessionIndex,
     };
 
     this.sp.create_logout_request_url(this.idp, options, (err, logout_url) => {

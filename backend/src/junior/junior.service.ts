@@ -1,3 +1,6 @@
+/* tslint:disable variable-name */
+/* tslint:disable max-line-length */
+
 import {
     Injectable,
     ConflictException,
@@ -42,7 +45,11 @@ export class JuniorService {
     ) { }
 
     async listAllJuniors(controls?: ListControlDto): Promise<JuniorListViewModel> {
-        let order = {}, filterValues = {}, query = '', take = 0, skip = 0;
+        let order = {}
+        let filterValues = {}
+        let query = ''
+        let take = 0
+        let skip = 0;
         if (controls) {
             order = controls.sort ? this.applySort(controls.sort) : {};
             ({ query, filterValues } = controls.filters ? this.applyFilters(controls.filters) : { query: '', filterValues: [] });
@@ -143,7 +150,7 @@ export class JuniorService {
             this.logger.log(`Found existing junior with ID ${existingJunior.id}, phone ${existingJunior.phoneNumber}, status ${existingJunior.status}`)
 
             // Only allow account renewal if existing junior's status is expired or pending
-            if (["expired", "pending"].includes(existingJunior.status)) {
+            if (['expired', 'pending'].includes(existingJunior.status)) {
                 this.logger.log(`Overwriting junior ${existingJunior.phoneNumber} with registration form data`)
                 junior = existingJunior
                 renew = true
@@ -247,7 +254,7 @@ export class JuniorService {
             }
         }
         await this.juniorRepo.save(user);
-        //typeorm doesn't currently return transformed values on save, have to retrieve it again to get the phone number in a correct format
+        // typeorm doesn't currently return transformed values on save, have to retrieve it again to get the phone number in a correct format
         if ((prevStatus === 'expired' || prevStatus === 'pending' || prevStatus === 'failedCall') && details.status === 'accepted') {
             const updatedJunior = await this.getJuniorByPhoneNumber(user.phoneNumber);
             const challenge = await this.setChallenge(updatedJunior.phoneNumber);
@@ -276,7 +283,7 @@ export class JuniorService {
     private async setChallenge(phoneNumber: string): Promise<Challenge> {
         const challenge = (Math.floor(1000 + Math.random() * 90000)).toString();
         const junior = await this.getJuniorByPhoneNumber(phoneNumber);
-        const activeChallenge = await this.challengeRepo.findOne({ where: { junior: junior }, relations: ['junior'] });
+        const activeChallenge = await this.challengeRepo.findOne({ where: { junior }, relations: ['junior'] });
         if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }
         const challengeData = { junior, challenge };
         await this.challengeRepo.save(challengeData);
@@ -285,10 +292,10 @@ export class JuniorService {
 
     async getNextAvailableDummyPhoneNumber(): Promise<string> {
         const juniors = await this.listAllJuniors();
-        const phoneNumbers = juniors.data.filter(j => j.phoneNumber.substr(0, 6) === "358999").map(j => j.phoneNumber);
-        let next = "";
-        for (var i = 0; i < 1000000; i++) {
-            next = "358999" + i.toString().padStart(6, '0');
+        const phoneNumbers = juniors.data.filter(j => j.phoneNumber.substr(0, 6) === '358999').map(j => j.phoneNumber);
+        let next = '';
+        for (let i = 0; i < 1000000; i++) {
+            next = '358999' + i.toString().padStart(6, '0');
             if (!phoneNumbers.includes(next)) {
                 break;
             }
@@ -297,7 +304,7 @@ export class JuniorService {
     }
 
     async createNewSeason({ expireDate }: SeasonExpiredDto): Promise<string> {
-        const result: UpdateResult = await this.juniorRepo.createQueryBuilder().update().set({ status: "expired" }).execute()
+        const result: UpdateResult = await this.juniorRepo.createQueryBuilder().update().set({ status: 'expired' }).execute()
         const juniors = await this.juniorRepo.find();
 
         // This SMS is sent to the parents. We don't know the parent's preferred communications language,
@@ -332,30 +339,30 @@ export class JuniorService {
      * This is a test method, only to be used during testing.
      */
     async createTestDataJuniors(numberOfCases: string): Promise<string> {
-        const num = parseInt(numberOfCases);
+        const num = parseInt(numberOfCases, 10);
         const first_names = ['Matti', 'Maija', 'Mervi', 'Olli', 'Riku', 'Maria', 'Juho', 'Aapeli', 'Tauno', 'Liisa', 'Jenni', 'Viola', 'Venla', 'Elias', 'Jenna'];
         const last_names = ['Virtanen', 'Ylinen', 'Koivisto', 'Perälä', 'Niittymäki', 'Hautala', 'Arhinmäki', 'Koski', 'Mäkinen', 'Astola', 'Heikkilä', 'Marjamäki'];
         const school_names = ['Kirkkoharjun ala-aste', 'Tuomiola', 'Mustalampaan koulu', 'Määkiälän ala-aste', 'Pikkola', 'Mordor', 'Tykkimäki', 'Ankkalampi'];
         const class_names = ['1A', '1B', '2C', '3D', '6. luokka', '3. luokka', '1. luokka', '5. luokka'];
         const genders = ['m', 'f', 'o', '-'];
-        for (var i = 0; i < num; i++) {
-            var date =
+        for (let i = 0; i < num; i++) {
+            const date =
                 (Math.floor(Math.random() * 8) + 2005).toString() + '-' +
                 (Math.floor(Math.random() * 12) + 1).toString().padStart(2, '0') + '-' +
                 (Math.floor(Math.random() * 28) + 1).toString().padStart(2, '0') + 'T00:00:00.000Z';
-            var data = {
-                phoneNumber: "358777" + i.toString().padStart(6, '0'),
+            const data = {
+                phoneNumber: '358777' + i.toString().padStart(6, '0'),
                 firstName: first_names[Math.floor(Math.random() * first_names.length)],
                 lastName: last_names[Math.floor(Math.random() * last_names.length)],
-                postCode: "0" + Math.floor(Math.random() * 1000).toString().padStart(3, '0') + "0",
+                postCode: '0' + Math.floor(Math.random() * 1000).toString().padStart(3, '0') + '0',
                 school: school_names[Math.floor(Math.random() * school_names.length)],
                 class: class_names[Math.floor(Math.random() * class_names.length)],
-                parentsName: first_names[Math.floor(Math.random() * first_names.length)] + " " + last_names[Math.floor(Math.random() * last_names.length)],
-                parentsPhoneNumber: "358400" + Math.floor(Math.random() * 1000000).toString().padStart(6, '0'),
+                parentsName: first_names[Math.floor(Math.random() * first_names.length)] + ' ' + last_names[Math.floor(Math.random() * last_names.length)],
+                parentsPhoneNumber: '358400' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0'),
                 gender: genders[Math.floor(Math.random() * genders.length)],
                 birthday: date,
                 homeYouthClub: (Math.floor(Math.random() * 14) + 1).toString(),
-                status: Math.random() < 0.5 ? "accepted" : "pending",
+                status: Math.random() < 0.5 ? 'accepted' : 'pending',
                 photoPermission: Math.random() < 0.5 ? true : false
             } as RegisterJuniorDto;
             await this.registerJunior(data, true);
@@ -368,9 +375,9 @@ export class JuniorService {
      */
     async deleteTestDataJuniors(): Promise<string> {
         const juniors = await this.listAllJuniors();
-        const ids = juniors.data.filter(j => j.phoneNumber.substr(0, 6) === "358777").map(j => j.id);
-        for (var i = 0; i < ids.length; i++) {
-            await this.deleteJunior(ids[i]);
+        const ids = juniors.data.filter(j => j.phoneNumber.substr(0, 6) === '358777').map(j => j.id);
+        for (const id of ids) {
+            await this.deleteJunior(id);
         }
         return `Deleted ${ids.length.toString()} juniors.`;
     }

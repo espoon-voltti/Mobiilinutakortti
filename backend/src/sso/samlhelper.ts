@@ -1,3 +1,5 @@
+/* tslint:disable variable-name */
+
 import * as crypto from 'crypto';
 import * as url from 'url';
 import * as zlib from 'zlib';
@@ -61,7 +63,7 @@ export class SAMLHelper {
 
     const new_saml_request = zlib.deflateRawSync(fixed_xml).toString('base64');
     const query = this._signSamlRequest(new_saml_request);
-    let new_logout_url = url.parse(this.sso_logout_url, true);
+    const new_logout_url = url.parse(this.sso_logout_url, true);
     new_logout_url.query = assignIn(query, new_logout_url.query);
     new_logout_url.search = null;
     new_logout_url.query = query;
@@ -78,13 +80,14 @@ export class SAMLHelper {
       // The status is in an XML element attribute like this:
       // <saml2p:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success" />
       const status_value =
-        xml_json['saml2p:Status']['saml2p:StatusCode']._Attribs['Value'];
+        xml_json['saml2p:Status']['saml2p:StatusCode']._Attribs.Value;
       const val_array = status_value.split(':');
       if (val_array[val_array.length - 1] === 'Success') {
         return true;
       }
-    } catch {}
-    return false;
+    } catch {
+      return false;
+    }
   }
 
   getSAMLRequestId(saml_request: string): string {
@@ -93,8 +96,10 @@ export class SAMLHelper {
       const deflated = Buffer.from(saml_request, 'base64');
       const xml_string = zlib.inflateRawSync(deflated).toString();
       const xml_json = XML.parse(xml_string, { preserveAttributes: true });
-      id = xml_json._Attribs['ID'];
-    } catch {}
+      id = xml_json._Attribs.ID;
+    } catch {
+      // Fall through
+    }
     return id;
   }
 

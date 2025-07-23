@@ -226,13 +226,13 @@ export class AdSsoService {
       );
       if (loggedOut) {
         if (profile) {
-          const url = await this.saml.getLogoutResponseUrlAsync(
+          const redirectUrl = await this.saml.getLogoutResponseUrlAsync(
             profile,
             '',
             {},
             false,
           );
-          res.redirect(url);
+          res.redirect(redirectUrl);
         } else {
           res.redirect(this.logoutSuccessUrl);
         }
@@ -252,7 +252,7 @@ export class AdSsoService {
                   type="radio"
                   id="${externalId}"
                   name="userId"
-                  ${idx == 0 ? 'checked' : ''}
+                  ${idx === 0 ? 'checked' : ''}
                  value="${externalId}" />
                 <label for="${externalId}">${name}</label>
               </div>`;
