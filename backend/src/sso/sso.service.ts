@@ -1,3 +1,5 @@
+/* tslint:disable variable-name */
+
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import * as saml2 from 'saml2-js';
@@ -131,14 +133,14 @@ export class SsoService {
           .replace(/\+/g, '-')
           .replace(/\//g, '_')
           .replace(/\=+$/, '');
-        const url = `${this.frontend_base_url}/hakemus?sc=${querystr}`;
-        res.redirect(url);
+        const redirectUrl = `${this.frontend_base_url}/hakemus?sc=${querystr}`;
+        res.redirect(redirectUrl);
       },
     );
   }
 
   getLogoutRequestUrl(req: Request, res: Response) {
-    let sc_token = {};
+    let sc_token: any = {};
     const token = req.headers.authorization;
     if (token.startsWith('Bearer ')) {
       const b64sc = token.slice(7, token.length);

@@ -1,3 +1,5 @@
+/* tslint:disable variable-name */
+
 import * as crypto from 'crypto';
 import * as url from 'url';
 import * as zlib from 'zlib';
@@ -83,8 +85,9 @@ export class SAMLHelper {
       if (val_array[val_array.length - 1] === 'Success') {
         return true;
       }
-    } catch {}
-    return false;
+    } catch {
+      return false;
+    }
   }
 
   getSAMLRequestId(saml_request: string): string {
@@ -94,7 +97,9 @@ export class SAMLHelper {
       const xml_string = zlib.inflateRawSync(deflated).toString();
       const xml_json = XML.parse(xml_string, { preserveAttributes: true });
       id = xml_json._Attribs.ID;
-    } catch {}
+    } catch {
+      // Fall through
+    }
     return id;
   }
 

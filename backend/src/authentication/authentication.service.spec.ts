@@ -169,7 +169,9 @@ describe('AuthenticationService', () => {
             email: newTestAdmin.email,
             password: 'DogZ',
           });
-        } catch (e) {}
+        } catch (e) {
+          // Expected to fail
+        }
         const failedAttemptExists = await adminService.getLockoutRecord(id);
         await service.loginAdmin(loginTestAdmin);
         const failedAttemptExists2 = await adminService.getLockoutRecord(id);

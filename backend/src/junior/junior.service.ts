@@ -1,3 +1,6 @@
+/* tslint:disable variable-name */
+/* tslint:disable max-line-length */
+
 import {
     Injectable,
     ConflictException,
@@ -42,7 +45,11 @@ export class JuniorService {
     ) { }
 
     async listAllJuniors(controls?: ListControlDto): Promise<JuniorListViewModel> {
-        let order = {}, filterValues = {}, query = '', take = 0, skip = 0;
+        let order = {}
+        let filterValues = {}
+        let query = ''
+        let take = 0
+        let skip = 0;
         if (controls) {
             order = controls.sort ? this.applySort(controls.sort) : {};
             ({ query, filterValues } = controls.filters ? this.applyFilters(controls.filters) : { query: '', filterValues: [] });
@@ -332,18 +339,18 @@ export class JuniorService {
      * This is a test method, only to be used during testing.
      */
     async createTestDataJuniors(numberOfCases: string): Promise<string> {
-        const num = parseInt(numberOfCases);
+        const num = parseInt(numberOfCases, 10);
         const first_names = ['Matti', 'Maija', 'Mervi', 'Olli', 'Riku', 'Maria', 'Juho', 'Aapeli', 'Tauno', 'Liisa', 'Jenni', 'Viola', 'Venla', 'Elias', 'Jenna'];
         const last_names = ['Virtanen', 'Ylinen', 'Koivisto', 'Perälä', 'Niittymäki', 'Hautala', 'Arhinmäki', 'Koski', 'Mäkinen', 'Astola', 'Heikkilä', 'Marjamäki'];
         const school_names = ['Kirkkoharjun ala-aste', 'Tuomiola', 'Mustalampaan koulu', 'Määkiälän ala-aste', 'Pikkola', 'Mordor', 'Tykkimäki', 'Ankkalampi'];
         const class_names = ['1A', '1B', '2C', '3D', '6. luokka', '3. luokka', '1. luokka', '5. luokka'];
         const genders = ['m', 'f', 'o', '-'];
         for (let i = 0; i < num; i++) {
-            let date =
+            const date =
                 (Math.floor(Math.random() * 8) + 2005).toString() + '-' +
                 (Math.floor(Math.random() * 12) + 1).toString().padStart(2, '0') + '-' +
                 (Math.floor(Math.random() * 28) + 1).toString().padStart(2, '0') + 'T00:00:00.000Z';
-            let data = {
+            const data = {
                 phoneNumber: '358777' + i.toString().padStart(6, '0'),
                 firstName: first_names[Math.floor(Math.random() * first_names.length)],
                 lastName: last_names[Math.floor(Math.random() * last_names.length)],
@@ -369,8 +376,8 @@ export class JuniorService {
     async deleteTestDataJuniors(): Promise<string> {
         const juniors = await this.listAllJuniors();
         const ids = juniors.data.filter(j => j.phoneNumber.substr(0, 6) === '358777').map(j => j.id);
-        for (let i = 0; i < ids.length; i++) {
-            await this.deleteJunior(ids[i]);
+        for (const id of ids) {
+            await this.deleteJunior(id);
         }
         return `Deleted ${ids.length.toString()} juniors.`;
     }

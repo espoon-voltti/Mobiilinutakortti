@@ -1,18 +1,13 @@
-import {
-  Controller, Post, Body, Get, Res, Req, UseFilters, HttpException
-} from '@nestjs/common';
-import { Request, Response } from 'express';
-import { SsoService } from './sso.service';
-import { Routes } from '../content';
+import { Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Request, Response } from 'express';
+import { Routes } from '../content';
+import { SsoService } from './sso.service';
 
 @Controller(`${Routes.api}`)
 @ApiTags('Sso')
 export class SsoController {
-
-  constructor(
-    private readonly ssoService: SsoService
-  ) { }
+  constructor(private readonly ssoService: SsoService) {}
 
   // Call this to initiate login process.
   @Get('acs')
@@ -39,5 +34,4 @@ export class SsoController {
   logoutRedirect(@Req() req: Request, @Res() res: Response) {
     this.ssoService.handleLogout(req, res);
   }
-
 }

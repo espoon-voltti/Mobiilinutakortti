@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer, Logger } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { AppController } from './app.controller';
@@ -24,15 +24,17 @@ import { AdSsoModule } from './ad-sso/ad-sso.module';
 import { AdSsoController } from './ad-sso/ad-sso.controller';
 import * as redis from 'redis';
 
+const logger = new Logger('AppModule');
+
 const redisClientProvider = {
   provide: 'REDIS_CLIENT',
   useFactory: async () => {
     const redisOptions = ConfigHelper.getRedisOptions();
 
     const redisClient = redis.createClient(toRedisClientOpts(redisOptions));
-    redisClient.on('error', (err) => console.log('Redis error', err));
+    redisClient.on('error', (err) => logger.error('Redis error', err));
     redisClient.connect().catch((err) => {
-      console.log('Unable to connect to redis', err);
+      logger.error('Unable to connect to redis', err);
     });
     // Don't prevent the app from exiting if a redis connection is alive.
     redisClient.unref();
