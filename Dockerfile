@@ -1,4 +1,4 @@
-FROM node:20.19.4
+FROM node:22.17.1
 
 ARG CACHE_BUST=none
 
