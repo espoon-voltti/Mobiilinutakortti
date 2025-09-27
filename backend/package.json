@@ -82,7 +82,7 @@
     "sqlite3": "^5.1.5",
     "supertest": "^4.0.2",
     "ts-jest": "^29.4.0",
-    "ts-loader": "^9.5.1",
+    "ts-loader": "^9.5.2",
     "ts-node": "^10.8.1",
     "tsconfig-paths": "^4.1.1",
     "tslint": "^6.1.3",
