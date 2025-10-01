@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import Measure from 'react-measure'
 
 const QRWrapper = styled.section`
@@ -56,7 +56,7 @@ const QR: React.FC<QRProps> = (props) => {
         >
             {({ measureRef }) => (
                 <QRContainer ref={measureRef} active={props.id !== ''}>
-                    <QRCode value={props.id} includeMargin={true} size={size}/>
+                    <QRCodeSVG value={props.id} includeMargin={true} size={size}/>
                 </QRContainer>
             )}
         </Measure>
