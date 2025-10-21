@@ -1,5 +1,4 @@
 import { createStore, Store, applyMiddleware, compose } from 'redux';
-import { createBrowserHistory } from 'history';
 import createSagaMiddleware from 'redux-saga';
 import rootReducer, { AppState } from '../reducers';
 import { rootSaga } from '../actions'
@@ -9,12 +8,9 @@ import { LangActions, LangTypes} from "../types/langTypes";
 import { userActions, userTypes } from "../types/userTypes";
 import {Language} from "../customizations/types";
 
-export const history = createBrowserHistory();
-
 const token: string = localStorage.getItem('token') ?? '';
 const lang: string = localStorage.getItem('lang') ?? 'fi';
 const loggedIn: boolean = (token !== null);
-
 
 const persistedState = {
     auth: {
