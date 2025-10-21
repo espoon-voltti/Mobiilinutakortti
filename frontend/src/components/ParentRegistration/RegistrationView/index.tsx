@@ -72,7 +72,7 @@ const RegistrationView: React.FC = () => {
                 }
             })
             .catch(e => setError(true))
-    }, [])
+    }, [queryToSecurityContext])
 
 
     const logout = () => {
