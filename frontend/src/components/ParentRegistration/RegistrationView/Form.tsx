@@ -1,6 +1,6 @@
 import React from "react";
 import { Field, FormikProps, withFormik, FieldProps } from "formik";
-import { string, object, boolean, Schema } from "yup";
+import * as yup from 'yup';
 import { post } from "../../../apis";
 
 import { InputField, DropdownField, SelectGroup } from "./FormFields";
@@ -384,42 +384,42 @@ const RegistrationForm = withFormik<Props, FormValues>({
         ),
     };
   },
-  validationSchema: (): Schema<FormValues> =>
-    object().shape({
-      juniorFirstName: string().required("required"),
-      juniorLastName: string().required("required"),
-      juniorNickName: string(),
-      juniorBirthday: string()
+  validationSchema: () =>
+    yup.object().shape({
+      juniorFirstName: yup.string().required("required"),
+      juniorLastName: yup.string().required("required"),
+      juniorNickName: yup.string(),
+      juniorBirthday: yup.string()
         .matches(
           /^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/,
           "birthdayFormat"
         )
         .required("birthdayFormat"),
-      juniorPhoneNumber: string()
+      juniorPhoneNumber: yup.string()
         .matches(/(^(\+358|0)\d{6,10}$)/, "phoneNumberFormat")
         .required("required"),
       postCode: valueOr(
         "postCode",
-        string()
+          yup.string()
           .length(5, "postCodeFormat")
           .matches(/^[0-9]*$/, "postCodeFormat")
           .required("required"),
-        string()
+          yup.string()
       ),
-      school: valueOr("school", string().required("required"), string()),
-      class: valueOr("class", string().required("required"), string()),
-      juniorGender: string().required("required"),
-      photoPermission: string().required("required"),
-      parentFirstName: string().required("required"),
-      parentLastName: string().required("required"),
-      parentPhoneNumber: string()
+      school: valueOr("school", yup.string().required("required"), yup.string()),
+      class: valueOr("class", yup.string().required("required"), yup.string()),
+      juniorGender: yup.string().required("required"),
+      photoPermission: yup.string().required("required"),
+      parentFirstName: yup.string().required("required"),
+      parentLastName: yup.string().required("required"),
+      parentPhoneNumber: yup.string()
         .matches(/(^(\+358|0)\d{6,10})/, "phoneNumberFormat")
         .required("required"),
-      youthClub: string().required("selectYouthClub"),
-      communicationsLanguage: string()
+      youthClub: yup.string().required("selectYouthClub"),
+      communicationsLanguage: yup.string()
         .oneOf(["fi", "sv", "en"])
         .required("selectLanguage"),
-      termsOfUse: boolean()
+      termsOfUse: yup.boolean()
         .oneOf([true], "acceptTermsOfUse")
         .required("acceptTermsOfUse"),
     }),
