@@ -7,18 +7,22 @@ import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import { authActions, authTypes } from "../types/authTypes";
 import { LangActions, LangTypes} from "../types/langTypes";
 import { userActions, userTypes } from "../types/userTypes";
+import {Language} from "../customizations/types";
 
 export const history = createBrowserHistory();
 
-const token: string | null  = localStorage.getItem('token');
-const lang: string | null  = localStorage.getItem('lang');
+const token: string = localStorage.getItem('token') ?? '';
+const lang: string = localStorage.getItem('lang') ?? 'fi';
 const loggedIn: boolean = (token !== null);
 
 
 const persistedState = {
     auth: {
+        loggingIn: false,
         loggedIn,
-        token: token ? token : '',
+        token: token ?? '',
+        error: false,
+        message: null as "authFail" | "linkRequestSuccess" | "linkRequestFail" | null,
     }
 }
 
@@ -31,7 +35,7 @@ export function configureStore(): Store<AppState> {
     );
 
     sagaMiddleware.run(rootSaga);
-    store.dispatch({ type: LangTypes.SET_LANG, lang: lang ?? 'fi' })
+    store.dispatch({ type: LangTypes.SET_LANG, lang: lang as Language })
 
     if (loggedIn) {
       store.dispatch({ type: userTypes.GET_USER, payload: token })
