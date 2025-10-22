@@ -13,7 +13,7 @@
     "react": "^18.3.1",
     "react-admin": "^5.7.3",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.30.0",
+    "react-router-dom": "^7.0.0",
     "styled-components": "^6.0.0",
     "uifx": "^2.0.7"
   },
