@@ -6,16 +6,19 @@ import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import { authActions, authTypes } from "../types/authTypes";
 import { LangActions, LangTypes} from "../types/langTypes";
 import { userActions, userTypes } from "../types/userTypes";
+import { Language } from "../customizations/types";
 
 const token: string | null  = localStorage.getItem('token');
 const lang: string | null  = localStorage.getItem('lang');
 const loggedIn: boolean = (token !== null);
 
-
 const persistedState = {
     auth: {
-        loggedIn,
-        token: token ? token : '',
+        loggingIn: false,           // default
+        loggedIn,                   // your existing value
+        token: token ?? '',         // existing token or empty string
+        error: false,               // default
+        message: null as null,      // default message
     }
 }
 
@@ -28,10 +31,10 @@ export function configureStore(): Store<AppState> {
     );
 
     sagaMiddleware.run(rootSaga);
-    store.dispatch({ type: LangTypes.SET_LANG, lang: lang ?? 'fi' })
+    store.dispatch({ type: LangTypes.SET_LANG, lang: (lang ?? 'fi') as Language })
 
     if (loggedIn) {
-      store.dispatch({ type: userTypes.GET_USER, payload: token })
+      store.dispatch({ type: userTypes.GET_USER, payload: token ?? ''})
     } else {
       store.dispatch({ type: authTypes.AUTH_WITH_CACHE })
     }
