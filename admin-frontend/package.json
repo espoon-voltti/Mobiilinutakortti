@@ -2,6 +2,7 @@
   "name": "admin-frontend",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@mui/icons-material": "^7.0.0",
     "@mui/material": "^7.0.0",
@@ -18,18 +19,29 @@
     "uifx": "^2.0.7"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "8.46.2",
+    "@typescript-eslint/parser": "8.46.2",
+    "typescript-eslint": "8.46.2",
+    "@eslint/compat": "^1.4.1",
+    "@eslint/js": "^9.38.0",
+    "eslint": "^9.38.0",
+    "@typescript-eslint/parser": "^8.46.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-lodash": "^8.0.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-promise": "^7.2.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "@vitejs/plugin-react": "^5.0.0",
-    "eslint": "^9.0.0",
     "vite": "^7.0.0"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "lint": "eslint --max-warnings 0 .",
+    "lint:fix": "eslint --max-warnings 0 . --fix"
   },
   "browserslist": {
     "production": [
