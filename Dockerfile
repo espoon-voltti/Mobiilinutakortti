@@ -1,4 +1,4 @@
-FROM node:22.20.0
+FROM node:24.11.0-trixie-slim
 
 ARG CACHE_BUST=none
 
