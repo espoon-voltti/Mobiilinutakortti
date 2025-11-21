@@ -20,7 +20,7 @@ ADD ./admin-frontend /admin-frontend
 WORKDIR /admin-frontend
 ENV VITE_ENDPOINT=/api
 ENV VITE_ADMIN_FRONTEND_URL=/nuorisotyontekijat
-RUN npm ci && npm run build && cp -r ./dist ../backend/public-admin
+RUN npm ci && npm uninstall rollup && npm install rollup && npm run build && cp -r ./dist ../backend/public-admin
 
 WORKDIR /backend
 RUN npm ci && npm run build
