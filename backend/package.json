@@ -61,7 +61,7 @@
     "typeorm": "^0.3.26",
     "url": "^0.11.4",
     "zod": "^4.2.1",
-    "xmlbuilder2": "4.0.0"
+    "xmlbuilder2": "4.0.3"
   },
   "devDependencies": {
     "@babel/parser": "^7.28.0",
