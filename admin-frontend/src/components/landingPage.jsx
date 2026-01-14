@@ -31,7 +31,9 @@ export const LandingPage = () => {
 
   const [selectedYouthClub, setSelectedYouthClub] = useState(-1);
   const handleYouthClubChange = (e) => {
-    setSelectedYouthClub(e.target.value);
+    const selectedValue = e.target.value;
+    const isValid = youthClubs.some((yc) => yc.value.toString() === selectedValue);
+    setSelectedYouthClub(isValid ? selectedValue : '-1');
   };
 
   const setDefaultYouthClub = async () => {
