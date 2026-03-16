@@ -31,9 +31,9 @@
     "yup": "1.7.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject",
     "lint": "tslint -c tslint.json -p tsconfig.json"
   },
@@ -53,6 +53,7 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^7.1.0",
     "@types/socket.io-client": "3.0.0"
   }
 }
