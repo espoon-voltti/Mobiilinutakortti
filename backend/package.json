@@ -64,7 +64,7 @@
     "xmlbuilder2": "4.0.3"
   },
   "devDependencies": {
-    "@babel/parser": "7.29.0",
+    "@babel/parser": "7.29.2",
     "@babel/types": "7.29.0",
     "@compodoc/compodoc": "1.2.1",
     "@nestjs/cli": "11.0.16",
