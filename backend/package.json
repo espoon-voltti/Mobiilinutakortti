@@ -67,7 +67,7 @@
     "@babel/parser": "7.29.2",
     "@babel/types": "7.29.0",
     "@compodoc/compodoc": "1.2.1",
-    "@nestjs/cli": "11.0.16",
+    "@nestjs/cli": "11.0.17",
     "@nestjs/schematics": "10.2.3",
     "@nestjs/testing": "10.4.22",
     "@types/bcrypt": "6.0.0",
