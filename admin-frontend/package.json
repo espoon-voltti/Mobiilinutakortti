@@ -11,9 +11,9 @@
     "qrcode": "1.5.4",
     "ra-i18n-polyglot": "5.14.5",
     "ra-language-finnish": "5.14.4",
-    "react": "18.3.1",
+    "react": "19.2.4",
     "react-admin": "5.14.5",
-    "react-dom": "18.3.1",
+    "react-dom": "19.2.4",
     "react-router-dom": "7.13.2",
     "styled-components": "6.3.12",
     "uifx": "2.0.7"
