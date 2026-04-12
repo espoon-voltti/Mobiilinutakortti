@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@mui/icons-material": "7.3.10",
-    "@mui/material": "7.3.10",
+    "@mui/icons-material": "9.0.0",
+    "@mui/material": "9.0.0",
     "@zxing/browser": "0.1.5",
     "@zxing/library": "0.21.3",
     "qrcode": "1.5.4",
