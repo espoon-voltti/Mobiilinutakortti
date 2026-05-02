@@ -55,6 +55,6 @@
   "devDependencies": {
     "@craco/craco": "7.1.0",
     "@types/socket.io-client": "3.0.0",
-    "ajv": "8.18.0"
+    "ajv": "8.20.0"
   }
 }
