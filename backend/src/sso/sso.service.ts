@@ -9,6 +9,20 @@ import { SAMLHelper } from './samlhelper';
 import { AcsDto, SecurityContextDto } from '../authentication/dto';
 import { AuthenticationService } from '../authentication/authentication.service';
 
+// Read SFI IDP certs from SUOMIFI_IDP_CERT_<year> env vars (injected from SSM).
+// saml2-js expects raw base64 — strip PEM headers if present.
+// Falls back to bundled cert files for local development when no env vars are set.
+function sfiIdpCerts(certSelection: string): string[] {
+  const fromEnv = Object.entries(process.env)
+    .filter(([k]) => k.startsWith('SUOMIFI_IDP_CERT_'))
+    .map(([, v]) => (v ?? '').replace(/-----[^\n]+-----/g, '').replace(/\s+/g, ''))
+    .filter(Boolean);
+  if (fromEnv.length > 0) return fromEnv;
+  return [1, 2].map((n) =>
+    fs.readFileSync(`certs/tunnistus-${certSelection}-${n}.cer`).toString().trim(),
+  );
+}
+
 @Injectable()
 export class SsoService {
   private readonly entity_id: string;
@@ -57,14 +71,7 @@ export class SsoService {
       sso_logout_url:
         process.env.SSO_LOGOUT_URL ||
         'https://testi.apro.tunnistus.fi/idp/profile/SAML2/Redirect/SLO',
-      certificates: [
-        fs
-          .readFileSync('certs/tunnistus-' + cert_selection + '-1.cer')
-          .toString(),
-        fs
-          .readFileSync('certs/tunnistus-' + cert_selection + '-2.cer')
-          .toString(),
-      ],
+      certificates: sfiIdpCerts(cert_selection),
     };
     this.idp = new saml2.IdentityProvider(idp_options);
 
