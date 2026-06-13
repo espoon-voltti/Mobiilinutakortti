@@ -58,7 +58,7 @@
     "rxjs": "7.8.2",
     "saml2-js": "4.0.4",
     "swagger-ui-express": "5.0.1",
-    "typeorm": "0.3.30",
+    "typeorm": "1.0.0",
     "url": "0.11.4",
     "zod": "4.4.3",
     "xmlbuilder2": "4.0.3"
@@ -80,7 +80,7 @@
     "@types/supertest": "7.2.0",
     "jest": "30.4.2",
     "prettier": "3.8.4",
-    "sqlite3": "5.1.7",
+    "sqlite3": "6.0.1",
     "supertest": "7.2.2",
     "ts-jest": "29.4.11",
     "ts-loader": "9.6.0",
