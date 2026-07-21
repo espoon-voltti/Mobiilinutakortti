@@ -58,7 +58,7 @@
     "rxjs": "7.8.2",
     "saml2-js": "4.0.4",
     "swagger-ui-express": "5.0.1",
-    "typeorm": "0.3.31",
+    "typeorm": "1.1.0",
     "url": "0.11.4",
     "zod": "4.4.3",
     "xmlbuilder2": "4.0.3"
