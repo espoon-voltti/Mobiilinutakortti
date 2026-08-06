@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AdminService } from '../admin/admin.service';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Admin, Lockout } from '../admin/entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
@@ -23,7 +23,7 @@ import { HttpModule } from '@nestjs/axios';
 
 describe('AuthenticationService', () => {
   let module: TestingModule;
-  let connection: Connection;
+  let connection: DataSource;
   let service: AuthenticationService;
   let adminService: AdminService;
   let juniorService: JuniorService;
@@ -89,7 +89,7 @@ describe('AuthenticationService', () => {
         JwtStrategy,
       ],
     })
-      .overrideProvider(Connection)
+      .overrideProvider(DataSource)
       .useValue(connection)
       .compile();
 
@@ -110,7 +110,7 @@ describe('AuthenticationService', () => {
 
   afterAll(async () => {
     await module.close();
-    await connection.close();
+    await connection.destroy();
   });
 
   it('should be defined', () => {
