@@ -4,7 +4,7 @@ import { JuniorModule } from './junior.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
 import { AppModule } from '../app.module';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { getTestDB } from '../../test/testdb';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { AdminModule } from '../admin/admin.module';
@@ -18,7 +18,7 @@ import { HttpModule } from '@nestjs/axios';
 describe('JuniorService', () => {
   let module: TestingModule;
   let service: JuniorService;
-  let connection: Connection;
+  let connection: DataSource;
 
   const testRegisterYouth = {
     phoneNumber: '04122345000',
@@ -68,7 +68,7 @@ describe('JuniorService', () => {
         },
       ],
     })
-      .overrideProvider(Connection)
+      .overrideProvider(DataSource)
       .useValue(connection)
       .compile();
 
@@ -77,7 +77,7 @@ describe('JuniorService', () => {
 
   afterAll(async () => {
     await module.close();
-    await connection.close();
+    await connection.destroy();
   });
 
   it('should be defined', () => {

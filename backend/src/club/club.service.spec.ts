@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClubService } from './club.service';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { getTestDB } from '../../test/testdb';
 import { AppModule } from '../app.module';
 import { JuniorModule } from '../junior/junior.module';
@@ -16,7 +16,7 @@ import { LogBookDto } from './dto';
 describe('ClubService', () => {
   let module: TestingModule;
   let service: ClubService;
-  let connection: Connection;
+  let connection: DataSource;
   let juniorService: JuniorService;
   const testJuniors: Junior[] = [];
   let testClub: Club;
@@ -36,7 +36,7 @@ describe('ClubService', () => {
           provide: getRepositoryToken(CheckIn),
           useFactory: repositoryMockFactory,
         }],
-    }).overrideProvider(Connection)
+    }).overrideProvider(DataSource)
       .useValue(connection)
       .compile();
 
