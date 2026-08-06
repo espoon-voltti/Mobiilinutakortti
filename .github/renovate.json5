@@ -48,6 +48,12 @@
       addLabels: ['admin-frontend'],
     },
     {
+      // @zxing/browser and @zxing/library peer-depend on each other's exact
+      // minor, so updating either alone deadlocks npm resolution (PRs #384, #499)
+      matchPackageNames: ['@zxing/browser', '@zxing/library'],
+      groupName: 'zxing packages',
+    },
+    {
       // Automerge patch versions of all dependencies
       matchUpdateTypes: ['minor', 'patch'],
       automerge: true,
