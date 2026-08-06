@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { RegisterAdminDto, LoginAdminDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto, ResetJuniorDto } from '../src/junior/dto';
@@ -9,7 +9,7 @@ import { JuniorUserViewModel } from '../src/junior/vm';
 
 describe('JuniorController (e2e)', () => {
     let app;
-    let connection: Connection;
+    let connection: DataSource;
     let token: string;
     let juniorToken: string;
     let juniorList: JuniorUserViewModel[];
@@ -42,7 +42,7 @@ describe('JuniorController (e2e)', () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
         })
-            .overrideProvider(Connection)
+            .overrideProvider(DataSource)
             .useValue(connection)
             .compile();
 
@@ -68,7 +68,7 @@ describe('JuniorController (e2e)', () => {
     });
 
     afterAll(async () => {
-        await connection.close();
+        await connection.destroy();
         await app.close();
     });
 

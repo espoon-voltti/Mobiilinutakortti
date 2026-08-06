@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AdminService } from './admin.service';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Admin, Lockout } from './entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
@@ -22,7 +22,7 @@ describe('AdminService', () => {
     email: 'AdmiN@servIce.teSt', firstName: 'Admin',
     lastName: 'Istrator', password: 'Secret',
   } as Admin;
-  let connection: Connection;
+  let connection: DataSource;
   let service: AdminService;
 
   const testRegisterAdmin = {
@@ -45,7 +45,7 @@ describe('AdminService', () => {
           provide: getRepositoryToken(Lockout),
           useFactory: repositoryMockFactory,
         }, JwtStrategy],
-    }).overrideProvider(Connection)
+    }).overrideProvider(DataSource)
       .useValue(connection)
       .compile();
 
@@ -55,7 +55,7 @@ describe('AdminService', () => {
 
   afterAll(async () => {
     await module.close();
-    await connection.close();
+    await connection.destroy();
   });
 
   it('should be defined', () => {
