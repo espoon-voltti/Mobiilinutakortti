@@ -39,7 +39,7 @@ export default function App() {
   );
 }
 
-const LoginRequired = React.memo(function LoginRequired({ children, }: { children: JSX.Element }) {
+const LoginRequired = React.memo(function LoginRequired({ children, }: { children: React.JSX.Element }) {
   const loggedIn = useAppSelector(state => state.auth.loggedIn)
   if (!loggedIn) {
     return <Navigate to="/login" />
