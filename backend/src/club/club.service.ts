@@ -44,7 +44,7 @@ export class ClubService {
     async getCheckinsForClub(clubId: string): Promise<CheckIn[]> {
         const club = await this.clubRepo.findOneBy({ id: clubId });
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
-        return await this.checkInRepo.find({ where: { club }, relations: ['club', 'junior'] });
+        return await this.checkInRepo.find({ where: { club }, relations: { club: true, junior: true } });
     }
 
     async getCheckinsForClubForDate(logbookDetails: LogBookDto): Promise<CheckIn[]> {
