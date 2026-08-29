@@ -7,7 +7,7 @@
     "@types/lodash": "4.17.25",
     "@types/node": "24.13.3",
     "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.4",
+    "@types/react-dom": "19.2.5",
     "@types/react-measure": "2.0.12",
     "@types/styled-components": "5.1.36",
     "@types/yup": "0.32.0",
