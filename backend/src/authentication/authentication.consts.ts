@@ -15,7 +15,10 @@ function getDaysUntilNextExpiry(): number {
 export const saltRounds = 10;
 export const jwt = {
     secret: ConfigHelper.getJWTSecret(),
-    juniorExpiry: `${getDaysUntilNextExpiry()}d`,
-    adminExpiry: `15m`,
+    // jsonwebtoken reads a numeric `expiresIn` as seconds. These were `${n}d`
+    // and `15m` until @types/jsonwebtoken 9.0.10 narrowed the option to the
+    // `ms` template-literal type, which a computed string cannot satisfy.
+    juniorExpiry: getDaysUntilNextExpiry() * 24 * 60 * 60,
+    adminExpiry: 15 * 60,
 };
 export const maximumAttempts = 5;
