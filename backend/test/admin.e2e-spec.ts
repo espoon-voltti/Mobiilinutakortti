@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { RegisterAdminDto, LoginAdminDto, EditAdminDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
 import { AdminUserViewModel } from '../src/admin/vm/admin.vm';
@@ -9,7 +9,7 @@ import { maximumAttempts } from '../src/authentication/authentication.consts';
 
 describe('AdminController (e2e)', () => {
     let app;
-    let connection: Connection;
+    let connection: DataSource;
     let superToken: string;
     let standardToken: string;
     let adminList: AdminUserViewModel[];
@@ -38,7 +38,7 @@ describe('AdminController (e2e)', () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
         })
-            .overrideProvider(Connection)
+            .overrideProvider(DataSource)
             .useValue(connection)
             .compile();
 
@@ -54,7 +54,7 @@ describe('AdminController (e2e)', () => {
     });
 
     afterAll(async () => {
-        await connection.close();
+        await connection.destroy();
         await app.close();
     });
 

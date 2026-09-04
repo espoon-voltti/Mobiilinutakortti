@@ -1,6 +1,6 @@
 import { Module, NestModule, MiddlewareConsumer, Logger } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { AppController } from './app.controller';
 import { AdminController } from './admin/admin.controller';
 import { AdminModule } from './admin/admin.module';
@@ -74,5 +74,5 @@ export class AppModule implements NestModule {
     consumer.apply(RoutersMiddleware).forRoutes('*');
   }
 
-  constructor(private readonly connection: Connection) {}
+  constructor(private readonly connection: DataSource) {}
 }

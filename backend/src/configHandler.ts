@@ -21,6 +21,11 @@ export class ConfigHelper {
       database: process.env.RDS_DB_NAME || 'nuta',
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
+      // typeorm 1.0 changed the default to 'throw'. Keep the 0.3 behaviour so
+      // the upgrade does not change query semantics; tightening this deserves
+      // its own PR (see setChallenge() and getUniqueJunior() in
+      // junior.service.ts, which can pass null/undefined into a where clause).
+      invalidWhereValuesBehavior: { null: 'ignore', undefined: 'ignore' },
     };
   }
 

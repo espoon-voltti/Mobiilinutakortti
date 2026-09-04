@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { getTestDB } from './testdb';
 
 describe('AppController (e2e)', () => {
   let app;
-  let connection: Connection;
+  let connection: DataSource;
 
   beforeAll(async () => {
     // Create a connection to a test DB
@@ -14,7 +14,7 @@ describe('AppController (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
-      .overrideProvider(Connection)
+      .overrideProvider(DataSource)
       .useValue(connection)
       .compile();
 
@@ -23,7 +23,7 @@ describe('AppController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await connection.close();
+    await connection.destroy();
     await app.close();
   });
 
