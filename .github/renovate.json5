@@ -54,6 +54,13 @@
       groupName: 'zxing packages',
     },
     {
+      // typeorm 1.1.1 (the newest release) peers on better-sqlite3 ^12.0.0, so
+      // v13 cannot resolve. better-sqlite3 is a devDependency with one consumer,
+      // backend/test/testdb.ts. Drop this rule once typeorm widens the range (PR #571)
+      matchPackageNames: ['better-sqlite3'],
+      allowedVersions: '<13',
+    },
+    {
       // Automerge patch versions of all dependencies
       matchUpdateTypes: ['minor', 'patch'],
       automerge: true,
