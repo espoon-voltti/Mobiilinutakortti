@@ -2,12 +2,10 @@
 //
 // SPDX-License-Identifier: LGPL-2.1-or-later
 
-import { fixupPluginRules } from '@eslint/compat';
 import eslint from '@eslint/js';
-import importPlugin from 'eslint-plugin-import';
-import lodashPlugin from 'eslint-plugin-lodash';
+import eslintReact from '@eslint-react/eslint-plugin';
+import importX from 'eslint-plugin-import-x';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import typescriptEslint from 'typescript-eslint';
@@ -30,11 +28,16 @@ export default [
     files: ['**/*.{js,mjs}'],
     ...typescriptEslint.configs.disableTypeChecked,
   },
-  importPlugin.flatConfigs.typescript,
+  // Registered directly rather than via importX.flatConfigs.typescript: that
+  // preset points import-x at the `typescript` resolver, which is not installed
+  // and would warn on every file. It has nothing to resolve here anyway -- this
+  // package has no tsconfig.json and no .ts/.tsx sources. `order` is the only
+  // import-x rule we enable and needs no resolver settings.
   {
     files: ['**/*.{ts,tsx,js,mjs}'],
+    plugins: { 'import-x': importX },
     rules: {
-      'import/order': [
+      'import-x/order': [
         'warn',
         {
           alphabetize: { order: 'asc' },
@@ -72,21 +75,46 @@ export default [
       ],
     },
   },
+  // eslint-plugin-react has no eslint 10 support (it is capped at ^9.7 and its
+  // latest release still calls rule-context methods eslint 10 removed), so the
+  // React rules come from @eslint-react instead. The two stylistic rules we had
+  // -- react/jsx-curly-brace-presence and react/self-closing-comp -- have no
+  // equivalent there; @eslint-react is correctness-focused, not stylistic.
+  {
+    files: ['**/*.{ts,tsx}'],
+    ...eslintReact.configs['recommended-typescript'],
+  },
+  // eslint-plugin-react-hooks stays the authority on hooks -- it is the React
+  // team's own plugin and already supports eslint 10. @eslint-react ships its
+  // own copies of these nine rules, so switch those off: otherwise both plugins
+  // report the same problem, and the deliberate opt-outs below (react-hooks/refs,
+  // set-state-in-effect, static-components, preserve-manual-memoization) would be
+  // silently undone by their @eslint-react twins. The list is @eslint-react's own
+  // declared conflict set, intersected with what recommended-typescript enables.
+  //
+  // Note: @eslint-react also ships configs/disable-conflict-eslint-plugin-react-hooks,
+  // but that resolves the overlap the other way -- it disables react-hooks/*.
+  {
+    files: ['**/*.{ts,tsx}'],
+    rules: {
+      '@eslint-react/error-boundaries': 'off',
+      '@eslint-react/exhaustive-deps': 'off',
+      '@eslint-react/purity': 'off',
+      '@eslint-react/rules-of-hooks': 'off',
+      '@eslint-react/set-state-in-effect': 'off',
+      '@eslint-react/set-state-in-render': 'off',
+      '@eslint-react/static-components': 'off',
+      '@eslint-react/unsupported-syntax': 'off',
+      '@eslint-react/use-memo': 'off',
+    },
+  },
   {
     files: ['**/*.{ts,tsx}'],
     plugins: {
-      react: reactPlugin,
       'react-hooks': reactHooksPlugin,
     },
-    settings: {
-      react: { version: 'detect' },
-    },
     rules: {
-      ...reactPlugin.configs.recommended.rules,
       ...reactHooksPlugin.configs.recommended.rules,
-      'react/jsx-curly-brace-presence': ['error', 'never'],
-      'react/prop-types': 'off',
-      'react/self-closing-comp': ['error', { component: true, html: true }],
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       'react-hooks/refs': 'off',
@@ -120,16 +148,6 @@ export default [
     files: ['**/*.js'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
-    },
-  },
-  {
-    // Only files that end up in the bundles
-    files: ['src/**/*.{ts,tsx,js,mjs}'],
-    plugins: {
-      lodash: fixupPluginRules(lodashPlugin),
-    },
-    rules: {
-      'lodash/import-scope': ['error', 'method'],
     },
   },
   eslintPluginPrettierRecommended,
