@@ -56,5 +56,13 @@
     "@craco/craco": "7.1.0",
     "@types/socket.io-client": "3.0.0",
     "ajv": "8.20.0"
+  },
+  "overrides": {
+    "underscore": "1.13.8",
+    "serialize-javascript": "7.1.1",
+    "resolve-url-loader": "5.0.0",
+    "@svgr/plugin-svgo": {
+      "svgo": "2.8.4"
+    }
   }
 }
