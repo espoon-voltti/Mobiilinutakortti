@@ -1,5 +1,11 @@
 # About certificates
 
+## Files in this directory
+
+* `tunnistus-{test,prod}-{1,2}.cer` — Suomi.fi Tunnistus IdP certificates; the `CERT_SELECTION` env var picks the set loaded at startup.
+* `nutakortti-{test,prod}.cer` — the SP certificates of the Espoo deployment (Nuori Espoo jäsenkortti). These are registered with the Suomi.fi IdP; replacing them requires a new metadata round with Suomi.fi.
+* `nuoriespoojasenkortti-suomi-fi-metadata-{test,prod}-env.xml` — the SP metadata submitted to Suomi.fi for the Espoo deployment, kept for reference.
+
 ## Terminology
 
 * IdP: Identity provider, in this case the Suomi.fi Tunnistus service.

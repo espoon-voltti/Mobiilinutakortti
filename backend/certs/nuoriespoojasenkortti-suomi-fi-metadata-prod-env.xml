@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://nuoriespoojasenkortti.espoo.fi">
+  <md:Extensions xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport">
+    <mdattr:EntityAttributes xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute">
+      <saml:Attribute xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" Name="FinnishAuthMethod" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">http://ftn.ficora.fi/2017/loa3</saml:AttributeValue>
+        <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">http://eidas.europa.eu/LoA/high</saml:AttributeValue>
+        <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">http://ftn.ficora.fi/2017/loa2</saml:AttributeValue>
+        <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">http://eidas.europa.eu/LoA/substantial</saml:AttributeValue>
+        <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">urn:oid:1.2.246.517.3002.110.999</saml:AttributeValue>
+      </saml:Attribute>
+      <saml:Attribute xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" FriendlyName="VtjVerificationRequired" Name="urn:oid:1.2.246.517.3003.111.3" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">true</saml:AttributeValue>
+      </saml:Attribute>
+      <saml:Attribute xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" FriendlyName="SkipEndpointValidationWhenSigned" Name="urn:oid:1.2.246.517.3003.111.4" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">false</saml:AttributeValue>
+      </saml:Attribute>
+      <saml:Attribute xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" FriendlyName="EidasSupport" Name="urn:oid:1.2.246.517.3003.111.14" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">full</saml:AttributeValue>
+      </saml:Attribute>
+    </mdattr:EntityAttributes>
+  </md:Extensions>
+  <md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:Extensions>
+      <mdui:UIInfo xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+        <mdui:DisplayName xml:lang="fi">Nuori Espoo jäsenkortin hakeminen</mdui:DisplayName>
+        <mdui:DisplayName xml:lang="sv">Nuori Espoo jäsenkortin hakeminen</mdui:DisplayName>
+        <mdui:DisplayName xml:lang="en">Nuori Espoo jäsenkortin hakeminen</mdui:DisplayName>
+        <mdui:Description xml:lang="fi">Nuori Espoo jäsenkortti on mobiililaitteella toimiva Espoon nuorisotilojen jäsenkortti, jonka avulla nuori kirjautuu sisään nuorisotilaan. Palvelussa voit hakea lapsellesi tai nuorellesi Nuori Espoo jäsenkorttia.</mdui:Description>
+        <mdui:Description xml:lang="sv">Nuori Espoo jäsenkortti on mobiililaitteella toimiva Espoon nuorisotilojen jäsenkortti, jonka avulla nuori kirjautuu sisään nuorisotilaan. Palvelussa voit hakea lapsellesi tai nuorellesi Nuori Espoo jäsenkorttia.</mdui:Description>
+        <mdui:Description xml:lang="en">Nuori Espoo jäsenkortti on mobiililaitteella toimiva Espoon nuorisotilojen jäsenkortti, jonka avulla nuori kirjautuu sisään nuorisotilaan. Palvelussa voit hakea lapsellesi tai nuorellesi Nuori Espoo jäsenkorttia.</mdui:Description>
+      </mdui:UIInfo>
+    </md:Extensions>
+    <md:KeyDescriptor>
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>
+            MIIJZzCCB0+gAwIBAgIPAYG4kdBxqwg7r1kYbLFHMA0GCSqGSIb3DQEBDQUAMHsx
+            CzAJBgNVBAYTAkZJMScwJQYDVQQKDB5EaWdpLSBqYSB2YWVzdG90aWV0b3ZpcmFz
+            dG8gQ0ExGjAYBgNVBAsMEVBhbHZlbHV2YXJtZW50ZWV0MScwJQYDVQQDDB5EVlYg
+            U2VydmljZSBDZXJ0aWZpY2F0ZXMgLSBHNVIwHhcNMjIwNzAxMDYzMTM4WhcNMjMw
+            NzAxMjA1OTU5WjByMQswCQYDVQQGEwJGSTEQMA4GA1UECAwHRmlubGFuZDEOMAwG
+            A1UEBwwFRVNQT08xGDAWBgNVBAoMD0VzcG9vbiBLYXVwdW5raTEnMCUGA1UEAwwe
+            bnVvcmllc3Bvb2phc2Vua29ydHRpLmVzcG9vLmZpMIICIjANBgkqhkiG9w0BAQEF
+            AAOCAg8AMIICCgKCAgEAz9GM/RxO68pEjh4nlIZRZkIOWMexrhGTGGfO5ATuIoMe
+            xGMRI1ZEvCprX7x14knKPXdWphvF5xKBV4hFwEQagoU0MIJQnbCcGyHaEvOTzLMc
+            Ee/u5a8EOxb3CeHp4LLH6uLoMNFQ4Xh4Fg43KjH6z9FFaV6G+FR+dCVjDIE6aLBD
+            yjAAlU9O8u+05X4V5hNS34VH8TUlDetuBGfMWMYkZwQZMAgTzYFDEgil+8NZOxD+
+            nOPEuwTxdJHE+Xwv0tBhLV9ci5hugMseRT3p2RgrFjgdUgo6k5/ejVPvVpFNR+/V
+            N8Z4DFMo6p9cNIVFXPR+4yeCUWolkrRxcHGSckV+Nkd/PfuiumudZirVZyrmecrI
+            CLN1mC4+bPPSHkiIXkpmOekk+1kA/BH558tE7tZjFwLfpRgEBKZ5wkG7OkJZTQB2
+            pmuEJebAc3+FZicwSPS5EgCWQDvnTJuQHhYZd6DFm2MVHbVDmMBruu3GobRfkmAG
+            bve9ivF75xafxuI/hmPWcXcqyoa00UYcdLsbqkoemzDtlA5JzsjXgza5Vr8rVR0x
+            zGptklQJwnmdmd10d4LfIWFD/Bqky+THUho4OmpXgHYyVq7m8MdjPRAEwWG48NRX
+            ESepfh3WlOjXs2H2SOJixX/0vBcF2RP6qRWNLdqJ7CYDq1i5UqW/uu2M8IdEpAsC
+            AwEAAaOCA+8wggPrMB8GA1UdIwQYMBaAFOSQsKgXg6OemtX9PclZax8gsuK+MB0G
+            A1UdDgQWBBR5HMYfEbWduDd5g/3Gi5LXttU6hTAOBgNVHQ8BAf8EBAMCBLAwgeEG
+            A1UdIASB2TCB1jAIBgYEAI96AQcwCAYGZ4EMAQICMIG/BgoqgXaEBQEKgjEBMIGw
+            MCcGCCsGAQUFBwIBFhtodHRwOi8vd3d3LmZpbmVpZC5maS9jcHM1NC8wgYQGCCsG
+            AQUFBwICMHgadlZhcm1lbm5lcG9saXRpaWtrYSBvbiBzYWF0YXZpbGxhIC0gQ2Vy
+            dGlmaWthdHBvbGljeSBmaW5ucyAtIENlcnRpZmljYXRlIHBvbGljeSBpcyBhdmFp
+            bGFibGUgaHR0cDovL3d3dy5maW5laWQuZmkvY3BzNTQwKQYDVR0RBCIwIIIebnVv
+            cmllc3Bvb2phc2Vua29ydHRpLmVzcG9vLmZpMA8GA1UdEwEB/wQFMAMBAQAwOAYD
+            VR0fBDEwLzAtoCugKYYnaHR0cDovL3Byb3h5LmZpbmVpZC5maS9jcmwvZHZ2c3A1
+            cmMuY3JsMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDATBuBggrBgEFBQcB
+            AQRiMGAwMgYIKwYBBQUHMAKGJmh0dHA6Ly9wcm94eS5maW5laWQuZmkvY2EvZHZ2
+            c3A1cmMuY3J0MCoGCCsGAQUFBzABhh5odHRwOi8vb2NzcC5maW5laWQuZmkvZHZ2
+            c3A1cmMwLQYIKwYBBQUHAQMEITAfMAgGBgQAjkYBATATBgYEAI5GAQYwCQYHBACO
+            RgEGAzCCAX8GCisGAQQB1nkCBAIEggFvBIIBawFpAHYArfe++nz/EMiLnT2cHj4Y
+            arRnKV3PsQwkyoWGNOvcgooAAAGBuJHRTgAABAMARzBFAiBROGCxlkFm5uoG55wA
+            CtHxf2k7k0Sc4S1WesjEKenM6gIhANlye+wpeSF+ONq5U3WOs2ryF0a3e4ci+dYQ
+            ZC/AgHokAHcAejKMVNi3LbYg6jjgUh7phBZwMhOFTTvSK8E6V6NS61IAAAGBuJHR
+            9gAABAMASDBGAiEAtWs3aLeyUC2SRpgO+2+Yg+WqLlMeZitVO6Kt3xYpHccCIQDL
+            ljcsGlSURXTbY+kmUrGW9PoTQyM+Gg+HUd/Mpx7LGwB2ALc++yTfnE26dfI5xbpY
+            9Gxd/ELPep81xJ4dCYEl7bSZAAABgbiR0osAAAQDAEcwRQIhAIZKPCEwRKShIyTv
+            /YFVx3L35PeLDCu4/Toujg5HJMVSAiBGXOLTKOk5LMnXpBXnyE3aJerbWD04PV0s
+            uhRUYV8qCjANBgkqhkiG9w0BAQ0FAAOCAgEANHI1iRJLBL6ABiCIGQARRovzClUL
+            K/aehhmEJ/hRFrEUoJKjskInl5hKZuOhiHU2qQdp1ZJIsnrYxijyupVlNPj1xItq
+            5LKKPdJ/vdgq97oDg1T1AuEq4uOC6NbFkbzNxesDQtUTlcMejpYHFuM9oWuchAJg
+            YZSEXhObDxdrrRjUlE7R/O/q7FMs9bb34C57CTgCBfFrtMmA17znOs/KIN1LsWr9
+            oFq184puBAryO+1DDM+fAaDdf0UB3Hd2vABqZw9kls3VMaKhz9eXdhWy5CSBD5Ey
+            yFa8SoyydnzKCoeyvLd/30npW3qFw/l8ajeUlmIVF2JzIUD36DRta/+ycMe5bjGn
+            9+WWyN1ZqLYPiXKM1I6V3Q+zplWUbpUHyfGJJTaxPlxJ1gaSCV4DwHucPJKBVuMo
+            HInmse/k0FkPjz/oWAwX18O/WBOr77vFBovTq3X62vVlz+AYDazRXMQ1xbjyn2PQ
+            r2h20MHQsroA5rojpeFWL7q3FPRu6d0AZXZqGyd4u/ySb1dTLo9O+0vVgCRXe387
+            slHfVo/t7+1uoaLlGE9OULPukTC59k/FjV42LDpeN7C3EvuQw9rQTj/LL0d7ANmL
+            wcK7JnXWM9wwp+6UCGPnx9Tjow2nyGHxxN4MxbLQMbQX5+BaojPNMh33fA52bbbd
+            wGP5QQksuk+ioC0=		  
+          </ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://nuoriespoojasenkortti.espoo.fi/api/slo"/>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://nuoriespoojasenkortti.espoo.fi/api/slo"/>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://nuoriespoojasenkortti.espoo.fi/api/acs" index="1" isDefault="true"/>
+    <md:AttributeConsumingService index="1" isDefault="true">
+      <md:ServiceName xml:lang="fi">Nuori Espoo jäsenkortin hakeminen</md:ServiceName>
+      <md:ServiceName xml:lang="sv">Nuori Espoo jäsenkortin hakeminen</md:ServiceName>
+      <md:ServiceName xml:lang="en">Nuori Espoo jäsenkortin hakeminen</md:ServiceName>
+      <md:RequestedAttribute FriendlyName="FirstName" Name="http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/>
+      <md:RequestedAttribute FriendlyName="FamilyName" Name="http://eidas.europa.eu/attributes/naturalperson/CurrentFamilyName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/>
+      <md:RequestedAttribute FriendlyName="sn" Name="urn:oid:2.5.4.4" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/>
+      <md:RequestedAttribute FriendlyName="VakinainenKotimainenLahiosoitePostinumero" Name="urn:oid:1.2.246.517.2002.2.6" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"/>
+    </md:AttributeConsumingService>
+  </md:SPSSODescriptor>
+  <md:Organization>
+    <md:OrganizationName xml:lang="fi">Espoon kaupunki</md:OrganizationName>
+    <md:OrganizationName xml:lang="sv">Esbo stad</md:OrganizationName>
+    <md:OrganizationName xml:lang="en">City of Espoo</md:OrganizationName>
+    <md:OrganizationDisplayName xml:lang="fi">Espoon kaupunki</md:OrganizationDisplayName>
+    <md:OrganizationDisplayName xml:lang="sv">Esbo stad</md:OrganizationDisplayName>
+    <md:OrganizationDisplayName xml:lang="en">City of Espoo</md:OrganizationDisplayName>
+    <md:OrganizationURL xml:lang="fi">https://www.espoo.fi</md:OrganizationURL>
+    <md:OrganizationURL xml:lang="sv">https://www.espoo.fi/sv</md:OrganizationURL>
+    <md:OrganizationURL xml:lang="en">https://www.espoo.fi/en</md:OrganizationURL>
+  </md:Organization>
+  <md:ContactPerson contactType="technical">
+    <md:GivenName>Saku</md:GivenName>
+    <md:SurName>Jokinen</md:SurName>
+    <md:EmailAddress>saku.jokinen@espoo.fi</md:EmailAddress>
+    <md:TelephoneNumber>+358404872725</md:TelephoneNumber>
+  </md:ContactPerson>
+  <md:ContactPerson contactType="administrative">
+    <md:GivenName>Espoon</md:GivenName>
+    <md:SurName>Voltti</md:SurName>
+    <md:EmailAddress>voltti@espoo.fi</md:EmailAddress>
+  </md:ContactPerson>
+</md:EntityDescriptor>
