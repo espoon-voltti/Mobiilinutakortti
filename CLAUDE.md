@@ -29,7 +29,9 @@ cd admin-frontend && npm install && PORT=3002 npm run dev  # Worker app on :3002
 cd backend
 npm run start:dev    # Watch mode
 npm run build        # Compile TypeScript → dist/
-npm run test         # Jest unit tests
+npm run test         # Jest unit tests; needs a reachable PostgreSQL (docker-compose db,
+                     # or point RDS_HOSTNAME/RDS_PORT elsewhere). Tests use their own
+                     # nuta_test database, dropped clean at every suite start.
 npm run test:watch   # Jest watch
 npm run test:e2e     # E2E tests
 npm run lint         # TSLint
