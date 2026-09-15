@@ -12,10 +12,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# The default for every job; jobs that push images or assume AWS roles
+# elevate only what they use in their own permissions block.
 permissions:
-  id-token: write
   contents: read
-  packages: write
 
 jobs:
   lint-shell:
@@ -35,6 +35,9 @@ jobs:
 
   service:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # pushes to GHCR
     needs:
       - cache-bust
     steps:
@@ -75,6 +78,9 @@ jobs:
 
   proxy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # pushes to GHCR
     needs:
       - cache-bust
     steps:
@@ -128,6 +134,9 @@ jobs:
       - service
       - proxy
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # assumes the AWS role via OIDC
+      packages: read  # pulls the manifests from GHCR
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6.2.4
@@ -171,6 +180,8 @@ jobs:
     needs:
       - service
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # assumes the AWS role via OIDC
     strategy:
       fail-fast: false
       matrix:
@@ -209,6 +220,8 @@ jobs:
       - ecr-push
       - install-frontend
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # assumes the AWS roles via OIDC
     strategy:
       fail-fast: false
       matrix:
